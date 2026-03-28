@@ -1,0 +1,562 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		16D82132E6DC3882931D2C5C /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2E98367B74869339FA13D2 /* AuthViewModel.swift */; };
+		1AA4AFDBF19E0B179817133F /* ServerSetupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4FE6055B66B1402A9BA91C3 /* ServerSetupViewModel.swift */; };
+		1D774975C65325A9AA287BFE /* DiscoverViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B51E03581D50B930FC87D744 /* DiscoverViewModel.swift */; };
+		1F1ED67C740C5C90822E0EFC /* URLNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27074C23E43436441EF6F02F /* URLNormalizer.swift */; };
+		37D1C04FE387044755C68A47 /* SeerrModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9E349149C88570515FD1F3 /* SeerrModels.swift */; };
+		438E49E22858126B23CF4BFF /* TMDBImageURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69B950886B50BE2637AA796 /* TMDBImageURL.swift */; };
+		5836E1B8DF927AD0FF62F670 /* DiscoverSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2F9EE06CCC51F03BC5B4F6 /* DiscoverSliderView.swift */; };
+		612001AFAADC8BD0E319C6BE /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DF43906E0E406A94453EF1 /* AppState.swift */; };
+		71AD4E3660A3A157516A5398 /* ServerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC2FF07F37E85C5506E7A09E /* ServerStore.swift */; };
+		75C8B13116A4CFA9FEA594E2 /* ServerRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559DE2B239D468A40F567DF2 /* ServerRepository.swift */; };
+		766C6FB9EEAAAA6F5165E666 /* DiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB1D51FC4F2154A8F0E010E /* DiscoverView.swift */; };
+		824B6E4FC831874D7784FB8D /* MediaCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69D7F345716A3DE42F3294A /* MediaCardView.swift */; };
+		835E30BA4370E001018A15FB /* SeerrAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F23B78D85AD082DF788C99 /* SeerrAPIClient.swift */; };
+		83957F5CCC7E0D4152487E92 /* ServerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBEB581AA47ACD7AC2BF46A2 /* ServerConfiguration.swift */; };
+		8F59C875CEBBBEBED7087067 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64C47E6800275508DB03C916 /* ContentView.swift */; };
+		96C066C75C2CBF615B50285E /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81677D5A77C4A46EED374C39 /* KeychainManager.swift */; };
+		9C1ABC8EA6F97142A90A8646 /* StatusBadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BAF214E68CE207CB709358 /* StatusBadgeView.swift */; };
+		9D25E67C34BAC8908C5675B8 /* DateFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A002FFC73E8F244FA27489C /* DateFormatting.swift */; };
+		A2EC57FB5898FBD0797C9167 /* DiscoverRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB38D0BE2C5D424D1208B1C /* DiscoverRepository.swift */; };
+		B069B98E3F89B59A8A90E7E6 /* AuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74273EE34B44ADDCFCA9326 /* AuthRepository.swift */; };
+		CA8605D14239CC1AEA63810E /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC276DA8E190B9425423E1A /* APIError.swift */; };
+		D78639ED60ED84756C488395 /* PlexOAuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51003BCD28BD393CA457D535 /* PlexOAuthView.swift */; };
+		DE2A923196AD601DAC8DA4E3 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199CDE54AD436C7475063960 /* Logger.swift */; };
+		DE5050F748DD9EEACEBE82DB /* SeerrClientApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFB67CD0DFFCE6295E9E87C8 /* SeerrClientApp.swift */; };
+		E84A482CE2ADC7B1068FCF3D /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E772FA7B51A7222166D1DA /* LoginView.swift */; };
+		E84C0783AF168F636CEB3657 /* ServerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CCAD2AEBC9B5070D704CC42 /* ServerListView.swift */; };
+		E8C3A103AD6602824EC110A2 /* AddServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D03BFDAA57BCFD1563B4547 /* AddServerView.swift */; };
+		EC8FF0FE880AC023DF8143C9 /* TrustManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A21FB0924B241FDC4D8DC9 /* TrustManager.swift */; };
+		F5E75B8DCEA4839422965BF1 /* APIEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA9BC8FEC91C03F2E9EF262 /* APIEndpoints.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		01BAF214E68CE207CB709358 /* StatusBadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBadgeView.swift; sourceTree = "<group>"; };
+		199CDE54AD436C7475063960 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		1D03BFDAA57BCFD1563B4547 /* AddServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddServerView.swift; sourceTree = "<group>"; };
+		27074C23E43436441EF6F02F /* URLNormalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLNormalizer.swift; sourceTree = "<group>"; };
+		2BB38D0BE2C5D424D1208B1C /* DiscoverRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverRepository.swift; sourceTree = "<group>"; };
+		35F23B78D85AD082DF788C99 /* SeerrAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeerrAPIClient.swift; sourceTree = "<group>"; };
+		3DA21C4FF404997FFF405DA9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		51003BCD28BD393CA457D535 /* PlexOAuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlexOAuthView.swift; sourceTree = "<group>"; };
+		559DE2B239D468A40F567DF2 /* ServerRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerRepository.swift; sourceTree = "<group>"; };
+		64C47E6800275508DB03C916 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		7BA9BC8FEC91C03F2E9EF262 /* APIEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIEndpoints.swift; sourceTree = "<group>"; };
+		7CCAD2AEBC9B5070D704CC42 /* ServerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListView.swift; sourceTree = "<group>"; };
+		81677D5A77C4A46EED374C39 /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
+		8B2E98367B74869339FA13D2 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
+		9A002FFC73E8F244FA27489C /* DateFormatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatting.swift; sourceTree = "<group>"; };
+		B0A21FB0924B241FDC4D8DC9 /* TrustManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrustManager.swift; sourceTree = "<group>"; };
+		B51E03581D50B930FC87D744 /* DiscoverViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverViewModel.swift; sourceTree = "<group>"; };
+		BF2F9EE06CCC51F03BC5B4F6 /* DiscoverSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverSliderView.swift; sourceTree = "<group>"; };
+		C4FE6055B66B1402A9BA91C3 /* ServerSetupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSetupViewModel.swift; sourceTree = "<group>"; };
+		C9DF43906E0E406A94453EF1 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		CA9E349149C88570515FD1F3 /* SeerrModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeerrModels.swift; sourceTree = "<group>"; };
+		CFB1D51FC4F2154A8F0E010E /* DiscoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverView.swift; sourceTree = "<group>"; };
+		D74273EE34B44ADDCFCA9326 /* AuthRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRepository.swift; sourceTree = "<group>"; };
+		DBEB581AA47ACD7AC2BF46A2 /* ServerConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerConfiguration.swift; sourceTree = "<group>"; };
+		E418DBD74F0261757BAE65C2 /* SeerrClient.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = SeerrClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4E772FA7B51A7222166D1DA /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		E69B950886B50BE2637AA796 /* TMDBImageURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBImageURL.swift; sourceTree = "<group>"; };
+		E69D7F345716A3DE42F3294A /* MediaCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaCardView.swift; sourceTree = "<group>"; };
+		FC2FF07F37E85C5506E7A09E /* ServerStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerStore.swift; sourceTree = "<group>"; };
+		FFB67CD0DFFCE6295E9E87C8 /* SeerrClientApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeerrClientApp.swift; sourceTree = "<group>"; };
+		FFC276DA8E190B9425423E1A /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		09640269D367A2B2AAA9B2D5 /* ServerSetup */ = {
+			isa = PBXGroup;
+			children = (
+				2B2E2AF58B675A4D937EF594 /* Repositories */,
+				7280BFAF535389DAA22B815A /* ViewModels */,
+				1C7C291376341FF9C6E63D76 /* Views */,
+			);
+			path = ServerSetup;
+			sourceTree = "<group>";
+		};
+		1C7C291376341FF9C6E63D76 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				1D03BFDAA57BCFD1563B4547 /* AddServerView.swift */,
+				7CCAD2AEBC9B5070D704CC42 /* ServerListView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		225D191904D715F45D6473A6 = {
+			isa = PBXGroup;
+			children = (
+				DA8611358F3E4231FA577FBB /* SeerrClient */,
+				6AAAC7B585A309055090811A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		29FA13DAA52BDF7547B1739E /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				7BA9BC8FEC91C03F2E9EF262 /* APIEndpoints.swift */,
+				FFC276DA8E190B9425423E1A /* APIError.swift */,
+				35F23B78D85AD082DF788C99 /* SeerrAPIClient.swift */,
+				B0A21FB0924B241FDC4D8DC9 /* TrustManager.swift */,
+				27074C23E43436441EF6F02F /* URLNormalizer.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		2B2E2AF58B675A4D937EF594 /* Repositories */ = {
+			isa = PBXGroup;
+			children = (
+				559DE2B239D468A40F567DF2 /* ServerRepository.swift */,
+			);
+			path = Repositories;
+			sourceTree = "<group>";
+		};
+		2E923D3650FF5155D531868D /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				C14B77DC4DAAA329610B5F51 /* Models */,
+				29FA13DAA52BDF7547B1739E /* Networking */,
+				8FA6A624AC72349C43E33EAA /* Storage */,
+				45EF2489B853A7F9CFE594CE /* Utilities */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		333FDE8C21977C639CCE9388 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				C9DF43906E0E406A94453EF1 /* AppState.swift */,
+				64C47E6800275508DB03C916 /* ContentView.swift */,
+				3DA21C4FF404997FFF405DA9 /* Info.plist */,
+				FFB67CD0DFFCE6295E9E87C8 /* SeerrClientApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		45EF2489B853A7F9CFE594CE /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				9A002FFC73E8F244FA27489C /* DateFormatting.swift */,
+				199CDE54AD436C7475063960 /* Logger.swift */,
+				E69B950886B50BE2637AA796 /* TMDBImageURL.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		4D2B3290AEE4A326F2D9E5F3 /* Discover */ = {
+			isa = PBXGroup;
+			children = (
+				D10BACCCD943A8C0CB817381 /* Repositories */,
+				F74BAD8E0BB89B9B87C208BA /* ViewModels */,
+				DF51682CA8BB447639A08B49 /* Views */,
+			);
+			path = Discover;
+			sourceTree = "<group>";
+		};
+		6AAAC7B585A309055090811A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E418DBD74F0261757BAE65C2 /* SeerrClient.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		7280BFAF535389DAA22B815A /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				C4FE6055B66B1402A9BA91C3 /* ServerSetupViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		743281D0A2EC8B7A0A03B805 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				8B2E98367B74869339FA13D2 /* AuthViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		8FA6A624AC72349C43E33EAA /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				81677D5A77C4A46EED374C39 /* KeychainManager.swift */,
+				FC2FF07F37E85C5506E7A09E /* ServerStore.swift */,
+			);
+			path = Storage;
+			sourceTree = "<group>";
+		};
+		B6A0E75702CEE690EB8E95AF /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				E9C2835CC74C61C871EE206D /* Auth */,
+				4D2B3290AEE4A326F2D9E5F3 /* Discover */,
+				09640269D367A2B2AAA9B2D5 /* ServerSetup */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		C14B77DC4DAAA329610B5F51 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				CA9E349149C88570515FD1F3 /* SeerrModels.swift */,
+				DBEB581AA47ACD7AC2BF46A2 /* ServerConfiguration.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		D10BACCCD943A8C0CB817381 /* Repositories */ = {
+			isa = PBXGroup;
+			children = (
+				2BB38D0BE2C5D424D1208B1C /* DiscoverRepository.swift */,
+			);
+			path = Repositories;
+			sourceTree = "<group>";
+		};
+		DA8611358F3E4231FA577FBB /* SeerrClient */ = {
+			isa = PBXGroup;
+			children = (
+				333FDE8C21977C639CCE9388 /* App */,
+				2E923D3650FF5155D531868D /* Core */,
+				B6A0E75702CEE690EB8E95AF /* Features */,
+			);
+			path = SeerrClient;
+			sourceTree = "<group>";
+		};
+		DD63420CF12ECE7C90046BA6 /* Repositories */ = {
+			isa = PBXGroup;
+			children = (
+				D74273EE34B44ADDCFCA9326 /* AuthRepository.swift */,
+			);
+			path = Repositories;
+			sourceTree = "<group>";
+		};
+		DF51682CA8BB447639A08B49 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				BF2F9EE06CCC51F03BC5B4F6 /* DiscoverSliderView.swift */,
+				CFB1D51FC4F2154A8F0E010E /* DiscoverView.swift */,
+				E69D7F345716A3DE42F3294A /* MediaCardView.swift */,
+				01BAF214E68CE207CB709358 /* StatusBadgeView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		E9C2835CC74C61C871EE206D /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				DD63420CF12ECE7C90046BA6 /* Repositories */,
+				743281D0A2EC8B7A0A03B805 /* ViewModels */,
+				FB94C5E1F628C94E87689C82 /* Views */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		F74BAD8E0BB89B9B87C208BA /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				B51E03581D50B930FC87D744 /* DiscoverViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		FB94C5E1F628C94E87689C82 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				E4E772FA7B51A7222166D1DA /* LoginView.swift */,
+				51003BCD28BD393CA457D535 /* PlexOAuthView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		9EA76F0C1C79685436156160 /* SeerrClient */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9AD9B06188B8F841FC3532D9 /* Build configuration list for PBXNativeTarget "SeerrClient" */;
+			buildPhases = (
+				C72512DF27A1142E3C8F6A1B /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SeerrClient;
+			packageProductDependencies = (
+			);
+			productName = SeerrClient;
+			productReference = E418DBD74F0261757BAE65C2 /* SeerrClient.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D4DC02BCE452C41F4C338432 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 044E315C0EFBF975E1AB45AE /* Build configuration list for PBXProject "SeerrClient" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 225D191904D715F45D6473A6;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 6AAAC7B585A309055090811A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				9EA76F0C1C79685436156160 /* SeerrClient */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C72512DF27A1142E3C8F6A1B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F5E75B8DCEA4839422965BF1 /* APIEndpoints.swift in Sources */,
+				CA8605D14239CC1AEA63810E /* APIError.swift in Sources */,
+				E8C3A103AD6602824EC110A2 /* AddServerView.swift in Sources */,
+				612001AFAADC8BD0E319C6BE /* AppState.swift in Sources */,
+				B069B98E3F89B59A8A90E7E6 /* AuthRepository.swift in Sources */,
+				16D82132E6DC3882931D2C5C /* AuthViewModel.swift in Sources */,
+				8F59C875CEBBBEBED7087067 /* ContentView.swift in Sources */,
+				9D25E67C34BAC8908C5675B8 /* DateFormatting.swift in Sources */,
+				A2EC57FB5898FBD0797C9167 /* DiscoverRepository.swift in Sources */,
+				5836E1B8DF927AD0FF62F670 /* DiscoverSliderView.swift in Sources */,
+				766C6FB9EEAAAA6F5165E666 /* DiscoverView.swift in Sources */,
+				1D774975C65325A9AA287BFE /* DiscoverViewModel.swift in Sources */,
+				96C066C75C2CBF615B50285E /* KeychainManager.swift in Sources */,
+				DE2A923196AD601DAC8DA4E3 /* Logger.swift in Sources */,
+				E84A482CE2ADC7B1068FCF3D /* LoginView.swift in Sources */,
+				824B6E4FC831874D7784FB8D /* MediaCardView.swift in Sources */,
+				D78639ED60ED84756C488395 /* PlexOAuthView.swift in Sources */,
+				835E30BA4370E001018A15FB /* SeerrAPIClient.swift in Sources */,
+				DE5050F748DD9EEACEBE82DB /* SeerrClientApp.swift in Sources */,
+				37D1C04FE387044755C68A47 /* SeerrModels.swift in Sources */,
+				83957F5CCC7E0D4152487E92 /* ServerConfiguration.swift in Sources */,
+				E84C0783AF168F636CEB3657 /* ServerListView.swift in Sources */,
+				75C8B13116A4CFA9FEA594E2 /* ServerRepository.swift in Sources */,
+				1AA4AFDBF19E0B179817133F /* ServerSetupViewModel.swift in Sources */,
+				71AD4E3660A3A157516A5398 /* ServerStore.swift in Sources */,
+				9C1ABC8EA6F97142A90A8646 /* StatusBadgeView.swift in Sources */,
+				438E49E22858126B23CF4BFF /* TMDBImageURL.swift in Sources */,
+				EC8FF0FE880AC023DF8143C9 /* TrustManager.swift in Sources */,
+				1F1ED67C740C5C90822E0EFC /* URLNormalizer.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		3F611DA3265137CA0B18A322 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = SeerrClient/App/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.rodrigoindustries.SeerrClient;
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4908C2CB221E648BB1B30C72 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = SeerrClient/App/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = targeted;
+				SWIFT_VERSION = 5;
+			};
+			name = Release;
+		};
+		6D3596B9EB4BE6DB558FBFC0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = SeerrClient/App/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.rodrigoindustries.SeerrClient;
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		EDA8CBE7EA0851B3D568D27D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = SeerrClient/App/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = targeted;
+				SWIFT_VERSION = 5;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		044E315C0EFBF975E1AB45AE /* Build configuration list for PBXProject "SeerrClient" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EDA8CBE7EA0851B3D568D27D /* Debug */,
+				4908C2CB221E648BB1B30C72 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		9AD9B06188B8F841FC3532D9 /* Build configuration list for PBXNativeTarget "SeerrClient" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3F611DA3265137CA0B18A322 /* Debug */,
+				6D3596B9EB4BE6DB558FBFC0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D4DC02BCE452C41F4C338432 /* Project object */;
+}

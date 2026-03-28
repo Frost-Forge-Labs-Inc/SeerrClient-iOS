@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Info.plist
+  SeerrClient
+
+  Required keys for the SeerrClient iOS app.
+
+  KEY NOTES:
+  ─────────────────────────────────────────────────────────────────────────────
+  NSAppTransportSecurity › NSAllowsArbitraryLoads = YES
+    Allows HTTP connections and self-signed HTTPS certificates.
+    Required because home Seerr servers typically run on HTTP with bare IPs
+    or self-signed certificates. TrustManager implements TOFU validation on
+    top of this for security.
+
+  CFBundleDisplayName = "Seerr"
+    Short name shown under the app icon on the Home Screen.
+
+  NSFaceIDUsageDescription
+    Required if biometric unlock (FaceID/TouchID) is added in a later phase.
+    Include now to avoid rejection if the feature ships in an update without
+    an Info.plist update.
+
+  UIBackgroundModes (none initially)
+    Will be needed if we add background refresh in a later phase.
+
+  CFBundleURLTypes
+    Will be needed for deep-link / universal-link support (Phase 2+).
+  ─────────────────────────────────────────────────────────────────────────────
+-->
+<plist version="1.0">
+<dict>
+
+    <!-- App Identity -->
+    <key>CFBundleDisplayName</key>
+    <string>Seerr</string>
+
+    <key>CFBundleName</key>
+    <string>SeerrClient</string>
+
+    <key>CFBundleIdentifier</key>
+    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+
+    <key>CFBundleVersion</key>
+    <string>$(CURRENT_PROJECT_VERSION)</string>
+
+    <key>CFBundleShortVersionString</key>
+    <string>$(MARKETING_VERSION)</string>
+
+    <key>CFBundleExecutable</key>
+    <string>$(EXECUTABLE_NAME)</string>
+
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+
+    <key>LSRequiresIPhoneOS</key>
+    <true/>
+
+    <!-- Supported iOS Orientations (iPhone) -->
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+
+    <!-- Supported iOS Orientations (iPad) -->
+    <key>UISupportedInterfaceOrientations~ipad</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationPortraitUpsideDown</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+
+    <!-- Transport Security
+         NSAllowsArbitraryLoads = YES is required to:
+         - Connect to HTTP (non-HTTPS) Seerr instances on home networks.
+         - Accept self-signed HTTPS certificates (TrustManager does TOFU on top).
+         Per Apple: this is acceptable for apps that connect to user-configured
+         servers where the server address is not known at build time.
+    -->
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
+
+    <!-- Biometric Unlock (FaceID / TouchID) — Phase 2+ feature.
+         Must be present before the feature ships to avoid App Store rejection.
+    -->
+    <key>NSFaceIDUsageDescription</key>
+    <string>Use Face ID or Touch ID to unlock the app and protect your server credentials.</string>
+
+    <!-- Launch Screen (using SwiftUI lifecycle — no storyboard required) -->
+    <key>UILaunchScreen</key>
+    <dict/>
+
+    <!-- Main SwiftUI scene configuration -->
+    <key>UIApplicationSceneManifest</key>
+    <dict>
+        <key>UIApplicationSupportsMultipleScenes</key>
+        <false/>
+        <key>UISceneConfigurations</key>
+        <dict>
+            <key>UIWindowSceneSessionRoleApplication</key>
+            <array>
+                <dict>
+                    <key>UISceneConfigurationName</key>
+                    <string>Default Configuration</string>
+                </dict>
+            </array>
+        </dict>
+    </dict>
+
+    <!-- ITSAppUsesNonExemptEncryption
+         Set to NO if the app doesn't implement its own encryption beyond
+         what the OS provides (Keychain, HTTPS). This avoids an export
+         compliance question on every TestFlight/App Store submission.
+    -->
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
+
+</dict>
+</plist>
