@@ -148,9 +148,15 @@ struct TvShowDetailView: View {
             get: { vm.showRequestSheet },
             set: { vm.showRequestSheet = $0 }
         )) {
-            // Week 6: Replace with actual RequestFormSheet
-            Text("Request form coming in Week 6")
-                .presentationDetents([.medium])
+            CreateRequestView(
+                mediaType: .tv,
+                mediaId: tvShow.id ?? tvId,
+                tvdbId: tvShow.externalIds?.tvdbId,
+                seasons: tvShow.seasons
+            ) {
+                Task { await vm.retryDetails() }
+            }
+            .presentationDetents([.medium, .large])
         }
     }
 

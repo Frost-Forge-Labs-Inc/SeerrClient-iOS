@@ -132,9 +132,13 @@ struct MovieDetailView: View {
             get: { vm.showRequestSheet },
             set: { vm.showRequestSheet = $0 }
         )) {
-            // Week 6: Replace with actual RequestFormSheet
-            Text("Request form coming in Week 6")
-                .presentationDetents([.medium])
+            CreateRequestView(
+                mediaType: .movie,
+                mediaId: movie.id ?? movieId
+            ) {
+                Task { await vm.retry() }
+            }
+            .presentationDetents([.medium, .large])
         }
     }
 

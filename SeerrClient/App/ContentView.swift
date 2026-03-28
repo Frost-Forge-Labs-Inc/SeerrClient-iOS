@@ -76,8 +76,13 @@ struct ContentView: View {
             .tabItem { Label("Search", systemImage: "magnifyingglass") }
 
             NavigationStack {
-                Text("Requests")
-                    .navigationTitle("Requests")
+                RequestListView()
+                    .navigationDestination(for: MovieNavDestination.self) { dest in
+                        MovieDetailView(movieId: dest.id, movieTitle: dest.title)
+                    }
+                    .navigationDestination(for: TvNavDestination.self) { dest in
+                        TvShowDetailView(tvId: dest.id, showTitle: dest.title)
+                    }
             }
             .tabItem { Label("Requests", systemImage: "tray.full") }
 

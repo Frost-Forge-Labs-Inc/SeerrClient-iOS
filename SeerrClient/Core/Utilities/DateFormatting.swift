@@ -144,4 +144,12 @@ public extension SeerrDateFormatter {
         guard let date = parseAPIDate(string) else { return nil }
         return relative.localizedString(for: date, relativeTo: Date())
     }
+
+    /// Returns a relative time string for a raw API date, or `"Unknown"` on failure.
+    ///
+    /// - Parameter string: An ISO 8601 or `YYYY-MM-DD` string from the API.
+    /// - Returns: A relative time string such as `"2 hr. ago"` or `"Unknown"`.
+    static func relativeDate(_ string: String?) -> String {
+        relativeString(from: string) ?? "Unknown"
+    }
 }
