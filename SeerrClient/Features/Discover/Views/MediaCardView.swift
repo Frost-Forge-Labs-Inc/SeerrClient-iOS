@@ -50,16 +50,28 @@ struct MediaCardView: View {
     var onTap: (() -> Void)?
 
     var body: some View {
-        Button {
-            onTap?()
-        } label: {
-            VStack(alignment: .leading, spacing: 6) {
-                posterImage
-                titleSection
+        if let onTap {
+            Button {
+                onTap()
+            } label: {
+                cardContent
             }
-            .frame(width: size.width)
+            .buttonStyle(MediaCardButtonStyle())
+        } else {
+            // When no tap action is provided the card is expected to be wrapped
+            // in a NavigationLink or similar container. Avoid nesting a Button
+            // inside another interactive element which causes duplicate taps.
+            cardContent
         }
-        .buttonStyle(MediaCardButtonStyle())
+    }
+
+    @ViewBuilder
+    private var cardContent: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            posterImage
+            titleSection
+        }
+        .frame(width: size.width)
     }
 
     // MARK: - Poster

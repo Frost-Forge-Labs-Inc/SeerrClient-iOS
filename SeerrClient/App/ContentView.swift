@@ -87,8 +87,7 @@ struct ContentView: View {
             .tabItem { Label("Requests", systemImage: "tray.full") }
 
             NavigationStack {
-                Text("Profile")
-                    .navigationTitle("Profile")
+                ProfileView()
             }
             .tabItem { Label("Profile", systemImage: "person.circle") }
         }

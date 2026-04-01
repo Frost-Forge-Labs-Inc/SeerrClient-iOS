@@ -201,9 +201,9 @@ public struct User: Codable, Sendable, Hashable {
     /// URL path to user avatar image (read-only).
     public let avatar: String?
     /// ISO 8601 timestamp when the account was created (read-only).
-    public let createdAt: String
+    public let createdAt: String?
     /// ISO 8601 timestamp of the last profile update (read-only).
-    public let updatedAt: String
+    public let updatedAt: String?
     /// Total number of requests made by this user (read-only).
     public let requestCount: Int?
 }

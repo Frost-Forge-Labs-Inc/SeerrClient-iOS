@@ -138,7 +138,7 @@ struct CreateRequestView: View {
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 } else {
-                    ForEach(availableSeasonNumbers, id: \.self) { seasonNumber in
+                    ForEach(availableSeasonNumbers, id: \.self) { (seasonNumber: Int) in
                         Button {
                             toggleSeason(seasonNumber)
                         } label: {
@@ -147,7 +147,7 @@ struct CreateRequestView: View {
                                 Spacer()
                                 if selectedSeasonNumbers.contains(seasonNumber) {
                                     Image(systemName: "checkmark.circle.fill")
-                                        .foregroundStyle(.accent)
+                                        .foregroundStyle(.tint)
                                 } else {
                                     Image(systemName: "circle")
                                         .foregroundStyle(.secondary)

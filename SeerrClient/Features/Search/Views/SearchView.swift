@@ -215,9 +215,10 @@ struct SearchView: View {
             genreIds: item.genreIds,
             mediaInfo: item.mediaInfo
         )
-        MediaCardView(item: discoverItem, size: .medium) {
-            AppLogger.debug("SearchView: tapped media result (id: \(item.id), type: \(item.mediaType ?? "unknown"))")
-        }
+        // No onTap closure — navigation is handled by the wrapping NavigationLink.
+        // Passing onTap here would nest a Button inside the NavigationLink, causing
+        // duplicate tap events.
+        MediaCardView(item: discoverItem, size: .medium)
     }
 
     // MARK: - Empty

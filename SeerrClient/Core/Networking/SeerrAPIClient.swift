@@ -42,9 +42,9 @@ public actor SeerrAPIClient {
     /// The server configuration this client was created for.
     private let serverConfig: ServerConfiguration
 
-    /// Dedicated cookie storage — isolated from `HTTPCookieStorage.shared`
-    /// so multiple server sessions don't bleed into each other.
-    private let cookieStorage = HTTPCookieStorage()
+    /// Session cookies stored directly on the actor. Private `HTTPCookieStorage()`
+    /// instances silently drop cookies, so we manage them manually.
+    private var storedCookies: [HTTPCookie] = []
 
     /// The URLSession used for all requests.
     private let session: URLSession
@@ -59,10 +59,10 @@ public actor SeerrAPIClient {
         return d
     }()
 
-    /// JSON encoder: converts `camelCase` Swift property names to `snake_case` JSON.
+    /// JSON encoder: preserves `camelCase` property names as-is.
+    /// The Overseerr/Jellyseerr API expects camelCase keys in request bodies.
     private let encoder: JSONEncoder = {
         let e = JSONEncoder()
-        e.keyEncodingStrategy = .convertToSnakeCase
         return e
     }()
 
@@ -84,9 +84,12 @@ public actor SeerrAPIClient {
         self.trustManager = trustMgr
 
         let config = URLSessionConfiguration.default
-        config.httpCookieStorage = cookieStorage
-        config.httpShouldSetCookies = true
-        config.httpCookieAcceptPolicy = .always
+        // Disable automatic cookie handling — we manage cookies manually
+        // via storedCookies because private HTTPCookieStorage instances
+        // silently drop cookies.
+        config.httpCookieStorage = nil
+        config.httpShouldSetCookies = false
+        config.httpCookieAcceptPolicy = .never
         config.timeoutIntervalForRequest = SeerrAPIClient.defaultTimeout
         config.timeoutIntervalForResource = SeerrAPIClient.mediaOperationTimeout
 
@@ -251,13 +254,13 @@ public actor SeerrAPIClient {
     ///
     /// - Parameter cookie: The `HTTPCookie` to store.
     public func storeCookie(_ cookie: HTTPCookie) {
-        cookieStorage.setCookie(cookie)
+        storedCookies.removeAll { $0.name == cookie.name }
+        storedCookies.append(cookie)
     }
 
-    /// Removes all cookies for this client's base URL domain.
+    /// Removes all cookies for this client.
     public func clearCookies() {
-        guard let url = URL(string: baseURL) else { return }
-        cookieStorage.cookies(for: url)?.forEach { cookieStorage.deleteCookie($0) }
+        storedCookies.removeAll()
     }
 
     // MARK: - Trust Manager Access
@@ -300,6 +303,15 @@ public actor SeerrAPIClient {
         // Headers.
         request.setValue("application/json", forHTTPHeaderField: "Accept")
 
+        // Attach stored session cookies to the request.
+        if !storedCookies.isEmpty {
+            let cookieHeaders = HTTPCookie.requestHeaderFields(with: storedCookies)
+            for (header, value) in cookieHeaders {
+                request.setValue(value, forHTTPHeaderField: header)
+            }
+            AppLogger.debug("Attached \(storedCookies.count) cookie(s)")
+        }
+
         // Inject API key if available.
         if let apiKey = KeychainManager.shared.readAPIKey(for: baseURL) {
             request.setValue(apiKey, forHTTPHeaderField: "X-Api-Key")
@@ -330,6 +342,18 @@ public actor SeerrAPIClient {
             let (data, urlResponse) = try await session.data(for: request)
             guard let httpResponse = urlResponse as? HTTPURLResponse else {
                 throw SeerrAPIError.networkError(underlying: URLError(.badServerResponse))
+            }
+            // Extract and store session cookies from the response.
+            if let url = request.url,
+               let headerFields = httpResponse.allHeaderFields as? [String: String] {
+                let cookies = HTTPCookie.cookies(withResponseHeaderFields: headerFields, for: url)
+                for cookie in cookies {
+                    storedCookies.removeAll { $0.name == cookie.name }
+                    storedCookies.append(cookie)
+                }
+                if !cookies.isEmpty {
+                    AppLogger.debug("Stored \(cookies.count) cookie(s) for \(url.host ?? "")")
+                }
             }
             return (data, httpResponse)
         } catch let error as SeerrAPIError {
