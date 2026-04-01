@@ -135,6 +135,7 @@ struct TvShowDetailView: View {
                 // Request Button
                 RequestButtonView(
                     mediaInfo: tvShow.mediaInfo,
+                    isTvShow: true,
                     showRequestSheet: Binding(
                         get: { vm.showRequestSheet },
                         set: { vm.showRequestSheet = $0 }
@@ -152,7 +153,8 @@ struct TvShowDetailView: View {
                 mediaType: .tv,
                 mediaId: tvShow.id ?? tvId,
                 tvdbId: tvShow.externalIds?.tvdbId,
-                seasons: tvShow.seasons
+                seasons: tvShow.seasons,
+                mediaInfo: tvShow.mediaInfo
             ) {
                 Task { await vm.retryDetails() }
             }

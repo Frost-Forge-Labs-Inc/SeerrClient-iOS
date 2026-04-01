@@ -813,12 +813,24 @@ public struct MediaInfo: Codable, Sendable, Hashable {
     public let tvdbId: Int?
     /// Availability status: 1=UNKNOWN, 2=PENDING, 3=PROCESSING, 4=PARTIALLY_AVAILABLE, 5=AVAILABLE, 6=DELETED.
     public let status: Int?
+    /// Per-season availability status (TV only). Each entry tracks a season's availability on the media server.
+    public let seasons: [MediaInfoSeason]?
     /// List of active or historical requests for this media item (read-only).
     public let requests: [MediaRequest]?
     /// ISO 8601 timestamp when the record was first created (read-only).
     public let createdAt: String?
     /// ISO 8601 timestamp of the last update (read-only).
     public let updatedAt: String?
+}
+
+/// Per-season availability status within MediaInfo.
+public struct MediaInfoSeason: Codable, Sendable, Hashable {
+    /// Seerr internal season record identifier.
+    public let id: Int?
+    /// Season number (1-based, matches TMDB).
+    public let seasonNumber: Int
+    /// Availability status: 1=UNKNOWN, 2=PENDING, 3=PROCESSING, 4=PARTIALLY_AVAILABLE, 5=AVAILABLE.
+    public let status: Int
 }
 
 /// A media request submitted by a user.
@@ -845,6 +857,18 @@ public struct MediaRequest: Codable, Sendable, Hashable {
     public let profileId: Int?
     /// Root folder path override.
     public let rootFolder: String?
+    /// Season requests within this request (TV only).
+    public let seasons: [SeasonRequest]?
+}
+
+/// A season within a media request, tracking approval status for that season.
+public struct SeasonRequest: Codable, Sendable, Hashable {
+    /// Seerr internal identifier.
+    public let id: Int?
+    /// Season number (1-based, matches TMDB).
+    public let seasonNumber: Int
+    /// Season request status: 1=PENDING, 2=APPROVED, 3=DECLINED.
+    public let status: Int
 }
 
 /// Request body for creating or updating a media request.

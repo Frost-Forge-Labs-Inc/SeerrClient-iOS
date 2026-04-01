@@ -181,6 +181,7 @@ private struct MediaCardButtonStyle: ButtonStyle {
             tmdbId: 603,
             tvdbId: nil,
             status: 5,
+            seasons: nil,
             requests: nil,
             createdAt: nil,
             updatedAt: nil

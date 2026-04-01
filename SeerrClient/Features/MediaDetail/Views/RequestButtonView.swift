@@ -11,14 +11,14 @@ import SwiftUI
 
 /// A button whose appearance adapts to the media's current request/availability status.
 ///
-/// - Available media: disabled "Available" button
-/// - No request: "Request" button (primary action)
-/// - Pending: "Pending" button (secondary)
-/// - Processing/Partial: "Requested" button (secondary)
+/// For TV shows, Pending and Processing states remain actionable so users can
+/// request additional unrequested seasons — matching the Jellyseerr web UI.
 struct RequestButtonView: View {
 
     /// The media info containing status. Nil means not yet loaded.
     let mediaInfo: MediaInfo?
+    /// Whether this is a TV show (enables "request more seasons" for Pending/Processing states).
+    var isTvShow: Bool = false
     /// Binding to trigger the request sheet.
     @Binding var showRequestSheet: Bool
 
@@ -73,6 +73,15 @@ struct RequestButtonView: View {
                 accessibilityLabel: "Already available"
             )
         case 2: // Pending
+            if isTvShow {
+                return ButtonConfig(
+                    label: "Request More",
+                    icon: "plus.circle.fill",
+                    tint: .blue,
+                    isActionable: true,
+                    accessibilityLabel: "Some seasons pending. Tap to request more."
+                )
+            }
             return ButtonConfig(
                 label: "Pending",
                 icon: "clock.fill",
@@ -81,6 +90,15 @@ struct RequestButtonView: View {
                 accessibilityLabel: "Request is pending approval"
             )
         case 3: // Processing
+            if isTvShow {
+                return ButtonConfig(
+                    label: "Request More",
+                    icon: "plus.circle.fill",
+                    tint: .blue,
+                    isActionable: true,
+                    accessibilityLabel: "Some seasons requested. Tap to request more."
+                )
+            }
             return ButtonConfig(
                 label: "Requested",
                 icon: "arrow.triangle.2.circlepath",
@@ -90,9 +108,9 @@ struct RequestButtonView: View {
             )
         case 4: // Partially Available
             return ButtonConfig(
-                label: "Partially Available",
-                icon: "circle.lefthalf.filled",
-                tint: .purple,
+                label: "Request More",
+                icon: "plus.circle.fill",
+                tint: .blue,
                 isActionable: true,
                 accessibilityLabel: "Partially available. Tap to request remaining."
             )

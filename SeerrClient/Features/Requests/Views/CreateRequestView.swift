@@ -1,7 +1,9 @@
 // CreateRequestView.swift
 // SeerrClient
 //
-// Sheet form used to submit a new media request.
+// Sheet form used to submit a new media request. For TV shows, displays
+// per-season status (available, requested, pending) and only allows
+// requesting unrequested seasons — matching the Jellyseerr web UI behavior.
 
 import SwiftUI
 
@@ -20,6 +22,7 @@ struct CreateRequestView: View {
     let mediaId: Int
     let tvdbId: Int?
     let seasons: [Season]?
+    let mediaInfo: MediaInfo?
     let onSuccess: (@MainActor () -> Void)?
 
     // MARK: - State
@@ -39,12 +42,14 @@ struct CreateRequestView: View {
         mediaId: Int,
         tvdbId: Int? = nil,
         seasons: [Season]? = nil,
+        mediaInfo: MediaInfo? = nil,
         onSuccess: (@MainActor () -> Void)? = nil
     ) {
         self.mediaType = mediaType
         self.mediaId = mediaId
         self.tvdbId = tvdbId
         self.seasons = seasons
+        self.mediaInfo = mediaInfo
         self.onSuccess = onSuccess
     }
 
@@ -96,6 +101,12 @@ struct CreateRequestView: View {
             guard let client = appState.apiClient else { return }
             repository = RequestRepository(apiClient: client)
         }
+        .onAppear {
+            // If there are already requested seasons, default to individual selection mode
+            if mediaType == .tv && !requestableSeasonNumbers.isEmpty && hasAnyRequestedOrAvailableSeasons {
+                allSeasons = false
+            }
+        }
         .onDisappear {
             submitTask?.cancel()
         }
@@ -130,35 +141,129 @@ struct CreateRequestView: View {
     @ViewBuilder
     private var tvSeasonSection: some View {
         Section("Seasons") {
-            Toggle("All Seasons", isOn: $allSeasons)
-
-            if !allSeasons {
-                if availableSeasonNumbers.isEmpty {
-                    Text("No seasons available for selection.")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
+            if requestableSeasonNumbers.isEmpty && hasAnyRequestedOrAvailableSeasons {
+                Text("All seasons have already been requested or are available.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            } else {
+                if hasAnyRequestedOrAvailableSeasons {
+                    // Some seasons already requested — show individual selection only
+                    seasonListView
                 } else {
-                    ForEach(availableSeasonNumbers, id: \.self) { (seasonNumber: Int) in
-                        Button {
-                            toggleSeason(seasonNumber)
-                        } label: {
-                            HStack {
-                                Text("Season \(seasonNumber)")
-                                Spacer()
-                                if selectedSeasonNumbers.contains(seasonNumber) {
-                                    Image(systemName: "checkmark.circle.fill")
-                                        .foregroundStyle(.tint)
-                                } else {
-                                    Image(systemName: "circle")
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
-                        }
-                        .buttonStyle(.plain)
+                    // No seasons requested yet — show All Seasons toggle
+                    Toggle("All Seasons", isOn: $allSeasons)
+
+                    if !allSeasons {
+                        seasonListView
                     }
                 }
             }
         }
+    }
+
+    @ViewBuilder
+    private var seasonListView: some View {
+        if availableSeasonNumbers.isEmpty {
+            Text("No seasons available for selection.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+        } else {
+            ForEach(availableSeasonNumbers, id: \.self) { (seasonNumber: Int) in
+                let status = seasonStatus(for: seasonNumber)
+                HStack {
+                    Button {
+                        if status == .requestable {
+                            toggleSeason(seasonNumber)
+                        }
+                    } label: {
+                        HStack {
+                            Text("Season \(seasonNumber)")
+                                .foregroundStyle(status == .requestable ? .primary : .secondary)
+                            Spacer()
+                            seasonStatusView(status: status, seasonNumber: seasonNumber)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(status != .requestable)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func seasonStatusView(status: SeasonAvailability, seasonNumber: Int) -> some View {
+        switch status {
+        case .available:
+            Label("Available", systemImage: "checkmark.circle.fill")
+                .font(.caption)
+                .foregroundStyle(.green)
+        case .partiallyAvailable:
+            Label("Partial", systemImage: "circle.lefthalf.filled")
+                .font(.caption)
+                .foregroundStyle(.purple)
+        case .requested:
+            Label("Requested", systemImage: "arrow.triangle.2.circlepath")
+                .font(.caption)
+                .foregroundStyle(.purple)
+        case .pending:
+            Label("Pending", systemImage: "clock.fill")
+                .font(.caption)
+                .foregroundStyle(.orange)
+        case .requestable:
+            if selectedSeasonNumbers.contains(seasonNumber) {
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundStyle(.tint)
+            } else {
+                Image(systemName: "circle")
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    // MARK: - Season Status Logic
+
+    private enum SeasonAvailability {
+        case available
+        case partiallyAvailable
+        case requested
+        case pending
+        case requestable
+    }
+
+    private func seasonStatus(for seasonNumber: Int) -> SeasonAvailability {
+        // Check availability from mediaInfo.seasons (media server status)
+        if let mediaSeasons = mediaInfo?.seasons {
+            if let mediaSeason = mediaSeasons.first(where: { $0.seasonNumber == seasonNumber }) {
+                switch mediaSeason.status {
+                case 5: return .available
+                case 4: return .partiallyAvailable
+                default: break
+                }
+            }
+        }
+
+        // Check if season is in any active (non-declined, non-completed) request
+        if let requests = mediaInfo?.requests {
+            for request in requests {
+                // Skip declined (3) and completed (5) requests
+                guard request.status != 3 else { continue }
+                if let seasonRequests = request.seasons {
+                    if seasonRequests.contains(where: { $0.seasonNumber == seasonNumber }) {
+                        return request.status == 1 ? .pending : .requested
+                    }
+                }
+            }
+        }
+
+        return .requestable
+    }
+
+    private var hasAnyRequestedOrAvailableSeasons: Bool {
+        availableSeasonNumbers.contains { seasonStatus(for: $0) != .requestable }
+    }
+
+    private var requestableSeasonNumbers: [Int] {
+        availableSeasonNumbers.filter { seasonStatus(for: $0) == .requestable }
     }
 
     // MARK: - Helpers
@@ -179,7 +284,16 @@ struct CreateRequestView: View {
             if tvdbId == nil {
                 return true
             }
-            if !allSeasons && selectedSeasonNumbers.isEmpty {
+            // If there are requested seasons, "all seasons" toggle is hidden — must select individual seasons
+            if hasAnyRequestedOrAvailableSeasons {
+                if selectedSeasonNumbers.isEmpty {
+                    return true
+                }
+            } else if !allSeasons && selectedSeasonNumbers.isEmpty {
+                return true
+            }
+            // Disable if all seasons are already requested
+            if requestableSeasonNumbers.isEmpty {
                 return true
             }
         }
@@ -203,9 +317,34 @@ struct CreateRequestView: View {
             return
         }
 
-        if mediaType == .tv, !allSeasons, selectedSeasonNumbers.isEmpty {
-            errorMessage = "Select at least one season, or choose All Seasons."
-            return
+        let seasonsToRequest: [Int]?
+        let requestAllSeasons: Bool?
+
+        if mediaType == .tv {
+            if hasAnyRequestedOrAvailableSeasons {
+                // When some seasons are already requested, always send specific season numbers
+                let selected = selectedSeasonNumbers.sorted()
+                if selected.isEmpty {
+                    errorMessage = "Select at least one season to request."
+                    return
+                }
+                seasonsToRequest = selected
+                requestAllSeasons = false
+            } else if allSeasons {
+                seasonsToRequest = nil
+                requestAllSeasons = true
+            } else {
+                let selected = selectedSeasonNumbers.sorted()
+                if selected.isEmpty {
+                    errorMessage = "Select at least one season, or choose All Seasons."
+                    return
+                }
+                seasonsToRequest = selected
+                requestAllSeasons = false
+            }
+        } else {
+            seasonsToRequest = nil
+            requestAllSeasons = nil
         }
 
         isSubmitting = true
@@ -215,8 +354,8 @@ struct CreateRequestView: View {
             mediaType: mediaType,
             mediaId: mediaId,
             tvdbId: mediaType == .tv ? tvdbId : nil,
-            seasons: mediaType == .tv && !allSeasons ? selectedSeasonNumbers.sorted() : nil,
-            seasonsAll: mediaType == .tv ? allSeasons : nil,
+            seasons: seasonsToRequest,
+            seasonsAll: requestAllSeasons,
             is4k: is4K,
             serverId: nil,
             profileId: nil,
