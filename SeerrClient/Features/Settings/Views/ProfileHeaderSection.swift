@@ -18,13 +18,15 @@ struct ProfileHeaderSection: View {
             HStack(alignment: .top, spacing: 16) {
                 avatarView
 
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text(displayName)
                         .font(.title3.weight(.semibold))
 
-                    Text(user.email ?? "—")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                    if let email = user.email, !email.isEmpty {
+                        Text(email)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
 
                     HStack(spacing: 8) {
                         badge(text: userTypeLabel, foreground: .accentColor, background: Color.accentColor.opacity(0.15))
@@ -105,13 +107,15 @@ struct ProfileHeaderSection: View {
     }
 
     private var displayName: String {
+        if let displayName = user.displayName?.trimmingCharacters(in: .whitespacesAndNewlines), !displayName.isEmpty {
+            return displayName
+        }
         if let username = user.username?.trimmingCharacters(in: .whitespacesAndNewlines), !username.isEmpty {
             return username
         }
         if let plexUsername = user.plexUsername?.trimmingCharacters(in: .whitespacesAndNewlines), !plexUsername.isEmpty {
             return plexUsername
         }
-        // Jellyfin users have no username or plexUsername — fall back to email.
         if let email = user.email?.trimmingCharacters(in: .whitespacesAndNewlines), !email.isEmpty {
             return email
         }

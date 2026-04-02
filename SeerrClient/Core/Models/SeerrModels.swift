@@ -188,6 +188,9 @@ public struct User: Codable, Sendable, Hashable {
     public let id: Int
     /// User email address. Optional — Plex-imported users may not have one.
     public let email: String?
+    /// Human-readable display name returned by the Jellyseerr API (e.g. "macmedia").
+    /// Present for all user types — prefer this over username/plexUsername for display.
+    public let displayName: String?
     /// Optional display username.
     public let username: String?
     /// Plex authentication token (read-only, sensitive).
