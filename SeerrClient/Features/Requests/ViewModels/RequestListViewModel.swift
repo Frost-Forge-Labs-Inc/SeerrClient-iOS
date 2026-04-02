@@ -98,6 +98,63 @@ public final class RequestListViewModel {
         metadataTask?.cancel()
     }
 
+    // MARK: - Inline Moderation Actions
+
+    /// Approves a pending request directly from the list. Admin only.
+    public func approveRequest(_ request: MediaRequest) {
+        Task {
+            do {
+                let updated = try await repository.approveRequest(id: request.id)
+                replaceRequest(updated)
+            } catch {
+                AppLogger.warning("RequestListViewModel: approve failed for id=\(request.id) — \(error)")
+            }
+        }
+    }
+
+    /// Declines a pending or approved request directly from the list. Admin only.
+    public func declineRequest(_ request: MediaRequest) {
+        Task {
+            do {
+                let updated = try await repository.declineRequest(id: request.id)
+                replaceRequest(updated)
+            } catch {
+                AppLogger.warning("RequestListViewModel: decline failed for id=\(request.id) — \(error)")
+            }
+        }
+    }
+
+    /// Deletes a request directly from the list.
+    /// Admins can delete any request; owners can delete their own pending request.
+    public func deleteRequest(_ request: MediaRequest, currentUserID: Int?) {
+        guard canDelete(request, currentUserID: currentUserID) else { return }
+        Task {
+            do {
+                try await repository.deleteRequest(id: request.id)
+                removeRequest(id: request.id)
+            } catch {
+                AppLogger.warning("RequestListViewModel: delete failed for id=\(request.id) — \(error)")
+            }
+        }
+    }
+
+    /// Whether the current user can delete `request`.
+    public func canDelete(_ request: MediaRequest, currentUserID: Int?) -> Bool {
+        if isAdmin { return true }
+        return request.status == 1 && request.requestedBy?.id == currentUserID
+    }
+
+    private func replaceRequest(_ updated: MediaRequest) {
+        requests = requests.map { $0.id == updated.id ? updated : $0 }
+        loadState = .loaded(requests)
+    }
+
+    private func removeRequest(id: Int) {
+        requests.removeAll { $0.id == id }
+        metadataByRequestID.removeValue(forKey: id)
+        loadState = .loaded(requests)
+    }
+
     // MARK: - Actions
 
     public func loadRequestsIfNeeded() {

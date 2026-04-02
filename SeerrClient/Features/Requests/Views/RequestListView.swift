@@ -97,6 +97,36 @@ struct RequestListView: View {
                         }
                         .buttonStyle(.plain)
                         .onAppear { vm.onRequestAppear(request) }
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            // Delete — admin or request owner (pending only)
+                            if vm.canDelete(request, currentUserID: appState.currentUser?.id) {
+                                Button(role: .destructive) {
+                                    vm.deleteRequest(request, currentUserID: appState.currentUser?.id)
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            }
+                        }
+                        .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                            // Approve — admin, pending requests only
+                            if vm.isAdmin && request.status == 1 {
+                                Button {
+                                    vm.approveRequest(request)
+                                } label: {
+                                    Label("Approve", systemImage: "checkmark")
+                                }
+                                .tint(.green)
+                            }
+                            // Decline — admin, pending or approved requests
+                            if vm.isAdmin && (request.status == 1 || request.status == 2) {
+                                Button {
+                                    vm.declineRequest(request)
+                                } label: {
+                                    Label("Decline", systemImage: "xmark")
+                                }
+                                .tint(.orange)
+                            }
+                        }
                     }
 
                     if vm.isLoadingMore {
