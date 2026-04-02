@@ -111,6 +111,18 @@ public final class DiscoverRepository: @unchecked Sendable {
     ///
     /// - Parameter sliders: The enabled sliders to fetch content for.
     /// - Returns: An array of `SliderContent`, one per successfully loaded slider.
+    // MARK: - Watchlist
+
+    /// Fetches the user's Plex watchlist from `GET /discover/watchlist`.
+    ///
+    /// - Parameter page: 1-based page number.
+    /// - Returns: A `DiscoverResponse` containing the watchlist items and pagination info.
+    public func fetchWatchlist(page: Int = 1) async throws -> DiscoverResponse<DiscoverMediaItem> {
+        let endpoints = apiClient.endpoints
+        let queryItems = [URLQueryItem(name: "page", value: "\(page)")]
+        return try await apiClient.get(endpoints.discoverWatchlist, queryItems: queryItems)
+    }
+
     public func fetchAllContent(for sliders: [DiscoverSlider]) async -> [SliderContent] {
         await withTaskGroup(of: (Int, SliderContent?).self) { group in
             for (index, slider) in sliders.enumerated() {

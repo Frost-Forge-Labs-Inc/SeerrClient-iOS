@@ -106,6 +106,12 @@ struct ProfileView: View {
 
             RequestSummarySection(requestCounts: viewModel.requestCounts, isAdmin: viewModel.isAdmin)
 
+            Section("My Content") {
+                NavigationLink(destination: WatchlistView()) {
+                    Label("Watchlist", systemImage: "bookmark")
+                }
+            }
+
             AppearanceSection(
                 selectedTheme: Binding(
                     get: { viewModel.selectedTheme },
