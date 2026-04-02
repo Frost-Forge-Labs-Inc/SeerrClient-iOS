@@ -35,8 +35,10 @@ enum RequestPresentation {
     }
 
     static func requesterName(for request: MediaRequest) -> String {
+        // Prefer username, then plexUsername, then email (Jellyfin users), then ID fallback.
         request.requestedBy?.username
             ?? request.requestedBy?.plexUsername
+            ?? request.requestedBy?.email
             ?? "User #\(request.requestedBy?.id ?? 0)"
     }
 

@@ -111,6 +111,10 @@ struct ProfileHeaderSection: View {
         if let plexUsername = user.plexUsername?.trimmingCharacters(in: .whitespacesAndNewlines), !plexUsername.isEmpty {
             return plexUsername
         }
+        // Jellyfin users have no username or plexUsername — fall back to email.
+        if let email = user.email?.trimmingCharacters(in: .whitespacesAndNewlines), !email.isEmpty {
+            return email
+        }
         return "User #\(user.id)"
     }
 

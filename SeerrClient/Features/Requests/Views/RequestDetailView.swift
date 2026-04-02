@@ -127,7 +127,7 @@ struct RequestDetailView: View {
                     detailRow(title: "Updated", value: SeerrDateFormatter.displayDate(request.updatedAt))
 
                     if let modifiedBy = request.modifiedBy {
-                        detailRow(title: "Reviewed by", value: modifiedBy.username ?? modifiedBy.plexUsername ?? "Admin")
+                        detailRow(title: "Reviewed by", value: modifiedBy.username ?? modifiedBy.plexUsername ?? modifiedBy.email ?? "Admin")
                     }
                 }
                 .padding(14)
