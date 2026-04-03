@@ -34,6 +34,8 @@ struct CreateRequestView: View {
     @State private var isSubmitting = false
     @State private var errorMessage: String?
     @State private var submitTask: Task<Void, Never>?
+    @State private var qualityProfiles: [ServiceProfile] = []
+    @State private var selectedProfileId: Int? = nil
 
     // MARK: - Init
 
@@ -62,6 +64,16 @@ struct CreateRequestView: View {
             Form {
                 Section("Request Options") {
                     Toggle("Request in 4K", isOn: $is4K)
+
+                    if qualityProfiles.count > 1 {
+                        Picker("Quality Profile", selection: $selectedProfileId) {
+                            Text("Server Default").tag(Optional<Int>.none)
+                            ForEach(qualityProfiles, id: \.id) { profile in
+                                Text(profile.name ?? "Profile \(profile.id ?? 0)")
+                                    .tag(Optional(profile.id))
+                            }
+                        }
+                    }
                 }
 
                 if mediaType == .tv {
@@ -99,7 +111,15 @@ struct CreateRequestView: View {
         .task {
             guard repository == nil else { return }
             guard let client = appState.apiClient else { return }
-            repository = RequestRepository(apiClient: client)
+            let repo = RequestRepository(apiClient: client)
+            repository = repo
+            // Load quality profiles in background — failure is silent (picker just won't show)
+            Task {
+                let profiles = (try? await mediaType == .movie
+                    ? repo.fetchRadarrProfiles()
+                    : repo.fetchSonarrProfiles()) ?? []
+                qualityProfiles = profiles
+            }
         }
         .onAppear {
             // If there are already requested seasons, default to individual selection mode
@@ -358,7 +378,7 @@ struct CreateRequestView: View {
             seasonsAll: requestAllSeasons,
             is4k: is4K,
             serverId: nil,
-            profileId: nil,
+            profileId: selectedProfileId,
             rootFolder: nil,
             languageProfileId: nil,
             userId: nil

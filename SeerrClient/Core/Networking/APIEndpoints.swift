@@ -407,6 +407,13 @@ public struct APIEndpoints: Sendable {
         "\(base)/settings/radarr/\(id)/profiles"
     }
 
+    /// `GET /api/v1/settings/sonarr/{id}/profiles` — Quality profiles for a Sonarr instance.
+    ///
+    /// - Parameter id: The Sonarr instance identifier.
+    public func settingsSonarrProfiles(id: Int) -> String {
+        "\(base)/settings/sonarr/\(id)/profiles"
+    }
+
     /// `GET/POST /api/v1/settings/sonarr` — Sonarr servers list.
     public var settingsSonarr: String { "\(base)/settings/sonarr" }
 

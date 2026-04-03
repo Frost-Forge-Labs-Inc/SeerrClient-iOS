@@ -108,6 +108,28 @@ public final class RequestRepository: Sendable {
         try await apiClient.deleteVoid(path)
     }
 
+    // MARK: - Quality Profiles
+
+    /// Fetches the default Radarr server and its quality profiles.
+    /// Returns an empty array if no Radarr server is configured.
+    public func fetchRadarrProfiles() async throws -> [ServiceProfile] {
+        let endpoints = apiClient.endpoints
+        let servers: [RadarrSettings] = try await apiClient.get(endpoints.settingsRadarr)
+        guard let defaultServer = servers.first(where: { $0.isDefault }) ?? servers.first,
+              let id = defaultServer.id else { return [] }
+        return try await apiClient.get(endpoints.settingsRadarrProfiles(id: id))
+    }
+
+    /// Fetches the default Sonarr server and its quality profiles.
+    /// Returns an empty array if no Sonarr server is configured.
+    public func fetchSonarrProfiles() async throws -> [ServiceProfile] {
+        let endpoints = apiClient.endpoints
+        let servers: [SonarrSettings] = try await apiClient.get(endpoints.settingsSonarr)
+        guard let defaultServer = servers.first(where: { $0.isDefault }) ?? servers.first,
+              let id = defaultServer.id else { return [] }
+        return try await apiClient.get(endpoints.settingsSonarrProfiles(id: id))
+    }
+
     // MARK: - Moderation
 
     public func approveRequest(id: Int) async throws -> MediaRequest {
