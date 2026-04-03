@@ -37,7 +37,7 @@ struct RequestDetailView: View {
         .toolbar {
             if let vm = viewModel,
                let request = vm.request,
-               canDeleteRequest(request, vm: vm) {
+               canDeleteRequest(request, currentUserID: vm.currentUserID) {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(role: .destructive) {
                         vm.deleteRequest()
@@ -130,11 +130,13 @@ struct RequestDetailView: View {
                         detailRow(title: "Reviewed by", value: modifiedBy.username ?? modifiedBy.plexUsername ?? modifiedBy.email ?? "Admin")
                     }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(14)
                 .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
 
                 // Admin actions: approve (pending only), decline (pending or approved)
-                if vm.isAdmin && (request.status == 1 || request.status == 2) {
+                // Compute isAdmin from appState directly — avoids stale value from ViewModel init.
+                if isAdmin && (request.status == 1 || request.status == 2) {
                     adminActions(request: request, vm: vm)
                 }
 
@@ -265,6 +267,12 @@ struct RequestDetailView: View {
 
     // MARK: - Helpers
 
+    /// Computed from AppState so it stays current if the user object loads after
+    /// the ViewModel is initialised — fixes buttons not appearing on first visit.
+    private var isAdmin: Bool {
+        ((appState.currentUser?.permissions ?? 0) & 2) != 0
+    }
+
     @ViewBuilder
     private func detailRow(title: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -278,9 +286,9 @@ struct RequestDetailView: View {
         }
     }
 
-    private func canDeleteRequest(_ request: MediaRequest, vm: RequestDetailViewModel) -> Bool {
+    private func canDeleteRequest(_ request: MediaRequest, currentUserID: Int?) -> Bool {
         // Admin can delete any request; owner can delete own pending request
-        if vm.isAdmin { return true }
-        return request.status == 1 && request.requestedBy?.id == vm.currentUserID
+        if isAdmin { return true }
+        return request.status == 1 && request.requestedBy?.id == currentUserID
     }
 }

@@ -116,13 +116,24 @@ struct MovieDetailView: View {
                 // Cast
                 CastCarouselView(credits: movie.credits)
 
+                // Recommendations
+                if !vm.recommendations.isEmpty {
+                    MediaHorizontalRowView(title: "Recommendations", items: vm.recommendations)
+                }
+
+                // Similar Movies
+                if !vm.similar.isEmpty {
+                    MediaHorizontalRowView(title: "Similar Movies", items: vm.similar)
+                }
+
                 // Request Button
                 RequestButtonView(
                     mediaInfo: movie.mediaInfo,
                     showRequestSheet: Binding(
                         get: { vm.showRequestSheet },
                         set: { vm.showRequestSheet = $0 }
-                    )
+                    ),
+                    activeRequestId: movie.mediaInfo?.requests?.first { $0.status == 1 || $0.status == 2 }?.id
                 )
 
                 Spacer(minLength: 40)

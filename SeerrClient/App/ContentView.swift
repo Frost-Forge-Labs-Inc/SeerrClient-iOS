@@ -49,7 +49,7 @@ struct ContentView: View {
 
     // MARK: - Main Interface
 
-    /// Main tab interface with Discover, Search, Requests, and Profile tabs.
+    /// Main tab interface with Discover, Search, Requests, Watchlist, and Profile tabs.
     @ViewBuilder
     private var mainInterfacePlaceholder: some View {
         TabView {
@@ -61,6 +61,9 @@ struct ContentView: View {
                     .navigationDestination(for: TvNavDestination.self) { dest in
                         TvShowDetailView(tvId: dest.id, showTitle: dest.title)
                     }
+                    .navigationDestination(for: RequestNavDestination.self) { dest in
+                        RequestDetailView(requestID: dest.requestID)
+                    }
             }
             .tabItem { Label("Discover", systemImage: "film.stack") }
 
@@ -71,6 +74,9 @@ struct ContentView: View {
                     }
                     .navigationDestination(for: TvNavDestination.self) { dest in
                         TvShowDetailView(tvId: dest.id, showTitle: dest.title)
+                    }
+                    .navigationDestination(for: RequestNavDestination.self) { dest in
+                        RequestDetailView(requestID: dest.requestID)
                     }
             }
             .tabItem { Label("Search", systemImage: "magnifyingglass") }
@@ -85,6 +91,17 @@ struct ContentView: View {
                     }
             }
             .tabItem { Label("Requests", systemImage: "tray.full") }
+
+            NavigationStack {
+                WatchlistView()
+                    .navigationDestination(for: MovieNavDestination.self) { dest in
+                        MovieDetailView(movieId: dest.id, movieTitle: dest.title)
+                    }
+                    .navigationDestination(for: TvNavDestination.self) { dest in
+                        TvShowDetailView(tvId: dest.id, showTitle: dest.title)
+                    }
+            }
+            .tabItem { Label("Watchlist", systemImage: "bookmark") }
 
             NavigationStack {
                 ProfileView()
@@ -111,7 +128,7 @@ struct ContentView: View {
 #Preview("No Server") {
     let store = ServerStore()
     let state = AppState(serverStore: store)
-    return ContentView()
+    ContentView()
         .environment(state)
         .environment(store)
 }
@@ -124,10 +141,10 @@ struct ContentView: View {
         baseURL: "http://192.168.1.50:5055",
         backendType: .jellyseerr
     )
-    state.selectServer(server)
     let mockUser = User(
         id: 1,
         email: "admin@example.com",
+        displayName: nil,
         username: "admin",
         plexToken: nil,
         plexUsername: nil,
@@ -138,8 +155,11 @@ struct ContentView: View {
         updatedAt: "2024-01-01T00:00:00Z",
         requestCount: 0
     )
-    state.setAuthenticatedUser(mockUser)
-    return ContentView()
+    ContentView()
         .environment(state)
         .environment(store)
+        .onAppear {
+            state.selectServer(server)
+            state.setAuthenticatedUser(mockUser)
+        }
 }

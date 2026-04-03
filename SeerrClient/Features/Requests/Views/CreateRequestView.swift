@@ -65,7 +65,7 @@ struct CreateRequestView: View {
                 Section("Request Options") {
                     Toggle("Request in 4K", isOn: $is4K)
 
-                    if qualityProfiles.count > 1 {
+                    if !qualityProfiles.isEmpty {
                         Picker("Quality Profile", selection: $selectedProfileId) {
                             Text("Server Default").tag(Optional<Int>.none)
                             ForEach(qualityProfiles, id: \.id) { profile in

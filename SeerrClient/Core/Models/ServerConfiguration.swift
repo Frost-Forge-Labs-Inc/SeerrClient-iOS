@@ -112,6 +112,10 @@ public struct ServerConfiguration: Identifiable, Codable, Sendable, Hashable {
     /// The auth method the user last authenticated with.
     public var authMethod: AuthMethod
 
+    /// All auth methods available on this server, as detected during setup.
+    /// `nil` for servers saved before this field was added (treated as `[.local]`).
+    public var availableAuthMethods: [AuthMethod]?
+
     /// Whether this is the user's default / primary server.
     public var isDefault: Bool
 
@@ -133,6 +137,7 @@ public struct ServerConfiguration: Identifiable, Codable, Sendable, Hashable {
     ///   - backendType: Detected backend flavour. Defaults to `.unknown`.
     ///   - apiVersion: API version. Defaults to `.v1`.
     ///   - authMethod: Most recent auth method. Defaults to `.none`.
+    ///   - availableAuthMethods: All auth methods available on this server. Defaults to `nil`.
     ///   - isDefault: Whether this is the primary server. Defaults to `false`.
     ///   - lastConnected: Last successful connection date. Defaults to `nil`.
     ///   - certFingerprint: TOFU certificate fingerprint. Defaults to `nil`.
@@ -143,6 +148,7 @@ public struct ServerConfiguration: Identifiable, Codable, Sendable, Hashable {
         backendType: BackendType = .unknown,
         apiVersion: ServerAPIVersion = .v1,
         authMethod: AuthMethod = .none,
+        availableAuthMethods: [AuthMethod]? = nil,
         isDefault: Bool = false,
         lastConnected: Date? = nil,
         certFingerprint: String? = nil
@@ -153,6 +159,7 @@ public struct ServerConfiguration: Identifiable, Codable, Sendable, Hashable {
         self.backendType = backendType
         self.apiVersion = apiVersion
         self.authMethod = authMethod
+        self.availableAuthMethods = availableAuthMethods
         self.isDefault = isDefault
         self.lastConnected = lastConnected
         self.certFingerprint = certFingerprint

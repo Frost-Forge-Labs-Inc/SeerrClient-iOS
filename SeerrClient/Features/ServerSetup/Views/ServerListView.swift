@@ -118,7 +118,14 @@ struct ServerListView: View {
                 )
                 .contentShape(Rectangle())
                 .onTapGesture {
-                    appState.selectServer(server)
+                    let methods: [AuthMethod] = server.availableAuthMethods ?? {
+                        switch server.backendType {
+                        case .jellyseerr, .seerr: return [.local, .jellyfin]
+                        case .overseerr:          return [.local, .plex]
+                        case .unknown:            return [.local]
+                        }
+                    }()
+                    appState.selectServer(server, authMethods: methods)
                 }
                 .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                     Button(role: .destructive) {

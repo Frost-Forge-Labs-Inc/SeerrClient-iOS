@@ -75,8 +75,11 @@ private struct ServerDetectionPublicSettings: Decodable {
     let initialized: Bool?
     let localLogin: Bool?
     let newPlexLogin: Bool?
-    /// Jellyseerr-specific: whether Jellyfin login is available on this server.
-    let jellyfinLogin: Bool?
+    /// Whether any media-server (Jellyfin/Plex) login is enabled.
+    /// Field name confirmed from Jellyseerr source: `mediaServerLogin`.
+    let mediaServerLogin: Bool?
+    /// Which media server is configured: 1 = Plex, 2 = Jellyfin, 3 = Emby.
+    let mediaServerType: Int?
     /// Some backends expose the application display title in public settings.
     let applicationTitle: String?
 }
@@ -172,12 +175,25 @@ public struct ServerRepository {
             endpoints.status,
             timeout: SeerrAPIClient.defaultTimeout
         )
-        let backendType = detectBackendType(from: status)
+        var backendType = detectBackendType(from: status)
 
         // Step 2: Query /settings/public — auth methods and application title.
         let publicSettings: ServerDetectionPublicSettings = try await client.get(
             endpoints.settingsPublic
         )
+
+        // Refine backend type using mediaServerType from public settings.
+        // Jellyseerr version strings are plain semver (e.g. "1.9.2") so the
+        // string-based detection above may fall back to .overseerr. Use the
+        // mediaServerType field to correct this: only Jellyseerr/Emby forks
+        // expose mediaServerType 2 (Jellyfin) or 3 (Emby); Overseerr always
+        // uses Plex (1) and predates this field.
+        if backendType == .overseerr {
+            let mst = publicSettings.mediaServerType
+            if mst == 2 || mst == 3 {
+                backendType = .jellyseerr
+            }
+        }
 
         // Determine the application title: server-provided > backend display name.
         let appTitle = publicSettings.applicationTitle.flatMap { $0.isEmpty ? nil : $0 }
@@ -185,13 +201,19 @@ public struct ServerRepository {
 
         // Auth method availability:
         // - localLogin: default true (all backends support it unless explicitly disabled)
-        // - plexLogin: default false for Jellyseerr-first installs, true for Overseerr
-        // - jellyfinLogin: only available on Jellyseerr/Seerr
-        let localEnabled    = publicSettings.localLogin ?? true
-        let plexEnabled     = publicSettings.newPlexLogin
-            ?? (backendType == .overseerr || backendType == .unknown)
-        let jellyfinEnabled = publicSettings.jellyfinLogin
-            ?? (backendType == .jellyseerr || backendType == .seerr)
+        // - mediaServerLogin: controls whether Plex/Jellyfin media-server login is enabled
+        // - mediaServerType: 1=Plex, 2=Jellyfin, 3=Emby — inferred from backend when absent
+        // - newPlexLogin: Plex OAuth specifically (Overseerr path)
+        let localEnabled = publicSettings.localLogin ?? true
+
+        let mediaServerEnabled = publicSettings.mediaServerLogin ?? true
+        // Infer mediaServerType from backend when the field is absent.
+        let mediaServerType = publicSettings.mediaServerType
+            ?? (backendType == .jellyseerr || backendType == .seerr ? 2 : 1)
+
+        let jellyfinEnabled = mediaServerEnabled && (mediaServerType == 2 || mediaServerType == 3)
+        let plexEnabled     = (publicSettings.newPlexLogin ?? false)
+            || (mediaServerEnabled && mediaServerType == 1)
 
         return ServerDetectionResult(
             baseURL: baseURL,

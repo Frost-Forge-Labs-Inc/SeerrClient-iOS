@@ -21,25 +21,40 @@ struct RequestButtonView: View {
     var isTvShow: Bool = false
     /// Binding to trigger the request sheet.
     @Binding var showRequestSheet: Bool
+    /// Request ID of the active request, if one exists. When set, a "Manage Request"
+    /// navigation link is shown below the main button so users can view or act on it.
+    var activeRequestId: Int? = nil
 
     var body: some View {
         let config = buttonConfig(for: mediaInfo?.status)
 
-        Button {
-            if config.isActionable {
-                showRequestSheet = true
+        VStack(spacing: 10) {
+            Button {
+                if config.isActionable {
+                    showRequestSheet = true
+                }
+            } label: {
+                Label(config.label, systemImage: config.icon)
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
             }
-        } label: {
-            Label(config.label, systemImage: config.icon)
-                .font(.headline)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
+            .buttonStyle(.borderedProminent)
+            .tint(config.tint)
+            .disabled(!config.isActionable)
+            .accessibilityLabel(config.accessibilityLabel)
+
+            if let requestId = activeRequestId {
+                NavigationLink(value: RequestNavDestination(requestID: requestId)) {
+                    Label("Manage Request", systemImage: "slider.horizontal.3")
+                        .font(.subheadline.weight(.medium))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                }
+                .buttonStyle(.bordered)
+            }
         }
-        .buttonStyle(.borderedProminent)
-        .tint(config.tint)
-        .disabled(!config.isActionable)
         .padding(.horizontal)
-        .accessibilityLabel(config.accessibilityLabel)
     }
 
     // MARK: - Button Configuration

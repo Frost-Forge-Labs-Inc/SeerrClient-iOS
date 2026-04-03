@@ -132,6 +132,16 @@ struct TvShowDetailView: View {
                     seasonSection(seasons: seasons, vm: vm)
                 }
 
+                // Recommendations
+                if !vm.recommendations.isEmpty {
+                    MediaHorizontalRowView(title: "Recommendations", items: vm.recommendations)
+                }
+
+                // Similar Shows
+                if !vm.similar.isEmpty {
+                    MediaHorizontalRowView(title: "Similar Shows", items: vm.similar)
+                }
+
                 // Request Button
                 RequestButtonView(
                     mediaInfo: tvShow.mediaInfo,
@@ -139,7 +149,8 @@ struct TvShowDetailView: View {
                     showRequestSheet: Binding(
                         get: { vm.showRequestSheet },
                         set: { vm.showRequestSheet = $0 }
-                    )
+                    ),
+                    activeRequestId: tvShow.mediaInfo?.requests?.first { $0.status == 1 || $0.status == 2 }?.id
                 )
 
                 Spacer(minLength: 40)

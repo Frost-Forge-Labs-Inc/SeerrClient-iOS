@@ -28,6 +28,9 @@ public final class WatchlistViewModel {
     public private(set) var isLoadingMore = false
     public private(set) var currentPage = 1
     public private(set) var totalPages = 1
+    /// Poster paths fetched from detail API to supplement the watchlist response,
+    /// which does not include `posterPath`. Keyed by TMDB item ID.
+    public private(set) var posterPaths: [Int: String] = [:]
 
     public var canLoadMore: Bool {
         currentPage < totalPages && !isLoadingMore
@@ -37,11 +40,14 @@ public final class WatchlistViewModel {
 
     @ObservationIgnored
     private let repository: DiscoverRepository
+    @ObservationIgnored
+    private let mediaDetailRepository: MediaDetailRepository?
 
     // MARK: - Init
 
-    public init(repository: DiscoverRepository) {
+    public init(repository: DiscoverRepository, mediaDetailRepository: MediaDetailRepository? = nil) {
         self.repository = repository
+        self.mediaDetailRepository = mediaDetailRepository
     }
 
     // MARK: - Actions
@@ -79,7 +85,7 @@ public final class WatchlistViewModel {
 
         do {
             let response = try await repository.fetchWatchlist(page: page)
-            let fetched = response.results ?? []
+            let fetched = response.results
 
             if reset {
                 items = fetched
@@ -87,16 +93,51 @@ public final class WatchlistViewModel {
                 items.append(contentsOf: fetched)
             }
 
-            currentPage = response.page ?? page
-            totalPages = response.totalPages ?? 1
+            currentPage = response.page
+            totalPages = response.totalPages
 
             loadState = items.isEmpty ? .empty : .loaded(items)
+
+            // Watchlist endpoint doesn't include posterPath — enrich in background.
+            if !fetched.isEmpty {
+                Task { await enrichPosterPaths(for: fetched) }
+            }
         } catch {
             AppLogger.warning("WatchlistViewModel: load failed (page=\(page)) — \(error)")
             if items.isEmpty {
                 loadState = .error("Could not load your watchlist. Check your connection.")
             } else {
                 loadState = .loaded(items)
+            }
+        }
+    }
+
+    /// Fetches poster paths for watchlist items by calling the detail endpoints
+    /// in parallel. The watchlist API does not include `posterPath`, so this
+    /// enrichment step is required to display images.
+    private func enrichPosterPaths(for items: [DiscoverMediaItem]) async {
+        guard let mediaRepo = mediaDetailRepository else { return }
+        await withTaskGroup(of: (Int, String?).self) { group in
+            for item in items {
+                group.addTask {
+                    let posterPath: String?
+                    // Use effectiveTmdbId — for Jellyfin users item.id is an internal
+                    // DB row ID, not a TMDB ID. tmdbId holds the real TMDB identifier.
+                    let tmdbId = item.effectiveTmdbId
+                    if item.isMovie {
+                        posterPath = try? await mediaRepo.fetchMovieDetails(movieId: tmdbId).posterPath
+                    } else if item.isTv {
+                        posterPath = try? await mediaRepo.fetchTvDetails(tvId: tmdbId).posterPath
+                    } else {
+                        posterPath = nil
+                    }
+                    return (item.id, posterPath)
+                }
+            }
+            for await (id, posterPath) in group {
+                if let posterPath {
+                    posterPaths[id] = posterPath
+                }
             }
         }
     }

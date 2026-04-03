@@ -46,6 +46,9 @@ struct MediaCardView: View {
     /// Size variant. Defaults to `.medium`.
     var size: MediaCardSize = .medium
 
+    /// Overrides `item.posterPath` when the API doesn't include it (e.g. watchlist endpoint).
+    var posterPathOverride: String? = nil
+
     /// Action triggered when the card is tapped.
     var onTap: (() -> Void)?
 
@@ -79,7 +82,7 @@ struct MediaCardView: View {
     @ViewBuilder
     private var posterImage: some View {
         ZStack(alignment: .topTrailing) {
-            AsyncImage(url: TMDBImageURL.poster(path: item.posterPath, size: .card)) { phase in
+            AsyncImage(url: TMDBImageURL.poster(path: posterPathOverride ?? item.posterPath, size: .card)) { phase in
                 switch phase {
                 case .success(let image):
                     image

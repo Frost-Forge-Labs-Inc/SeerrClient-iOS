@@ -51,6 +51,36 @@ public final class MediaDetailRepository: Sendable {
         return try await apiClient.get(path)
     }
 
+    // MARK: - Recommendations & Similar
+
+    /// Fetches movie recommendations based on a given movie.
+    public func fetchMovieRecommendations(movieId: Int) async throws -> [DiscoverMediaItem] {
+        let path = apiClient.endpoints.movieRecommendations(id: movieId)
+        let response: DiscoverResponse<DiscoverMediaItem> = try await apiClient.get(path)
+        return response.results
+    }
+
+    /// Fetches movies similar to a given movie.
+    public func fetchSimilarMovies(movieId: Int) async throws -> [DiscoverMediaItem] {
+        let path = apiClient.endpoints.movieSimilar(id: movieId)
+        let response: DiscoverResponse<DiscoverMediaItem> = try await apiClient.get(path)
+        return response.results
+    }
+
+    /// Fetches TV show recommendations based on a given show.
+    public func fetchTvRecommendations(tvId: Int) async throws -> [DiscoverMediaItem] {
+        let path = apiClient.endpoints.tvRecommendations(id: tvId)
+        let response: DiscoverResponse<DiscoverMediaItem> = try await apiClient.get(path)
+        return response.results
+    }
+
+    /// Fetches TV shows similar to a given show.
+    public func fetchSimilarTvShows(tvId: Int) async throws -> [DiscoverMediaItem] {
+        let path = apiClient.endpoints.tvSimilar(id: tvId)
+        let response: DiscoverResponse<DiscoverMediaItem> = try await apiClient.get(path)
+        return response.results
+    }
+
     // MARK: - Season
 
     /// Fetches details for a specific season of a TV show.

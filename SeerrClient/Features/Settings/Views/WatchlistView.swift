@@ -40,7 +40,8 @@ struct WatchlistView: View {
             guard viewModel == nil else { return }
             guard let client = appState.apiClient else { return }
             let repo = DiscoverRepository(apiClient: client)
-            let vm = WatchlistViewModel(repository: repo)
+            let mediaRepo = MediaDetailRepository(apiClient: client)
+            let vm = WatchlistViewModel(repository: repo, mediaDetailRepository: mediaRepo)
             viewModel = vm
             vm.loadIfNeeded()
         }
@@ -72,11 +73,22 @@ struct WatchlistView: View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 14) {
                 ForEach(items) { item in
-                    NavigationLink(value: navDestination(for: item)) {
-                        MediaCardView(item: item, size: .medium)
+                    if item.isMovie {
+                        NavigationLink(value: MovieNavDestination(id: item.effectiveTmdbId, title: item.displayTitle)) {
+                            MediaCardView(item: item, size: .medium, posterPathOverride: vm.posterPaths[item.id])
+                        }
+                        .buttonStyle(.plain)
+                        .onAppear { vm.onItemAppear(item) }
+                    } else if item.isTv {
+                        NavigationLink(value: TvNavDestination(id: item.effectiveTmdbId, title: item.displayTitle)) {
+                            MediaCardView(item: item, size: .medium, posterPathOverride: vm.posterPaths[item.id])
+                        }
+                        .buttonStyle(.plain)
+                        .onAppear { vm.onItemAppear(item) }
+                    } else {
+                        MediaCardView(item: item, size: .medium, posterPathOverride: vm.posterPaths[item.id])
+                            .onAppear { vm.onItemAppear(item) }
                     }
-                    .buttonStyle(.plain)
-                    .onAppear { vm.onItemAppear(item) }
                 }
 
                 if vm.isLoadingMore {
@@ -143,13 +155,4 @@ struct WatchlistView: View {
         }
     }
 
-    // MARK: - Navigation
-
-    private func navDestination(for item: DiscoverMediaItem) -> AnyHashable {
-        if item.isMovie {
-            return MovieNavDestination(id: item.id, title: item.displayTitle)
-        } else {
-            return TvNavDestination(id: item.id, title: item.displayTitle)
-        }
-    }
 }

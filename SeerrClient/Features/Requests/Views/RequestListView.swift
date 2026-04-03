@@ -7,7 +7,7 @@ import SwiftUI
 
 // MARK: - RequestNavDestination
 
-private struct RequestNavDestination: Hashable {
+struct RequestNavDestination: Hashable {
     let requestID: Int
 }
 

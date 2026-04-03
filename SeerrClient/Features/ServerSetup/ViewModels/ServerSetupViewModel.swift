@@ -210,6 +210,7 @@ public final class ServerSetupViewModel {
             backendType: result.backendType,
             apiVersion: .v1,
             authMethod: .none,
+            availableAuthMethods: result.availableAuthMethods,
             isDefault: serverStore.servers.isEmpty,
             lastConnected: nil
         )

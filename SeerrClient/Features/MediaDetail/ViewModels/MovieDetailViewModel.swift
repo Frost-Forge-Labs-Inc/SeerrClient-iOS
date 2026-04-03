@@ -37,6 +37,8 @@ public final class MovieDetailViewModel {
 
     public private(set) var loadState: MovieDetailLoadState = .idle
     public var showRequestSheet: Bool = false
+    public private(set) var recommendations: [DiscoverMediaItem] = []
+    public private(set) var similar: [DiscoverMediaItem] = []
 
     /// Convenience accessor for loaded movie details.
     public var movie: MovieDetails? {
@@ -69,6 +71,14 @@ public final class MovieDetailViewModel {
             let details = try await repository.fetchMovieDetails(movieId: movieId)
             guard !Task.isCancelled else { return }
             loadState = .loaded(details)
+
+            // Fetch recommendations and similar concurrently; failures are non-fatal.
+            async let recs = (try? await repository.fetchMovieRecommendations(movieId: movieId)) ?? []
+            async let sim = (try? await repository.fetchSimilarMovies(movieId: movieId)) ?? []
+            let (fetchedRecs, fetchedSim) = await (recs, sim)
+            guard !Task.isCancelled else { return }
+            recommendations = fetchedRecs
+            similar = fetchedSim
         } catch {
             guard !Task.isCancelled else { return }
             AppLogger.warning("MovieDetailViewModel: failed to load movie \(movieId): \(error)")

@@ -960,6 +960,10 @@ public struct DiscoverResponse<T: Codable & Sendable & Hashable>: Codable, Senda
 /// This unified type decodes both, using `mediaType` to distinguish them.
 public struct DiscoverMediaItem: Codable, Sendable, Hashable, Identifiable {
     public let id: Int
+    /// The TMDB ID for this item. For Jellyfin watchlist items `id` is an internal
+    /// DB row ID, while `tmdbId` holds the actual TMDB identifier needed for API
+    /// calls to `/movie/{id}` and `/tv/{id}`. For Plex users the two are equal.
+    public let tmdbId: Int?
     public let mediaType: String?
     public let title: String?
     public let name: String?
@@ -971,6 +975,11 @@ public struct DiscoverMediaItem: Codable, Sendable, Hashable, Identifiable {
     public let firstAirDate: String?
     public let genreIds: [Int]?
     public let mediaInfo: MediaInfo?
+
+    /// The TMDB ID to use for detail API calls and navigation.
+    /// Jellyfin watchlist items carry an internal `id` and a separate `tmdbId`;
+    /// falls back to `id` for Plex items where they are the same value.
+    public var effectiveTmdbId: Int { tmdbId ?? id }
 
     /// Display title: movie `title` or TV `name`.
     public var displayTitle: String {

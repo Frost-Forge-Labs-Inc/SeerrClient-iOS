@@ -64,6 +64,9 @@ public final class TvShowDetailViewModel {
     /// Selected season detail state (episodes).
     public private(set) var seasonState: SeasonLoadState = .idle
 
+    public private(set) var recommendations: [DiscoverMediaItem] = []
+    public private(set) var similar: [DiscoverMediaItem] = []
+
     /// Currently selected season number (bound to picker).
     /// Uses a computed property to intercept external changes and trigger season loading.
     public var selectedSeasonNumber: Int {
@@ -127,6 +130,14 @@ public final class TvShowDetailViewModel {
                 let firstRegular = seasons.first(where: { ($0.seasonNumber ?? 0) > 0 })
                 _selectedSeasonNumber = firstRegular?.seasonNumber ?? seasons.first?.seasonNumber ?? 1
             }
+            // Fetch recommendations and similar concurrently; failures are non-fatal.
+            async let recs = (try? await repository.fetchTvRecommendations(tvId: tvId)) ?? []
+            async let sim = (try? await repository.fetchSimilarTvShows(tvId: tvId)) ?? []
+            let (fetchedRecs, fetchedSim) = await (recs, sim)
+            guard !Task.isCancelled else { return }
+            recommendations = fetchedRecs
+            similar = fetchedSim
+
             // Load episodes for the selected season
             await loadSeasonDetails()
         } catch {
