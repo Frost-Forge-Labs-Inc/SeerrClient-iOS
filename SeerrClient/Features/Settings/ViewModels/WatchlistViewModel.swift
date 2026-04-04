@@ -29,8 +29,12 @@ public final class WatchlistViewModel {
     public private(set) var currentPage = 1
     public private(set) var totalPages = 1
     /// Poster paths fetched from detail API to supplement the watchlist response,
-    /// which does not include `posterPath`. Keyed by TMDB item ID.
+    /// which does not include `posterPath`. Keyed by watchlist item ID.
     public private(set) var posterPaths: [Int: String] = [:]
+
+    /// Release/air years fetched from detail API to supplement the watchlist response,
+    /// which does not include `releaseDate` or `firstAirDate`. Keyed by watchlist item ID.
+    public private(set) var years: [Int: String] = [:]
 
     public var canLoadMore: Bool {
         currentPage < totalPages && !isLoadingMore
@@ -112,31 +116,41 @@ public final class WatchlistViewModel {
         }
     }
 
-    /// Fetches poster paths for watchlist items by calling the detail endpoints
-    /// in parallel. The watchlist API does not include `posterPath`, so this
-    /// enrichment step is required to display images.
+    /// Fetches poster paths and release years for watchlist items by calling the
+    /// detail endpoints in parallel. The watchlist API does not include `posterPath`,
+    /// `releaseDate`, or `firstAirDate`, so this enrichment step is required to
+    /// display images and years.
     private func enrichPosterPaths(for items: [DiscoverMediaItem]) async {
         guard let mediaRepo = mediaDetailRepository else { return }
-        await withTaskGroup(of: (Int, String?).self) { group in
+        await withTaskGroup(of: (Int, String?, String?).self) { group in
             for item in items {
                 group.addTask {
                     let posterPath: String?
+                    let year: String?
                     // Use effectiveTmdbId — for Jellyfin users item.id is an internal
                     // DB row ID, not a TMDB ID. tmdbId holds the real TMDB identifier.
                     let tmdbId = item.effectiveTmdbId
                     if item.isMovie {
-                        posterPath = try? await mediaRepo.fetchMovieDetails(movieId: tmdbId).posterPath
+                        let details = try? await mediaRepo.fetchMovieDetails(movieId: tmdbId)
+                        posterPath = details?.posterPath
+                        year = details?.releaseDate.flatMap { $0.count >= 4 ? String($0.prefix(4)) : nil }
                     } else if item.isTv {
-                        posterPath = try? await mediaRepo.fetchTvDetails(tvId: tmdbId).posterPath
+                        let details = try? await mediaRepo.fetchTvDetails(tvId: tmdbId)
+                        posterPath = details?.posterPath
+                        year = details?.firstAirDate.flatMap { $0.count >= 4 ? String($0.prefix(4)) : nil }
                     } else {
                         posterPath = nil
+                        year = nil
                     }
-                    return (item.id, posterPath)
+                    return (item.id, posterPath, year)
                 }
             }
-            for await (id, posterPath) in group {
+            for await (id, posterPath, year) in group {
                 if let posterPath {
                     posterPaths[id] = posterPath
+                }
+                if let year {
+                    years[id] = year
                 }
             }
         }

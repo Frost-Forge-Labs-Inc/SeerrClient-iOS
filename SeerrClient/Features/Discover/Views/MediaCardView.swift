@@ -49,6 +49,11 @@ struct MediaCardView: View {
     /// Overrides `item.posterPath` when the API doesn't include it (e.g. watchlist endpoint).
     var posterPathOverride: String? = nil
 
+    /// Overrides the year derived from `item.year` when the API doesn't include
+    /// release/air date fields (e.g. watchlist endpoint). Pass a pre-extracted year
+    /// string such as `"1999"` or a range like `"1999–2007"`.
+    var yearOverride: String? = nil
+
     /// Action triggered when the card is tapped.
     var onTap: (() -> Void)?
 
@@ -144,7 +149,7 @@ struct MediaCardView: View {
                 .lineLimit(2)
                 .multilineTextAlignment(.leading)
 
-            if let year = item.year {
+            if let year = yearOverride ?? item.year {
                 Text(year)
                     .font(.caption2)
                     .foregroundStyle(.secondary)

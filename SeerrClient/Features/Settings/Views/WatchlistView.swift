@@ -75,19 +75,34 @@ struct WatchlistView: View {
                 ForEach(items) { item in
                     if item.isMovie {
                         NavigationLink(value: MovieNavDestination(id: item.effectiveTmdbId, title: item.displayTitle)) {
-                            MediaCardView(item: item, size: .medium, posterPathOverride: vm.posterPaths[item.id])
+                            MediaCardView(
+                                item: item,
+                                size: .medium,
+                                posterPathOverride: vm.posterPaths[item.id],
+                                yearOverride: vm.years[item.id]
+                            )
                         }
                         .buttonStyle(.plain)
                         .onAppear { vm.onItemAppear(item) }
                     } else if item.isTv {
                         NavigationLink(value: TvNavDestination(id: item.effectiveTmdbId, title: item.displayTitle)) {
-                            MediaCardView(item: item, size: .medium, posterPathOverride: vm.posterPaths[item.id])
+                            MediaCardView(
+                                item: item,
+                                size: .medium,
+                                posterPathOverride: vm.posterPaths[item.id],
+                                yearOverride: vm.years[item.id]
+                            )
                         }
                         .buttonStyle(.plain)
                         .onAppear { vm.onItemAppear(item) }
                     } else {
-                        MediaCardView(item: item, size: .medium, posterPathOverride: vm.posterPaths[item.id])
-                            .onAppear { vm.onItemAppear(item) }
+                        MediaCardView(
+                            item: item,
+                            size: .medium,
+                            posterPathOverride: vm.posterPaths[item.id],
+                            yearOverride: vm.years[item.id]
+                        )
+                        .onAppear { vm.onItemAppear(item) }
                     }
                 }
 
