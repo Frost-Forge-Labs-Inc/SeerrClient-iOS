@@ -39,6 +39,7 @@
 		766C6FB9EEAAAA6F5165E666 /* DiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB1D51FC4F2154A8F0E010E /* DiscoverView.swift */; };
 		7B40C0D92BEDFF87D286A3B9 /* MediaDetailHeroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 429FE31E1061D26176F2FF86 /* MediaDetailHeroView.swift */; };
 		7CC72637AAF0D58C9996BDA2 /* MovieDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6312DDACD311AA170C2B35B3 /* MovieDetailView.swift */; };
+		7FB94BD3AC29CC5BFC7B12F6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEE87EED834463BD311560B9 /* Assets.xcassets */; };
 		824B6E4FC831874D7784FB8D /* MediaCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69D7F345716A3DE42F3294A /* MediaCardView.swift */; };
 		835E30BA4370E001018A15FB /* SeerrAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F23B78D85AD082DF788C99 /* SeerrAPIClient.swift */; };
 		83957F5CCC7E0D4152487E92 /* ServerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBEB581AA47ACD7AC2BF46A2 /* ServerConfiguration.swift */; };
@@ -129,6 +130,7 @@
 		CA416916A3938B893C902DD4 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		CA4D80AE934D8EE61E68CC5F /* CastCarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastCarouselView.swift; sourceTree = "<group>"; };
 		CA9E349149C88570515FD1F3 /* SeerrModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeerrModels.swift; sourceTree = "<group>"; };
+		CEE87EED834463BD311560B9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CFB1D51FC4F2154A8F0E010E /* DiscoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverView.swift; sourceTree = "<group>"; };
 		D74273EE34B44ADDCFCA9326 /* AuthRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRepository.swift; sourceTree = "<group>"; };
 		D817ADAEC73E667AF2AACDDB /* EpisodeListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeListView.swift; sourceTree = "<group>"; };
@@ -437,6 +439,7 @@
 				333FDE8C21977C639CCE9388 /* App */,
 				2E923D3650FF5155D531868D /* Core */,
 				B6A0E75702CEE690EB8E95AF /* Features */,
+				CEE87EED834463BD311560B9 /* Assets.xcassets */,
 			);
 			path = SeerrClient;
 			sourceTree = "<group>";
@@ -541,6 +544,7 @@
 			buildConfigurationList = 9AD9B06188B8F841FC3532D9 /* Build configuration list for PBXNativeTarget "SeerrClient" */;
 			buildPhases = (
 				C72512DF27A1142E3C8F6A1B /* Sources */,
+				0717205E76D788C2F605C15E /* Resources */,
 			);
 			buildRules = (
 			);
@@ -582,6 +586,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0717205E76D788C2F605C15E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7FB94BD3AC29CC5BFC7B12F6 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		C72512DF27A1142E3C8F6A1B /* Sources */ = {
