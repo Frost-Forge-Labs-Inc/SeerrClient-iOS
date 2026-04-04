@@ -169,6 +169,7 @@ private struct MediaCardButtonStyle: ButtonStyle {
 #Preview("Media Card") {
     let item = DiscoverMediaItem(
         id: 603,
+        tmdbId: 603,
         mediaType: "movie",
         title: "The Matrix",
         name: nil,
@@ -202,6 +203,7 @@ private struct MediaCardButtonStyle: ButtonStyle {
 #Preview("No Poster") {
     let item = DiscoverMediaItem(
         id: 1,
+        tmdbId: nil,
         mediaType: "tv",
         title: nil,
         name: "A Very Long TV Show Name That Should Truncate",

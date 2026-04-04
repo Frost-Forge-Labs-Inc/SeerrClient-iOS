@@ -203,6 +203,7 @@ struct SearchView: View {
         // Bridge SearchResultItem to DiscoverMediaItem for MediaCardView reuse
         let discoverItem = DiscoverMediaItem(
             id: item.id,
+            tmdbId: nil,
             mediaType: item.mediaType,
             title: item.title,
             name: item.name,

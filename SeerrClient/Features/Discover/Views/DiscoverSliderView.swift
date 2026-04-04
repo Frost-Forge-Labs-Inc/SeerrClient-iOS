@@ -129,6 +129,7 @@ struct SkeletonSliderView: View {
     let items = (1...10).map { i in
         DiscoverMediaItem(
             id: i,
+            tmdbId: nil,
             mediaType: "movie",
             title: "Movie \(i)",
             name: nil,
