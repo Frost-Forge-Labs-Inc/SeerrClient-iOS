@@ -102,7 +102,12 @@ struct TvShowDetailView: View {
                 // Metadata
                 let firstYear = tvShow.firstAirDate.flatMap { $0.count >= 4 ? String($0.prefix(4)) : nil }
                 let endYear: String? = {
-                    guard let status = tvShow.status, status == "Ended" else { return nil }
+                    // For shows still in production, show "Present".
+                    // For shows that have ended (Ended, Canceled, etc.) show the last air year.
+                    if tvShow.inProduction == true {
+                        return "Present"
+                    }
+                    // Treat any non-in-production show with a lastAirDate as ended.
                     return tvShow.lastAirDate.flatMap { $0.count >= 4 ? String($0.prefix(4)) : nil }
                 }()
                 let runtime: String? = {

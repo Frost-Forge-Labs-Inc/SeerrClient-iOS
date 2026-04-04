@@ -137,7 +137,18 @@ public final class WatchlistViewModel {
                     } else if item.isTv {
                         let details = try? await mediaRepo.fetchTvDetails(tvId: tmdbId)
                         posterPath = details?.posterPath
-                        year = details?.firstAirDate.flatMap { $0.count >= 4 ? String($0.prefix(4)) : nil }
+                        let startYear = details?.firstAirDate.flatMap { $0.count >= 4 ? String($0.prefix(4)) : nil }
+                        if let startYear {
+                            if details?.inProduction == true {
+                                year = "\(startYear)–Present"
+                            } else if let endYr = details?.lastAirDate.flatMap({ $0.count >= 4 ? String($0.prefix(4)) : nil }) {
+                                year = "\(startYear)–\(endYr)"
+                            } else {
+                                year = startYear
+                            }
+                        } else {
+                            year = nil
+                        }
                     } else {
                         posterPath = nil
                         year = nil
