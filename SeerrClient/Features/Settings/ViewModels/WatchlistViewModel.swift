@@ -43,13 +43,13 @@ public final class WatchlistViewModel {
     // MARK: - Dependencies
 
     @ObservationIgnored
-    private let repository: DiscoverRepository
+    private let repository: any WatchlistFetching
     @ObservationIgnored
     private let mediaDetailRepository: MediaDetailRepository?
 
     // MARK: - Init
 
-    public init(repository: DiscoverRepository, mediaDetailRepository: MediaDetailRepository? = nil) {
+    public init(repository: any WatchlistFetching, mediaDetailRepository: MediaDetailRepository? = nil) {
         self.repository = repository
         self.mediaDetailRepository = mediaDetailRepository
     }

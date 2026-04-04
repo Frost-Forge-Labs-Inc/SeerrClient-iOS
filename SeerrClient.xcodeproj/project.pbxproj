@@ -17,6 +17,7 @@
 		1AA4AFDBF19E0B179817133F /* ServerSetupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4FE6055B66B1402A9BA91C3 /* ServerSetupViewModel.swift */; };
 		1D774975C65325A9AA287BFE /* DiscoverViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B51E03581D50B930FC87D744 /* DiscoverViewModel.swift */; };
 		1F1ED67C740C5C90822E0EFC /* URLNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27074C23E43436441EF6F02F /* URLNormalizer.swift */; };
+		2D532E27BE8FF1399DA2A3BF /* DiscoverMediaItemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0E8AF893654BCD6C39AC12 /* DiscoverMediaItemTests.swift */; };
 		33A190A8A3D8C96D0AD93BAE /* RequestCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9CACE529E1925DFDD5CF20 /* RequestCardView.swift */; };
 		37D1C04FE387044755C68A47 /* SeerrModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9E349149C88570515FD1F3 /* SeerrModels.swift */; };
 		3A1AD2811B79C6CE0AEEEB54 /* AboutSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFE9A3868A19863AAB5B71E /* AboutSection.swift */; };
@@ -24,6 +25,7 @@
 		438E49E22858126B23CF4BFF /* TMDBImageURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69B950886B50BE2637AA796 /* TMDBImageURL.swift */; };
 		461FA6B96694952B917DE8E2 /* MovieDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 108613EEFAC5605F2FFE339D /* MovieDetailViewModel.swift */; };
 		4A53C4364D7148F2F1325FC0 /* ProfileHeaderSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BB8BDD36E7E8BA1633E119B /* ProfileHeaderSection.swift */; };
+		4C7C52B874F8ADB62D37FB1F /* WatchlistViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487D98B554FDDAA3F90661D4 /* WatchlistViewModelTests.swift */; };
 		50A385491AC7DE95CA94A5B8 /* CastCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D80AE934D8EE61E68CC5F /* CastCarouselView.swift */; };
 		5836E1B8DF927AD0FF62F670 /* DiscoverSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2F9EE06CCC51F03BC5B4F6 /* DiscoverSliderView.swift */; };
 		5B542C3F047A5AF18CCCDC1D /* ServerInfoSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B636B641B400144C5B4A9D6E /* ServerInfoSection.swift */; };
@@ -45,12 +47,14 @@
 		83957F5CCC7E0D4152487E92 /* ServerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBEB581AA47ACD7AC2BF46A2 /* ServerConfiguration.swift */; };
 		89032B00879D0EFBDF13B130 /* AppearanceSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E64979A476B83BBC55926763 /* AppearanceSection.swift */; };
 		8F59C875CEBBBEBED7087067 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64C47E6800275508DB03C916 /* ContentView.swift */; };
+		904A35C863CBE48F8DC6ADC7 /* ServerDetectionResultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66E1E51275191AF431112E6C /* ServerDetectionResultTests.swift */; };
 		90A14736E1D13B3C56831BB9 /* EpisodeListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D817ADAEC73E667AF2AACDDB /* EpisodeListView.swift */; };
 		96C066C75C2CBF615B50285E /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81677D5A77C4A46EED374C39 /* KeychainManager.swift */; };
 		9984D7327D96E96DF674D6E2 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B80980E75F51890E352DE28 /* ProfileView.swift */; };
 		9C1ABC8EA6F97142A90A8646 /* StatusBadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BAF214E68CE207CB709358 /* StatusBadgeView.swift */; };
 		9D25E67C34BAC8908C5675B8 /* DateFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A002FFC73E8F244FA27489C /* DateFormatting.swift */; };
 		A2EC57FB5898FBD0797C9167 /* DiscoverRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB38D0BE2C5D424D1208B1C /* DiscoverRepository.swift */; };
+		A9A94BAEC92FCCFE259FEA6C /* MockWatchlistFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D61F6815EFC57AC8DF4F8424 /* MockWatchlistFetcher.swift */; };
 		ADC3CAE700D8F42DF35CED6D /* ProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78ABD9B388909ABD99B582D2 /* ProfileRepository.swift */; };
 		B069B98E3F89B59A8A90E7E6 /* AuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74273EE34B44ADDCFCA9326 /* AuthRepository.swift */; };
 		B3C998630B5747E9F90FA870 /* ShimmerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B06681BFD58F3624A783EF4 /* ShimmerView.swift */; };
@@ -65,6 +69,7 @@
 		D78639ED60ED84756C488395 /* PlexOAuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51003BCD28BD393CA457D535 /* PlexOAuthView.swift */; };
 		DE2A923196AD601DAC8DA4E3 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199CDE54AD436C7475063960 /* Logger.swift */; };
 		DE5050F748DD9EEACEBE82DB /* SeerrClientApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFB67CD0DFFCE6295E9E87C8 /* SeerrClientApp.swift */; };
+		DF45A146DF57543F5ED69041 /* SeerrModelsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A65F11D0875344C5E92CB0 /* SeerrModelsTests.swift */; };
 		E84A482CE2ADC7B1068FCF3D /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E772FA7B51A7222166D1DA /* LoginView.swift */; };
 		E84C0783AF168F636CEB3657 /* ServerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CCAD2AEBC9B5070D704CC42 /* ServerListView.swift */; };
 		E8C3A103AD6602824EC110A2 /* AddServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D03BFDAA57BCFD1563B4547 /* AddServerView.swift */; };
@@ -75,6 +80,16 @@
 		F5E75B8DCEA4839422965BF1 /* APIEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA9BC8FEC91C03F2E9EF262 /* APIEndpoints.swift */; };
 		FA4712AA673C6908505E1549 /* PersonSearchCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD05BFBDB2A8FDE3892F0A7 /* PersonSearchCardView.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A553AA1E29B70026AD56A011 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D4DC02BCE452C41F4C338432 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9EA76F0C1C79685436156160;
+			remoteInfo = SeerrClient;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		0008919C3BEB59A2D341CC18 /* WatchlistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistView.swift; sourceTree = "<group>"; };
@@ -91,9 +106,12 @@
 		2BB38D0BE2C5D424D1208B1C /* DiscoverRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverRepository.swift; sourceTree = "<group>"; };
 		2DD05BFBDB2A8FDE3892F0A7 /* PersonSearchCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonSearchCardView.swift; sourceTree = "<group>"; };
 		2EBB05AAEDED3FBD74CE5011 /* EpisodeCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeCardView.swift; sourceTree = "<group>"; };
+		31A65F11D0875344C5E92CB0 /* SeerrModelsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeerrModelsTests.swift; sourceTree = "<group>"; };
 		35F23B78D85AD082DF788C99 /* SeerrAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeerrAPIClient.swift; sourceTree = "<group>"; };
 		3DA21C4FF404997FFF405DA9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		429FE31E1061D26176F2FF86 /* MediaDetailHeroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaDetailHeroView.swift; sourceTree = "<group>"; };
+		487D98B554FDDAA3F90661D4 /* WatchlistViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistViewModelTests.swift; sourceTree = "<group>"; };
+		4D82C291E836C1E1D59DFF4B /* SeerrClientTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = SeerrClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F9CACE529E1925DFDD5CF20 /* RequestCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestCardView.swift; sourceTree = "<group>"; };
 		51003BCD28BD393CA457D535 /* PlexOAuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlexOAuthView.swift; sourceTree = "<group>"; };
 		52CACE715F2E81DB7F34E04B /* MediaHorizontalRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaHorizontalRowView.swift; sourceTree = "<group>"; };
@@ -104,6 +122,7 @@
 		611335D5B4B13E4CCE58A230 /* RequestRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestRepository.swift; sourceTree = "<group>"; };
 		6312DDACD311AA170C2B35B3 /* MovieDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailView.swift; sourceTree = "<group>"; };
 		64C47E6800275508DB03C916 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		66E1E51275191AF431112E6C /* ServerDetectionResultTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetectionResultTests.swift; sourceTree = "<group>"; };
 		6B80980E75F51890E352DE28 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		6EFE9A3868A19863AAB5B71E /* AboutSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutSection.swift; sourceTree = "<group>"; };
 		78ABD9B388909ABD99B582D2 /* ProfileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileRepository.swift; sourceTree = "<group>"; };
@@ -130,8 +149,10 @@
 		CA416916A3938B893C902DD4 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		CA4D80AE934D8EE61E68CC5F /* CastCarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastCarouselView.swift; sourceTree = "<group>"; };
 		CA9E349149C88570515FD1F3 /* SeerrModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeerrModels.swift; sourceTree = "<group>"; };
+		CC0E8AF893654BCD6C39AC12 /* DiscoverMediaItemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverMediaItemTests.swift; sourceTree = "<group>"; };
 		CEE87EED834463BD311560B9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CFB1D51FC4F2154A8F0E010E /* DiscoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverView.swift; sourceTree = "<group>"; };
+		D61F6815EFC57AC8DF4F8424 /* MockWatchlistFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockWatchlistFetcher.swift; sourceTree = "<group>"; };
 		D74273EE34B44ADDCFCA9326 /* AuthRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRepository.swift; sourceTree = "<group>"; };
 		D817ADAEC73E667AF2AACDDB /* EpisodeListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeListView.swift; sourceTree = "<group>"; };
 		DBEB581AA47ACD7AC2BF46A2 /* ServerConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerConfiguration.swift; sourceTree = "<group>"; };
@@ -190,6 +211,7 @@
 			isa = PBXGroup;
 			children = (
 				DA8611358F3E4231FA577FBB /* SeerrClient */,
+				FD3A4C18DDD171219C21D6ED /* SeerrClientTests */,
 				6AAAC7B585A309055090811A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -236,6 +258,16 @@
 				FFB67CD0DFFCE6295E9E87C8 /* SeerrClientApp.swift */,
 			);
 			path = App;
+			sourceTree = "<group>";
+		};
+		3382CBACDCC430B31FF6B8B5 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				CC0E8AF893654BCD6C39AC12 /* DiscoverMediaItemTests.swift */,
+				31A65F11D0875344C5E92CB0 /* SeerrModelsTests.swift */,
+				66E1E51275191AF431112E6C /* ServerDetectionResultTests.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		3CC994DFB072E84876A385FA /* Search */ = {
@@ -286,6 +318,14 @@
 			path = Settings;
 			sourceTree = "<group>";
 		};
+		5710BB3CEBE2DB7884A66557 /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				D61F6815EFC57AC8DF4F8424 /* MockWatchlistFetcher.swift */,
+			);
+			path = Mocks;
+			sourceTree = "<group>";
+		};
 		64ED1F29AD48B647809B7C39 /* MediaDetail */ = {
 			isa = PBXGroup;
 			children = (
@@ -300,6 +340,7 @@
 			isa = PBXGroup;
 			children = (
 				E418DBD74F0261757BAE65C2 /* SeerrClient.app */,
+				4D82C291E836C1E1D59DFF4B /* SeerrClientTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -316,6 +357,14 @@
 			isa = PBXGroup;
 			children = (
 				8B2E98367B74869339FA13D2 /* AuthViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		78FA1B1F81C77921CDA259C2 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				487D98B554FDDAA3F90661D4 /* WatchlistViewModelTests.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -536,9 +585,37 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		FD3A4C18DDD171219C21D6ED /* SeerrClientTests */ = {
+			isa = PBXGroup;
+			children = (
+				5710BB3CEBE2DB7884A66557 /* Mocks */,
+				3382CBACDCC430B31FF6B8B5 /* Models */,
+				78FA1B1F81C77921CDA259C2 /* ViewModels */,
+			);
+			path = SeerrClientTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		5C6985FED49AADD9C9BE0632 /* SeerrClientTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EE52F2BE271CDAB0EA7F9298 /* Build configuration list for PBXNativeTarget "SeerrClientTests" */;
+			buildPhases = (
+				D941CB7D20CD0D9C054EA743 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CF7EE1586F73C8D0E4A8E2A6 /* PBXTargetDependency */,
+			);
+			name = SeerrClientTests;
+			packageProductDependencies = (
+			);
+			productName = SeerrClientTests;
+			productReference = 4D82C291E836C1E1D59DFF4B /* SeerrClientTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		9EA76F0C1C79685436156160 /* SeerrClient */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9AD9B06188B8F841FC3532D9 /* Build configuration list for PBXNativeTarget "SeerrClient" */;
@@ -583,6 +660,7 @@
 			projectRoot = "";
 			targets = (
 				9EA76F0C1C79685436156160 /* SeerrClient */,
+				5C6985FED49AADD9C9BE0632 /* SeerrClientTests */,
 			);
 		};
 /* End PBXProject section */
@@ -672,9 +750,47 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D941CB7D20CD0D9C054EA743 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D532E27BE8FF1399DA2A3BF /* DiscoverMediaItemTests.swift in Sources */,
+				A9A94BAEC92FCCFE259FEA6C /* MockWatchlistFetcher.swift in Sources */,
+				DF45A146DF57543F5ED69041 /* SeerrModelsTests.swift in Sources */,
+				904A35C863CBE48F8DC6ADC7 /* ServerDetectionResultTests.swift in Sources */,
+				4C7C52B874F8ADB62D37FB1F /* WatchlistViewModelTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		CF7EE1586F73C8D0E4A8E2A6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9EA76F0C1C79685436156160 /* SeerrClient */;
+			targetProxy = A553AA1E29B70026AD56A011 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		30C3123984006355238E16C4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.rodrigoindustries.SeerrClientTests;
+				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = targeted;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SeerrClient.app/SeerrClient";
+			};
+			name = Release;
+		};
 		3F611DA3265137CA0B18A322 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -774,6 +890,24 @@
 			};
 			name = Release;
 		};
+		A368AC3D269C4102AC230B5A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.rodrigoindustries.SeerrClientTests;
+				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = targeted;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SeerrClient.app/SeerrClient";
+			};
+			name = Debug;
+		};
 		EDA8CBE7EA0851B3D568D27D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -859,6 +993,15 @@
 			buildConfigurations = (
 				3F611DA3265137CA0B18A322 /* Debug */,
 				6D3596B9EB4BE6DB558FBFC0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		EE52F2BE271CDAB0EA7F9298 /* Build configuration list for PBXNativeTarget "SeerrClientTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A368AC3D269C4102AC230B5A /* Debug */,
+				30C3123984006355238E16C4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

@@ -28,6 +28,17 @@ public struct SliderContent: Identifiable, Sendable {
     public let totalPages: Int
 }
 
+// MARK: - WatchlistFetching
+
+/// Protocol exposing only the watchlist fetch capability.
+///
+/// Conformed to by `DiscoverRepository` in production and by `MockWatchlistFetcher`
+/// in `SeerrClientTests`, allowing `WatchlistViewModel` to be tested without
+/// a live `SeerrAPIClient`.
+public protocol WatchlistFetching: Sendable {
+    func fetchWatchlist(page: Int) async throws -> DiscoverResponse<DiscoverMediaItem>
+}
+
 // MARK: - DiscoverRepository
 
 /// Fetches and assembles discover page data from the Seerr API.
@@ -214,3 +225,7 @@ public final class DiscoverRepository: @unchecked Sendable {
         return value
     }
 }
+
+// MARK: - WatchlistFetching Conformance
+
+extension DiscoverRepository: WatchlistFetching {}

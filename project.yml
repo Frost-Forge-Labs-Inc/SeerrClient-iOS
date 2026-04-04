@@ -33,3 +33,18 @@ targets:
         TARGETED_DEVICE_FAMILY: "1,2"
         SWIFT_EMIT_LOC_STRINGS: "YES"
         ENABLE_PREVIEWS: "YES"
+
+  SeerrClientTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: SeerrClientTests
+        excludes:
+          - "**/.DS_Store"
+    dependencies:
+      - target: SeerrClient
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.rodrigoindustries.SeerrClientTests
+        GENERATE_INFOPLIST_FILE: true
+        SWIFT_STRICT_CONCURRENCY: targeted
