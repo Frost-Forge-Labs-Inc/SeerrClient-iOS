@@ -26,7 +26,7 @@ struct CastCarouselView: View {
                     .padding(.horizontal)
 
                 ScrollView(.horizontal, showsIndicators: false) {
-                    LazyHStack(spacing: 12) {
+                    LazyHStack(alignment: .top, spacing: 12) {
                         ForEach(Array(castList.enumerated()), id: \.offset) { _, member in
                             CastCardView(cast: member)
                         }

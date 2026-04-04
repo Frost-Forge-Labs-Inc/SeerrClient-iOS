@@ -59,7 +59,7 @@ struct DiscoverSliderView: View {
     @ViewBuilder
     private var cardScrollView: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            LazyHStack(spacing: 12) {
+            LazyHStack(alignment: .top, spacing: 12) {
                 ForEach(content.items) { item in
                     if item.isMovie {
                         NavigationLink(value: MovieNavDestination(id: item.id, title: item.displayTitle)) {
