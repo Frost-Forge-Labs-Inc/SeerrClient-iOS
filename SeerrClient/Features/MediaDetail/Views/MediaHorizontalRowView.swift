@@ -23,7 +23,7 @@ struct MediaHorizontalRowView: View {
                 .padding(.horizontal)
 
             ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack(spacing: 12) {
+                LazyHStack(alignment: .top, spacing: 12) {
                     ForEach(items) { item in
                         if item.isMovie {
                             NavigationLink(value: MovieNavDestination(id: item.id, title: item.displayTitle)) {
