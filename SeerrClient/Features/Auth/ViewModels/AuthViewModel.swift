@@ -81,8 +81,21 @@ public final class AuthViewModel {
     public var authState: AuthState = .idle
 
     /// `true` from init until `restoreSessionIfPossible()` completes (success or failure).
-    /// Used by `LoginView` to overlay `LaunchAnimationView` during the silent restore probe.
+    /// Used by `LoginView` to suppress the `loadingOverlay` during the silent restore probe.
     public var isRestoringSession: Bool = true
+
+    // MARK: - Remember Me
+
+    /// Whether to persist credentials in the Keychain for silent session restoration.
+    ///
+    /// Defaults to `true`. Persisted in `UserDefaults` so the preference survives across
+    /// launches. When `false`, no password, auth-method, or session cookie is stored —
+    /// the user must sign in manually on every app launch.
+    public var rememberCredentials: Bool = (UserDefaults.standard.object(forKey: "seerr.rememberCredentials") as? Bool) ?? true {
+        didSet {
+            UserDefaults.standard.set(rememberCredentials, forKey: "seerr.rememberCredentials")
+        }
+    }
 
     // MARK: - Selected Method
 
@@ -257,6 +270,9 @@ public final class AuthViewModel {
                 email: trimmedEmail,
                 password: password
             )
+            if rememberCredentials {
+                authRepository.storeLocalCredentials(email: trimmedEmail, password: password)
+            }
             apply(authenticatedUser: user)
         } catch let error as SeerrAPIError {
             authState = .failed(localizedAuthError(error))
@@ -277,6 +293,9 @@ public final class AuthViewModel {
         authState = .authenticating
         do {
             let user = try await authRepository.loginPlex(authToken: authToken)
+            if rememberCredentials {
+                authRepository.storePlexAuthMethod()
+            }
             apply(authenticatedUser: user)
         } catch let error as SeerrAPIError {
             authState = .failed(localizedAuthError(error))
@@ -308,6 +327,13 @@ public final class AuthViewModel {
                 password: jellyfinPassword,
                 hostname: hostname
             )
+            if rememberCredentials {
+                authRepository.storeJellyfinCredentials(
+                    username: trimmedUsername,
+                    password: jellyfinPassword,
+                    hostname: hostname
+                )
+            }
             apply(authenticatedUser: user)
         } catch let error as SeerrAPIError {
             authState = .failed(localizedAuthError(error))
@@ -326,12 +352,16 @@ public final class AuthViewModel {
         do {
             try await authRepository.logout()
         } catch {
-            // Log but don't block sign-out — local state must always be cleared.
+            // Log but don't block sign-out — cookies are already cleared before the POST.
             AppLogger.warning("AuthViewModel: server logout call failed — \(error)")
         }
 
+        // Clear all locally stored credentials so the next launch requires sign-in.
         authRepository.clearStoredCredentials()
-        appState.signOut()
+        // Disconnect fully so ContentView returns to ServerListView, not LoginView.
+        // This prevents the new LoginView's .task from re-running session restore
+        // against a potentially stale (though cleared) credential state.
+        appState.disconnectFromServer()
         authState = .idle
     }
 
@@ -353,8 +383,10 @@ public final class AuthViewModel {
         appState.setAuthenticatedUser(user)
         serverStore.markConnected(server)
         AppLogger.info("AuthViewModel: authenticated user id=\(user.id)")
-        // Persist the session cookie so the next app launch can skip the login form.
-        Task { await authRepository.persistSessionCookie() }
+        // Persist the session cookie only when the user has enabled "Remember Me".
+        if rememberCredentials {
+            Task { await authRepository.persistSessionCookie() }
+        }
     }
 
     /// Maps `SeerrAPIError` cases to user-appropriate auth error messages.

@@ -89,8 +89,8 @@ public struct AuthRepository {
 
     /// Signs in with a local email and password.
     ///
-    /// On success stores credentials and session cookie in the Keychain so the
-    /// session can be silently restored on next app launch.
+    /// Credentials are NOT saved here — call `storeLocalCredentials` afterwards
+    /// if the user has enabled "Remember Me".
     ///
     /// - Parameters:
     ///   - email: The user's local account email address.
@@ -102,13 +102,17 @@ public struct AuthRepository {
         let endpoints = await apiClient.endpoints
         let body = LocalAuthRequest(email: email, password: password)
         let user: User = try await apiClient.post(endpoints.authLocal, body: body)
-
-        let km = KeychainManager.shared
-        try? km.save(email,    for: .username,   server: server.baseURL)
-        try? km.save(password, for: .password,   server: server.baseURL)
-        try? km.save("local",  for: .authMethod, server: server.baseURL)
         AppLogger.info("AuthRepository: local login success — user id=\(user.id)")
         return user
+    }
+
+    /// Persists local login credentials in the Keychain for session restoration.
+    /// Call after a successful `loginLocal` only when the user has enabled "Remember Me".
+    public func storeLocalCredentials(email: String, password: String) {
+        let km = KeychainManager.shared
+        try? km.save(email,   for: .username,   server: server.baseURL)
+        try? km.save(password, for: .password,  server: server.baseURL)
+        try? km.save("local", for: .authMethod, server: server.baseURL)
     }
 
     // MARK: - POST /auth/plex
@@ -126,9 +130,14 @@ public struct AuthRepository {
         let endpoints = await apiClient.endpoints
         let body = PlexAuthRequest(authToken: authToken)
         let user: User = try await apiClient.post(endpoints.authPlex, body: body)
-        try? KeychainManager.shared.save("plex", for: .authMethod, server: server.baseURL)
         AppLogger.info("AuthRepository: Plex login success — user id=\(user.id)")
         return user
+    }
+
+    /// Records the Plex auth method in the Keychain so session cookie restore is
+    /// attempted on the next launch. Call only when the user has enabled "Remember Me".
+    public func storePlexAuthMethod() {
+        try? KeychainManager.shared.save("plex", for: .authMethod, server: server.baseURL)
     }
 
     // MARK: - POST /auth/jellyfin
@@ -158,14 +167,18 @@ public struct AuthRepository {
             hostname: hostname
         )
         let user: User = try await apiClient.post(endpoints.authJellyfin, body: body)
-
-        let km = KeychainManager.shared
-        try? km.save(username,          for: .username,         server: server.baseURL)
-        try? km.save(password,          for: .password,         server: server.baseURL)
-        try? km.save("jellyfin",        for: .authMethod,       server: server.baseURL)
-        try? km.save(hostname ?? "",    for: .jellyfinHostname, server: server.baseURL)
         AppLogger.info("AuthRepository: Jellyfin login success — user id=\(user.id)")
         return user
+    }
+
+    /// Persists Jellyfin credentials in the Keychain for session restoration.
+    /// Call after a successful `loginJellyfin` only when the user has enabled "Remember Me".
+    public func storeJellyfinCredentials(username: String, password: String, hostname: String?) {
+        let km = KeychainManager.shared
+        try? km.save(username,       for: .username,         server: server.baseURL)
+        try? km.save(password,       for: .password,         server: server.baseURL)
+        try? km.save("jellyfin",     for: .authMethod,       server: server.baseURL)
+        try? km.save(hostname ?? "", for: .jellyfinHostname, server: server.baseURL)
     }
 
     // MARK: - POST /auth/logout
@@ -179,10 +192,11 @@ public struct AuthRepository {
     /// - Throws: `SeerrAPIError` if the logout request itself fails.
     ///   (Callers should clear local credentials even on failure.)
     public func logout() async throws {
-        let endpoints = await apiClient.endpoints
-        // Logout typically returns an empty 200 body; decode to `EmptyResponse`.
-        let _: EmptyResponse = try await apiClient.post(endpoints.authLogout)
+        // Clear in-memory cookies FIRST — unconditionally — so that even if the
+        // server call fails the old cookie cannot be used by the next session restore.
         await apiClient.clearCookies()
+        let endpoints = await apiClient.endpoints
+        let _: EmptyResponse = try await apiClient.post(endpoints.authLogout)
         AppLogger.info("AuthRepository: logout success for \(server.baseURL)")
     }
 

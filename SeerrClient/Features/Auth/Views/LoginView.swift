@@ -222,6 +222,8 @@ struct LoginView: View {
                     )
             }
 
+            rememberMeToggle
+
             Button {
                 Task { await viewModel.loginLocal() }
             } label: {
@@ -265,6 +267,8 @@ struct LoginView: View {
             .controlSize(.large)
             .tint(Color(red: 0.9, green: 0.56, blue: 0.0))
             .disabled(viewModel.isAuthenticating)
+
+            rememberMeToggle
         }
     }
 
@@ -326,6 +330,8 @@ struct LoginView: View {
                     )
             }
 
+            rememberMeToggle
+
             Button {
                 Task { await viewModel.loginJellyfin() }
             } label: {
@@ -365,6 +371,24 @@ struct LoginView: View {
         }
         .padding(14)
         .background(Color.red.opacity(0.10), in: RoundedRectangle(cornerRadius: 12))
+    }
+
+    // MARK: - Remember Me Toggle
+
+    /// Shared "Remember me" toggle shown in every login form.
+    @ViewBuilder
+    private var rememberMeToggle: some View {
+        Toggle(isOn: $viewModel.rememberCredentials) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Remember me on this device")
+                    .font(.subheadline)
+                Text("Your credentials are stored securely in the Keychain.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .tint(.accentColor)
+        .padding(.vertical, 4)
     }
 
     // MARK: - Loading Overlay
