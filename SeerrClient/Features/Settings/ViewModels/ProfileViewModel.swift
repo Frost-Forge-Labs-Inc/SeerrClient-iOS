@@ -185,22 +185,24 @@ public final class ProfileViewModel {
         signOutTask = Task {
             defer { isSigningOut = false }
 
+            // authRepository.logout() clears in-memory cookies BEFORE the POST,
+            // so the POST is sent without a cookie and the server returns 401.
+            // A 401 here is expected — the session is already invalidated locally.
+            // Any error (401 or otherwise) does NOT block sign-out.
             do {
                 try await authRepository.logout()
-                guard !Task.isCancelled else { return }
-                appState.signOut()
             } catch {
-                guard !Task.isCancelled else { return }
-
-                if let apiError = error as? SeerrAPIError,
-                   case .unauthorized = apiError {
-                    appState.signOut()
-                    return
-                }
-
-                AppLogger.warning("ProfileViewModel: sign out failed: \(mapError(error))")
-                loadState = .error(mapError(error))
+                AppLogger.warning("ProfileViewModel: server logout call failed (continuing) — \(error)")
             }
+
+            guard !Task.isCancelled else { return }
+
+            // Always clear Keychain so session restore cannot re-authenticate after sign-out.
+            authRepository.clearStoredCredentials()
+
+            // Disconnect fully — resets activeServer so ContentView shows ServerListView,
+            // not LoginView (which would immediately re-run session restore from Keychain).
+            appState.disconnectFromServer()
         }
     }
 
