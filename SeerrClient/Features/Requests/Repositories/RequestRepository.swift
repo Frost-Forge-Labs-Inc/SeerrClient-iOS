@@ -122,12 +122,16 @@ public final class RequestRepository: Sendable {
 
     /// Fetches the default Sonarr server and its quality profiles.
     /// Returns an empty array if no Sonarr server is configured.
+    ///
+    /// Uses `GET /service/sonarr/{id}` — the `/settings/sonarr/{id}/profiles` endpoint
+    /// does not exist in Jellyseerr (only in Overseerr).
     public func fetchSonarrProfiles() async throws -> [ServiceProfile] {
         let endpoints = apiClient.endpoints
         let servers: [SonarrSettings] = try await apiClient.get(endpoints.settingsSonarr)
         guard let defaultServer = servers.first(where: { $0.isDefault }) ?? servers.first,
               let id = defaultServer.id else { return [] }
-        return try await apiClient.get(endpoints.settingsSonarrProfiles(id: id))
+        let details: ServiceInstanceDetails = try await apiClient.get(endpoints.serviceSonarr(id: id))
+        return details.profiles
     }
 
     // MARK: - Moderation

@@ -17,13 +17,17 @@ import Security
 /// to produce a per-server scoped key string.
 public enum KeychainKey: String {
     /// Seerr API key (`X-Api-Key` header value).
-    case apiKey        = "apiKey"
-    /// Session cookie value set by `/auth/*` endpoints.
-    case sessionToken  = "sessionToken"
-    /// The user's local login email address (not sensitive, but stored with creds).
-    case username      = "username"
-    /// The user's local login password (local auth only).
-    case password      = "password"
+    case apiKey             = "apiKey"
+    /// Session cookie value (`connect.sid`) for the active server session.
+    case sessionToken       = "sessionToken"
+    /// The user's login email (local) or username (Jellyfin).
+    case username           = "username"
+    /// The user's login password (local or Jellyfin auth only — never stored for Plex).
+    case password           = "password"
+    /// The auth method used at last successful login: "local", "jellyfin", or "plex".
+    case authMethod         = "authMethod"
+    /// Jellyfin server URL override (stored when user provides one; empty string = use default).
+    case jellyfinHostname   = "jellyfinHostname"
 }
 
 // MARK: - KeychainManager

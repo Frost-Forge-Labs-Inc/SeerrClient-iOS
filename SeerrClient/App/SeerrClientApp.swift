@@ -30,7 +30,15 @@ struct SeerrClientApp: App {
     init() {
         let store = ServerStore()
         _serverStore = State(initialValue: store)
-        _appState = State(initialValue: AppState(serverStore: store))
+        let state = AppState(serverStore: store)
+        // Auto-connect to the default/last server so LoginView (and its
+        // LaunchAnimationView overlay) shows immediately on every launch.
+        if let server = store.defaultServer {
+            let methods: [AuthMethod] = server.availableAuthMethods
+                ?? (server.backendType == .overseerr ? [.local, .plex] : [.local, .jellyfin])
+            state.selectServer(server, authMethods: methods)
+        }
+        _appState = State(initialValue: state)
     }
 
     // MARK: - Scene

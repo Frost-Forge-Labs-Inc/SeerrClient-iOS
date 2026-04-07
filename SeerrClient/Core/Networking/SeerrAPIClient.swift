@@ -258,6 +258,27 @@ public actor SeerrAPIClient {
         storedCookies.append(cookie)
     }
 
+    /// Injects a previously persisted cookie (e.g. loaded from Keychain on app launch).
+    ///
+    /// Used by session restoration to populate the cookie jar before `GET /auth/me`.
+    ///
+    /// - Parameter cookie: The `HTTPCookie` to inject.
+    public func restoreCookie(_ cookie: HTTPCookie) {
+        storedCookies.removeAll { $0.name == cookie.name }
+        storedCookies.append(cookie)
+        AppLogger.debug("SeerrAPIClient: restored cookie '\(cookie.name)' for \(cookie.domain)")
+    }
+
+    /// Returns the stored cookie with the given name, or `nil` if not present.
+    ///
+    /// Use this after a successful login to extract `connect.sid` for Keychain persistence.
+    ///
+    /// - Parameter name: The cookie name (e.g. `"connect.sid"`).
+    /// - Returns: The matching `HTTPCookie`, or `nil`.
+    public func cookie(named name: String) -> HTTPCookie? {
+        storedCookies.first { $0.name == name }
+    }
+
     /// Removes all cookies for this client.
     public func clearCookies() {
         storedCookies.removeAll()

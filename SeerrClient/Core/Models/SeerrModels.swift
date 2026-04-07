@@ -156,8 +156,9 @@ public struct SonarrSettings: Codable, Sendable, Hashable {
     public let activeAnimeDirectory: String?
     /// Whether this instance handles 4K content.
     public let is4k: Bool
-    /// Whether season folders are created automatically.
-    public let enableSeasonFolders: Bool
+    /// Whether season folders are created automatically. Optional to handle Jellyseerr versions
+    /// that omit or null this field in the response.
+    public let enableSeasonFolders: Bool?
     /// Whether this is the default Sonarr instance.
     public let isDefault: Bool
     /// Publicly accessible URL for linking.
@@ -1568,6 +1569,13 @@ public struct SonarrAddOptions: Codable, Sendable, Hashable {
 public struct ServiceProfile: Codable, Sendable, Hashable {
     public let id: Int?
     public let name: String?
+}
+
+/// Response from `GET /api/v1/service/sonarr/{sonarrId}` or `GET /api/v1/service/radarr/{radarrId}`.
+/// Contains quality profiles and root folders for the named service instance.
+public struct ServiceInstanceDetails: Codable, Sendable, Hashable {
+    /// Available quality profiles on this service instance.
+    public let profiles: [ServiceProfile]
 }
 
 /// A scheduled background job in Overseerr.

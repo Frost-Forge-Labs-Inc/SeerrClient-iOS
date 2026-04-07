@@ -108,7 +108,7 @@ struct LoginView: View {
                 }
             }
             .overlay {
-                if viewModel.isAuthenticating {
+                if viewModel.isAuthenticating && !viewModel.isRestoringSession {
                     loadingOverlay
                 }
             }

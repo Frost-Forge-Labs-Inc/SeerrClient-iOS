@@ -96,9 +96,13 @@
     <key>NSFaceIDUsageDescription</key>
     <string>Use Face ID or Touch ID to unlock the app and protect your server credentials.</string>
 
-    <!-- Launch Screen (using SwiftUI lifecycle — no storyboard required) -->
-    <key>UILaunchScreen</key>
-    <dict/>
+    <!-- Launch Screen storyboard — gives full Auto Layout control over mascot sizing.
+         UILaunchScreen (plist-only) has no scaling: the image renders at its native
+         pixel size. LaunchScreen.storyboard centres the mascot at a fixed 180×180 pt
+         with scaleAspectFit and matches the dark-navy (#0D111C) background.
+    -->
+    <key>UILaunchStoryboardName</key>
+    <string>LaunchScreen</string>
 
     <!-- Main SwiftUI scene configuration -->
     <key>UIApplicationSceneManifest</key>

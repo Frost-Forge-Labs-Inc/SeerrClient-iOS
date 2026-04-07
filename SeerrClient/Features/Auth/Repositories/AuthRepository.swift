@@ -89,7 +89,8 @@ public struct AuthRepository {
 
     /// Signs in with a local email and password.
     ///
-    /// On success stores the session token in the Keychain and returns the user.
+    /// On success stores credentials and session cookie in the Keychain so the
+    /// session can be silently restored on next app launch.
     ///
     /// - Parameters:
     ///   - email: The user's local account email address.
@@ -102,8 +103,10 @@ public struct AuthRepository {
         let body = LocalAuthRequest(email: email, password: password)
         let user: User = try await apiClient.post(endpoints.authLocal, body: body)
 
-        // Persist credentials for session restoration.
-        try? KeychainManager.shared.save(email, for: .username, server: server.baseURL)
+        let km = KeychainManager.shared
+        try? km.save(email,    for: .username,   server: server.baseURL)
+        try? km.save(password, for: .password,   server: server.baseURL)
+        try? km.save("local",  for: .authMethod, server: server.baseURL)
         AppLogger.info("AuthRepository: local login success — user id=\(user.id)")
         return user
     }
@@ -111,6 +114,8 @@ public struct AuthRepository {
     // MARK: - POST /auth/plex
 
     /// Signs in using a Plex auth token obtained via the Plex pin OAuth flow.
+    ///
+    /// For Plex, no reusable credentials exist — only the session cookie is persisted.
     ///
     /// - Parameter authToken: The `authToken` returned from `GET plex.tv/api/v2/pins/{id}`
     ///   after the user authenticates in the Plex web view.
@@ -121,6 +126,7 @@ public struct AuthRepository {
         let endpoints = await apiClient.endpoints
         let body = PlexAuthRequest(authToken: authToken)
         let user: User = try await apiClient.post(endpoints.authPlex, body: body)
+        try? KeychainManager.shared.save("plex", for: .authMethod, server: server.baseURL)
         AppLogger.info("AuthRepository: Plex login success — user id=\(user.id)")
         return user
     }
@@ -128,6 +134,9 @@ public struct AuthRepository {
     // MARK: - POST /auth/jellyfin
 
     /// Signs in with Jellyfin credentials.
+    ///
+    /// On success stores credentials and session cookie in the Keychain for
+    /// silent session restoration on next app launch.
     ///
     /// - Parameters:
     ///   - username: The Jellyfin username.
@@ -150,8 +159,11 @@ public struct AuthRepository {
         )
         let user: User = try await apiClient.post(endpoints.authJellyfin, body: body)
 
-        // Store username for session restoration hints.
-        try? KeychainManager.shared.save(username, for: .username, server: server.baseURL)
+        let km = KeychainManager.shared
+        try? km.save(username,          for: .username,         server: server.baseURL)
+        try? km.save(password,          for: .password,         server: server.baseURL)
+        try? km.save("jellyfin",        for: .authMethod,       server: server.baseURL)
+        try? km.save(hostname ?? "",    for: .jellyfinHostname, server: server.baseURL)
         AppLogger.info("AuthRepository: Jellyfin login success — user id=\(user.id)")
         return user
     }
@@ -174,6 +186,84 @@ public struct AuthRepository {
         AppLogger.info("AuthRepository: logout success for \(server.baseURL)")
     }
 
+    // MARK: - Session Persistence
+
+    /// Extracts the `connect.sid` cookie from the API client and saves its value
+    /// to the Keychain so it can be restored on the next app launch.
+    ///
+    /// Call this immediately after any successful login.
+    public func persistSessionCookie() async {
+        guard let cookie = await apiClient.cookie(named: "connect.sid") else {
+            AppLogger.debug("AuthRepository: no connect.sid cookie to persist")
+            return
+        }
+        try? KeychainManager.shared.save(cookie.value, for: .sessionToken, server: server.baseURL)
+        AppLogger.info("AuthRepository: session cookie persisted for \(server.baseURL)")
+    }
+
+    /// Reads the persisted `connect.sid` cookie value from the Keychain and
+    /// injects a reconstructed `HTTPCookie` into the API client.
+    ///
+    /// Call this before `fetchCurrentUser()` on app launch so the session
+    /// cookie is available to the `GET /auth/me` request.
+    public func restorePersistedSession() async {
+        guard let savedValue = KeychainManager.shared.read(.sessionToken, server: server.baseURL),
+              !savedValue.isEmpty,
+              let url = URL(string: server.baseURL),
+              let host = url.host else {
+            return
+        }
+        let properties: [HTTPCookiePropertyKey: Any] = [
+            .name:   "connect.sid",
+            .value:  savedValue,
+            .domain: host,
+            .path:   "/"
+        ]
+        guard let cookie = HTTPCookie(properties: properties) else { return }
+        await apiClient.restoreCookie(cookie)
+        AppLogger.info("AuthRepository: restored persisted session cookie for \(host)")
+    }
+
+    /// Silently re-authenticates using credentials stored in the Keychain.
+    ///
+    /// Used when the persisted session cookie has expired. Supports local and
+    /// Jellyfin auth. Plex users must re-authenticate interactively (OAuth).
+    ///
+    /// - Returns: The re-authenticated `User`, or `nil` if no stored credentials exist.
+    /// - Throws: `SeerrAPIError` if credentials exist but are rejected by the server.
+    public func reAuthenticateWithStoredCredentials() async throws -> User? {
+        let km = KeychainManager.shared
+        guard let method = km.read(.authMethod, server: server.baseURL) else {
+            return nil
+        }
+
+        switch method {
+        case "local":
+            guard let email    = km.read(.username, server: server.baseURL),
+                  let password = km.read(.password, server: server.baseURL),
+                  !email.isEmpty, !password.isEmpty else {
+                return nil
+            }
+            AppLogger.info("AuthRepository: attempting silent local re-auth for \(server.baseURL)")
+            return try await loginLocal(email: email, password: password)
+
+        case "jellyfin":
+            guard let username = km.read(.username, server: server.baseURL),
+                  let password = km.read(.password, server: server.baseURL),
+                  !username.isEmpty, !password.isEmpty else {
+                return nil
+            }
+            let hostname = km.read(.jellyfinHostname, server: server.baseURL)
+            let effectiveHostname = (hostname?.isEmpty == false) ? hostname : nil
+            AppLogger.info("AuthRepository: attempting silent Jellyfin re-auth for \(server.baseURL)")
+            return try await loginJellyfin(username: username, password: password, hostname: effectiveHostname)
+
+        default:
+            // "plex" or unknown — no reusable credentials; interactive login required.
+            return nil
+        }
+    }
+
     // MARK: - Keychain Helpers
 
     /// Returns the API key stored in the Keychain for this server, if any.
@@ -188,7 +278,8 @@ public struct AuthRepository {
         try? KeychainManager.shared.save(apiKey, for: .apiKey, server: server.baseURL)
     }
 
-    /// Clears all credentials (API key, session token, username) from the Keychain.
+    /// Clears all credentials (API key, session token, username, password, auth method)
+    /// from the Keychain. Call on explicit user logout.
     public func clearStoredCredentials() {
         KeychainManager.shared.deleteAll(server: server.baseURL)
     }

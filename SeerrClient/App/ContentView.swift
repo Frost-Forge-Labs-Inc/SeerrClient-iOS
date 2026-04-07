@@ -23,6 +23,13 @@ struct ContentView: View {
     @Environment(AppState.self) private var appState
     @Environment(ServerStore.self) private var serverStore
 
+    // MARK: - Launch Phase
+
+    /// True for the first 2.5 s of the app's life — drives the launch animation overlay.
+    /// Lives here (not in LoginView) so task-cancellation from auth state transitions
+    /// cannot shorten the minimum display time.
+    @State private var isInLaunchPhase = true
+
     // MARK: - Body
 
     var body: some View {
@@ -45,6 +52,19 @@ struct ContentView: View {
         }
         .animation(.easeInOut(duration: 0.25), value: appState.showServerSetup)
         .animation(.easeInOut(duration: 0.25), value: appState.showMainInterface)
+        // Launch animation — overlaid at this level so it survives auth state transitions.
+        .overlay {
+            if isInLaunchPhase {
+                LaunchAnimationView()
+                    .transition(.opacity)
+            }
+        }
+        .animation(.easeInOut(duration: 0.45), value: isInLaunchPhase)
+        .task {
+            // Hold the launch animation for exactly 2.5 s then fade out.
+            try? await Task.sleep(for: .seconds(2.5))
+            isInLaunchPhase = false
+        }
     }
 
     // MARK: - Main Interface
@@ -110,16 +130,10 @@ struct ContentView: View {
         }
     }
 
-    /// Spinner shown while auth state is being resolved.
+    /// Animated splash shown while session restoration is in progress.
     @ViewBuilder
     private var loadingView: some View {
-        VStack(spacing: 16) {
-            ProgressView()
-                .scaleEffect(1.5)
-            Text("Connecting…")
-                .font(.callout)
-                .foregroundStyle(.secondary)
-        }
+        LaunchAnimationView()
     }
 }
 

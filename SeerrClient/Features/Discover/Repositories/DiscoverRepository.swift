@@ -91,7 +91,15 @@ public final class DiscoverRepository: @unchecked Sendable {
     public func fetchContent(for slider: DiscoverSlider, page: Int = 1) async throws -> SliderContent {
         let endpoints = apiClient.endpoints
         let sliderType = DiscoverSliderType(rawValue: slider.type)
-        let path = contentPath(for: sliderType, slider: slider, endpoints: endpoints)
+
+        // Resolve the endpoint path. nil means the slider cannot be loaded
+        // (e.g. a keyword slider with no keywordId configured) — throw so
+        // fetchAllContent silently skips it without hitting the server.
+        guard let path = contentPath(for: sliderType, slider: slider, endpoints: endpoints) else {
+            AppLogger.info("DiscoverRepository: skipping slider '\(slider.title ?? "unknown")' (type \(slider.type)) — missing required configuration (e.g. keywordId)")
+            throw SeerrAPIError.serverError(statusCode: 0, message: "Slider skipped: missing required data")
+        }
+
         let queryItems = [URLQueryItem(name: "page", value: "\(page)")]
 
         let displayTitle = slider.title.flatMap { $0.isEmpty ? nil : $0 }
@@ -163,11 +171,16 @@ public final class DiscoverRepository: @unchecked Sendable {
     // MARK: - Private: Endpoint Mapping
 
     /// Maps a slider type to its API endpoint path.
+    ///
+    /// Returns `nil` when the slider cannot be resolved without server contact —
+    /// e.g. a keyword slider whose `slider.data` contains no valid `keywordId`.
+    /// `fetchContent` treats `nil` as "skip this slider" and throws without making
+    /// any network request, which `fetchAllContent` then silently discards.
     private func contentPath(
         for sliderType: DiscoverSliderType?,
         slider: DiscoverSlider,
         endpoints: APIEndpoints
-    ) -> String {
+    ) -> String? {
         guard let sliderType else {
             AppLogger.warning("DiscoverRepository: unknown slider type \(slider.type), falling back to trending")
             return endpoints.discoverTrending
@@ -197,11 +210,18 @@ public final class DiscoverRepository: @unchecked Sendable {
             let networkId = extractDataId(from: slider.data, key: "networkId") ?? 1
             return endpoints.discoverTvByNetwork(id: networkId)
         case .tmdbMovieKeyword:
-            let keywordId = extractDataId(from: slider.data, key: "keywordId") ?? 1
+            // Requires a valid keywordId in slider.data — skip if absent so we
+            // don't call the keyword endpoint with an arbitrary or zero ID.
+            guard let keywordId = extractDataId(from: slider.data, key: "keywordId"),
+                  keywordId > 0 else { return nil }
             return endpoints.discoverMoviesByKeyword(id: keywordId)
         case .tmdbTvKeyword:
-            // TV keyword filtering uses the general TV endpoint (keyword passed via query in future).
-            return endpoints.discoverTv
+            // Requires a valid keywordId. Do NOT fall back to /discover/tv —
+            // that endpoint 500s when Jellyseerr detects a keyword slider without
+            // a resolved keyword ("Unable to retrieve movies by keyword").
+            guard let keywordId = extractDataId(from: slider.data, key: "keywordId"),
+                  keywordId > 0 else { return nil }
+            return endpoints.discoverTvByKeyword(id: keywordId)
         case .plexWatchlist:
             return endpoints.discoverWatchlist
         }

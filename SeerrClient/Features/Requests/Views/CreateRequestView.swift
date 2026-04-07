@@ -113,12 +113,15 @@ struct CreateRequestView: View {
             guard let client = appState.apiClient else { return }
             let repo = RequestRepository(apiClient: client)
             repository = repo
-            // Load quality profiles in background — failure is silent (picker just won't show)
+            // Load quality profiles in background — failure is logged; picker stays hidden on error
             Task {
-                let profiles = (try? await mediaType == .movie
-                    ? repo.fetchRadarrProfiles()
-                    : repo.fetchSonarrProfiles()) ?? []
-                qualityProfiles = profiles
+                do {
+                    qualityProfiles = try await mediaType == .movie
+                        ? repo.fetchRadarrProfiles()
+                        : repo.fetchSonarrProfiles()
+                } catch {
+                    AppLogger.warning("CreateRequestView: quality profiles fetch failed for \(mediaType.rawValue): \(error)")
+                }
             }
         }
         .onAppear {

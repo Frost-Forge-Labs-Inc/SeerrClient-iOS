@@ -80,6 +80,10 @@ public final class AuthViewModel {
     /// The current authentication flow state.
     public var authState: AuthState = .idle
 
+    /// `true` from init until `restoreSessionIfPossible()` completes (success or failure).
+    /// Used by `LoginView` to overlay `LaunchAnimationView` during the silent restore probe.
+    public var isRestoringSession: Bool = true
+
     // MARK: - Selected Method
 
     /// The auth method the user has selected in the picker.
@@ -162,29 +166,76 @@ public final class AuthViewModel {
 
     // MARK: - Session Restoration
 
-    /// Attempts to restore an existing session by calling `GET /auth/me`.
+    /// Silently restores the user's session on app launch using a three-layer strategy:
     ///
-    /// Call this on app launch when a server is already configured. If the stored
-    /// session is valid the user is set in `AppState` without showing the login UI.
-    /// A `401` silently fails — the login screen is then shown normally.
+    /// 1. **Cookie restore** — loads the persisted `connect.sid` from Keychain and
+    ///    injects it into the API client, then calls `GET /auth/me`. If the cookie is
+    ///    still valid this is instant and requires no user interaction.
+    /// 2. **Credential re-auth** — if the cookie has expired (401), re-authenticates
+    ///    silently using the stored email/password (local) or username/password (Jellyfin).
+    ///    Plex users fall through to the login form (OAuth tokens are not reusable).
+    /// 3. **Login form** — if both layers fail (no credentials stored, wrong password,
+    ///    network error), the login form is displayed normally.
+    ///
+    /// A minimum display time of 1.8 seconds is enforced so the `LaunchAnimationView`
+    /// overlay is always visible long enough to complete its animation, even on fast
+    /// networks or when the stored cookie is still valid.
+    ///
+    /// Credentials and session cookies are cleared from Keychain only on explicit logout.
     public func restoreSessionIfPossible() async {
         authState = .authenticating
+
+        // Run the actual restore and a minimum-display timer concurrently.
+        // This guarantees the launch animation is visible for at least 1.8 s
+        // even on fast networks or when the stored cookie is still valid.
+        await withTaskGroup(of: Void.self) { group in
+            group.addTask { await self.performSessionRestore() }
+            group.addTask {
+                try? await Task.sleep(for: .seconds(2.5))
+            }
+            // Wait for BOTH to finish before hiding the animation.
+            for await _ in group {}
+        }
+
+        isRestoringSession = false
+    }
+
+    /// Inner restore logic — three-layer strategy:
+    /// 1. Persisted session cookie → GET /auth/me
+    /// 2. Silent credential re-auth (local or Jellyfin)
+    /// 3. Fall through to login form
+    private func performSessionRestore() async {
+        await authRepository.restorePersistedSession()
         do {
             let user = try await authRepository.fetchCurrentUser()
             apply(authenticatedUser: user)
+            return
         } catch let error as SeerrAPIError {
             switch error {
             case .unauthorized, .forbidden:
-                // Session expired — show login form cleanly.
-                authState = .idle
+                break       // Cookie expired — try credential re-auth below.
             default:
-                // Network unavailable, etc. — still show login form.
+                // Network unavailable or server error — show login form; don't wipe credentials.
                 authState = .idle
-                AppLogger.warning("AuthViewModel: session restore failed — \(error.userMessage)")
+                AppLogger.warning("AuthViewModel: session restore network error — \(error.userMessage)")
+                return
             }
         } catch {
             authState = .idle
+            return
         }
+
+        do {
+            if let user = try await authRepository.reAuthenticateWithStoredCredentials() {
+                await authRepository.persistSessionCookie()
+                apply(authenticatedUser: user)
+                return
+            }
+        } catch {
+            AppLogger.warning("AuthViewModel: silent re-auth failed — \(error)")
+        }
+
+        authState = .idle
     }
 
     // MARK: - Local Login
@@ -302,6 +353,8 @@ public final class AuthViewModel {
         appState.setAuthenticatedUser(user)
         serverStore.markConnected(server)
         AppLogger.info("AuthViewModel: authenticated user id=\(user.id)")
+        // Persist the session cookie so the next app launch can skip the login form.
+        Task { await authRepository.persistSessionCookie() }
     }
 
     /// Maps `SeerrAPIError` cases to user-appropriate auth error messages.

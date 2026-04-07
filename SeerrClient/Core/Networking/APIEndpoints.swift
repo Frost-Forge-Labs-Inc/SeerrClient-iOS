@@ -248,6 +248,9 @@ public struct APIEndpoints: Sendable {
     /// `GET /api/v1/discover/keyword/{keywordId}/movies` — Movies by keyword.
     public func discoverMoviesByKeyword(id: Int) -> String { "\(base)/discover/keyword/\(id)/movies" }
 
+    /// `GET /api/v1/discover/keyword/{keywordId}/tv` — TV shows by keyword.
+    public func discoverTvByKeyword(id: Int) -> String { "\(base)/discover/keyword/\(id)/tv" }
+
     /// `GET /api/v1/discover/genreslider/movie` — Genre slider data for movies.
     public var discoverGenreSliderMovie: String { "\(base)/discover/genreslider/movie" }
 
@@ -338,11 +341,21 @@ public struct APIEndpoints: Sendable {
     /// `GET /api/v1/service` — Service details.
     public var service: String { "\(base)/service" }
 
-    /// `GET /api/v1/service/radarr` — Radarr service info.
+    /// `GET /api/v1/service/radarr` — Radarr instances visible to the current user.
     public var serviceRadarr: String { "\(base)/service/radarr" }
 
-    /// `GET /api/v1/service/sonarr` — Sonarr service info.
+    /// `GET /api/v1/service/radarr/{radarrId}` — Quality profiles and root folders for a Radarr instance.
+    ///
+    /// - Parameter id: The Radarr instance identifier.
+    public func serviceRadarr(id: Int) -> String { "\(base)/service/radarr/\(id)" }
+
+    /// `GET /api/v1/service/sonarr` — Sonarr instances visible to the current user.
     public var serviceSonarr: String { "\(base)/service/sonarr" }
+
+    /// `GET /api/v1/service/sonarr/{sonarrId}` — Quality profiles and root folders for a Sonarr instance.
+    ///
+    /// - Parameter id: The Sonarr instance identifier.
+    public func serviceSonarr(id: Int) -> String { "\(base)/service/sonarr/\(id)" }
 
     // MARK: - Reference Data
 
