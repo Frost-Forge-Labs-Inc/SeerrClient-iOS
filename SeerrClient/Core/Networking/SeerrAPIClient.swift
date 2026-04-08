@@ -152,15 +152,20 @@ public actor SeerrAPIClient {
     }
 
     /// Performs a `POST` request with no body and decodes the response.
+    ///
+    /// Sends an empty JSON object (`{}`) as the body so that `Content-Type: application/json`
+    /// is always included. Some Seerr endpoints (e.g. watchlist, approve, decline) return
+    /// HTTP 415 Unsupported Media Type when the header is absent.
     public func post<T: Decodable>(
         _ path: String,
         timeout: TimeInterval? = nil
     ) async throws -> T {
+        let emptyBody = try encodeBody(EmptyRequestBody())
         let request = try buildRequest(
             method: "POST",
             path: path,
             queryItems: [],
-            body: nil as Data?,
+            body: emptyBody,
             timeout: timeout
         )
         return try await perform(request)
@@ -436,6 +441,15 @@ public actor SeerrAPIClient {
         }
     }
 }
+
+// MARK: - EmptyRequestBody (private helper)
+
+/// Encodable sentinel used by the no-body `post()` overload.
+///
+/// Encodes to `{}`, which ensures `Content-Type: application/json` is always
+/// present on POST requests that carry no meaningful payload. Without a body
+/// the header is omitted and some Seerr endpoints return HTTP 415.
+private struct EmptyRequestBody: Encodable {}
 
 // MARK: - DataConvertible (private helper)
 
