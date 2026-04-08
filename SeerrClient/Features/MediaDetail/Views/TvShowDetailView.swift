@@ -38,7 +38,7 @@ struct TvShowDetailView: View {
         .navigationTitle(showTitle)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            if let vm = viewModel, vm.tvShow?.mediaInfo?.id != nil {
+            if let vm = viewModel, vm.tvShow != nil {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         vm.toggleWatchlist()
@@ -59,7 +59,20 @@ struct TvShowDetailView: View {
             if viewModel == nil {
                 guard let client = appState.apiClient else { return }
                 let repo = MediaDetailRepository(apiClient: client)
-                viewModel = TvShowDetailViewModel(tvId: tvId, repository: repo)
+                let vm = TvShowDetailViewModel(
+                    tvId: tvId,
+                    repository: repo,
+                    initiallyOnWatchlist: appState.watchlistedTmdbIds.contains(tvId)
+                )
+                // Keep AppState.watchlistedTmdbIds in sync when the user taps the bookmark.
+                vm.onWatchlistChanged = { [weak appState] tmdbId, isNowOnWatchlist in
+                    if isNowOnWatchlist {
+                        appState?.watchlistedTmdbIds.insert(tmdbId)
+                    } else {
+                        appState?.watchlistedTmdbIds.remove(tmdbId)
+                    }
+                }
+                viewModel = vm
             }
             await viewModel?.loadDetails()
         }

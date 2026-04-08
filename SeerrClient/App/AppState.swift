@@ -43,6 +43,17 @@ final class AppState {
     /// Used by `LoginView` to show only the relevant login tabs.
     var availableAuthMethods: [AuthMethod] = []
 
+    // MARK: - Watchlist Cache
+
+    /// In-memory set of TMDB IDs currently on the user's watchlist.
+    ///
+    /// Populated after authentication completes; updated optimistically whenever
+    /// `MovieDetailViewModel` or `TvShowDetailViewModel` successfully toggles
+    /// watchlist membership. Detail views seed their `isOnWatchlist` flag from
+    /// this cache so the bookmark icon is correct immediately on open, without
+    /// requiring a separate network call.
+    var watchlistedTmdbIds: Set<Int> = []
+
     // MARK: - Navigation Flags
 
     /// Whether the app should show the server-setup onboarding flow.
@@ -92,12 +103,35 @@ final class AppState {
 
     /// Stores the authenticated user and clears any auth error.
     ///
+    /// Immediately kicks off a background task to populate `watchlistedTmdbIds`
+    /// using the active API client's watchlist endpoint, so detail screens that
+    /// open shortly after login see the correct bookmark state.
+    ///
     /// - Parameter user: The `User` returned by `GET /auth/me`.
     func setAuthenticatedUser(_ user: User) {
         currentUser = user
         authError = nil
         isAuthenticating = false
         AppLogger.info("AppState: authenticated as user id=\(user.id)")
+        Task { await loadWatchlistCache() }
+    }
+
+    /// Fetches all pages of the user's watchlist and stores the TMDB IDs in
+    /// `watchlistedTmdbIds`. Called automatically after authentication; safe to
+    /// call again to force a refresh (e.g. after returning to the Watchlist tab).
+    ///
+    /// Failures are non-fatal: the cache simply stays empty and the bookmark icon
+    /// starts as unfilled until the user explicitly toggles it.
+    func loadWatchlistCache() async {
+        guard let client = apiClient else { return }
+        let repo = DiscoverRepository(apiClient: client)
+        do {
+            let ids = try await repo.fetchAllWatchlistTmdbIds()
+            watchlistedTmdbIds = ids
+            AppLogger.info("AppState: watchlist cache loaded — \(ids.count) item(s)")
+        } catch {
+            AppLogger.warning("AppState: failed to load watchlist cache — \(error)")
+        }
     }
 
     /// Clears authentication state, keeping the server selection intact.
@@ -107,6 +141,7 @@ final class AppState {
         currentUser = nil
         authError = nil
         isAuthenticating = false
+        watchlistedTmdbIds = []
         AppLogger.info("AppState: signed out from '\(activeServer?.displayName ?? "unknown")'")
     }
 
@@ -119,6 +154,7 @@ final class AppState {
         authError = nil
         availableAuthMethods = []
         isAuthenticating = false
+        watchlistedTmdbIds = []
         AppLogger.info("AppState: disconnected from server")
     }
 

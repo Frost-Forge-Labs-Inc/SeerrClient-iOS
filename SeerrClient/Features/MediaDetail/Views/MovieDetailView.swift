@@ -36,11 +36,8 @@ struct MovieDetailView: View {
         }
         .navigationTitle(movieTitle)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationDestination(for: CollectionNavDestination.self) { dest in
-            CollectionDetailView(collectionId: dest.id, collectionName: dest.name)
-        }
         .toolbar {
-            if let vm = viewModel, vm.movie?.mediaInfo?.id != nil {
+            if let vm = viewModel, vm.movie != nil {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         vm.toggleWatchlist()
@@ -61,7 +58,20 @@ struct MovieDetailView: View {
             if viewModel == nil {
                 guard let client = appState.apiClient else { return }
                 let repo = MediaDetailRepository(apiClient: client)
-                viewModel = MovieDetailViewModel(movieId: movieId, repository: repo)
+                let vm = MovieDetailViewModel(
+                    movieId: movieId,
+                    repository: repo,
+                    initiallyOnWatchlist: appState.watchlistedTmdbIds.contains(movieId)
+                )
+                // Keep AppState.watchlistedTmdbIds in sync when the user taps the bookmark.
+                vm.onWatchlistChanged = { [weak appState] tmdbId, isNowOnWatchlist in
+                    if isNowOnWatchlist {
+                        appState?.watchlistedTmdbIds.insert(tmdbId)
+                    } else {
+                        appState?.watchlistedTmdbIds.remove(tmdbId)
+                    }
+                }
+                viewModel = vm
             }
             await viewModel?.loadDetails()
         }

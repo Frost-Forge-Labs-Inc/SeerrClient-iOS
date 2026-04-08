@@ -112,11 +112,26 @@ public final class TvShowDetailViewModel {
     @ObservationIgnored
     private var loadSeasonTask: Task<Void, Never>?
 
+    /// Called whenever the watchlist toggle succeeds.
+    /// The view supplies a closure that updates `AppState.watchlistedTmdbIds`.
+    @ObservationIgnored
+    var onWatchlistChanged: ((Int, Bool) -> Void)?
+
     // MARK: - Init
 
-    public init(tvId: Int, repository: MediaDetailRepository) {
+    /// Creates a `TvShowDetailViewModel`.
+    ///
+    /// - Parameters:
+    ///   - tvId: The TMDB TV show ID to load.
+    ///   - repository: The `MediaDetailRepository` used for all API calls.
+    ///   - initiallyOnWatchlist: Whether this show is already on the user's watchlist,
+    ///     determined from `AppState.watchlistedTmdbIds` before the detail network call
+    ///     completes. Seeds `isOnWatchlist` immediately so the toolbar icon is correct
+    ///     before the detail response arrives. Defaults to `false`.
+    public init(tvId: Int, repository: MediaDetailRepository, initiallyOnWatchlist: Bool = false) {
         self.tvId = tvId
         self.repository = repository
+        self.isOnWatchlist = initiallyOnWatchlist
     }
 
     // MARK: - Show Details
@@ -130,8 +145,9 @@ public final class TvShowDetailViewModel {
             let details = try await repository.fetchTvDetails(tvId: tvId)
             guard !Task.isCancelled else { return }
             detailState = .loaded(details)
-            // Seed watchlist state from the API response.
-            isOnWatchlist = details.mediaInfo?.watchlisted ?? false
+            // NOTE: details.mediaInfo?.watchlisted is always nil in Jellyseerr's
+            // GET /tv/{id} response, so we do NOT overwrite isOnWatchlist here.
+            // The correct value was seeded at init time from AppState.watchlistedTmdbIds.
 
             // Auto-select the first non-specials season, or season 1.
             // Write to _selectedSeasonNumber directly to avoid triggering didSet Task.
@@ -195,10 +211,10 @@ public final class TvShowDetailViewModel {
     ///
     /// Uses optimistic UI — the state flips immediately, then the API call confirms.
     /// If the call fails the state is reverted and a log warning is emitted.
-    /// Requires the media to have a Seerr media record (`mediaInfo.id` must be non-nil).
+    /// Uses the TMDB TV show ID directly; no Seerr media record is required.
     public func toggleWatchlist() {
-        guard let mediaId = tvShow?.mediaInfo?.id else {
-            AppLogger.warning("TvShowDetailViewModel: toggleWatchlist called but mediaInfo.id is nil")
+        guard tvShow != nil else {
+            AppLogger.warning("TvShowDetailViewModel: toggleWatchlist called before show loaded")
             return
         }
         guard !isTogglingWatchlist else { return }
@@ -211,12 +227,14 @@ public final class TvShowDetailViewModel {
             defer { isTogglingWatchlist = false }
             do {
                 if wasOnWatchlist {
-                    try await repository.removeFromWatchlist(mediaId: mediaId)
+                    try await repository.removeFromWatchlist(tmdbId: tvId, mediaType: "tv")
                     AppLogger.info("TvShowDetailViewModel: removed TV \(tvId) from watchlist")
                 } else {
-                    try await repository.addToWatchlist(mediaId: mediaId)
+                    try await repository.addToWatchlist(tmdbId: tvId, mediaType: "tv")
                     AppLogger.info("TvShowDetailViewModel: added TV \(tvId) to watchlist")
                 }
+                // Notify the view so AppState.watchlistedTmdbIds stays in sync.
+                onWatchlistChanged?(tvId, !wasOnWatchlist)
             } catch {
                 // Revert on failure
                 isOnWatchlist = wasOnWatchlist

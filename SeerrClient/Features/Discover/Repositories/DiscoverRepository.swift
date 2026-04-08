@@ -145,6 +145,50 @@ public final class DiscoverRepository: @unchecked Sendable {
         return try await apiClient.get(endpoints.discoverWatchlist, queryItems: queryItems)
     }
 
+    /// Fetches ALL pages of the user's watchlist and returns the set of effective TMDB IDs.
+    ///
+    /// Used by `AppState.loadWatchlistCache()` to warm the bookmark-state cache right
+    /// after authentication so detail screens can show the correct filled/unfilled icon
+    /// without making an extra network call per item.
+    ///
+    /// For Jellyfin users the watchlist items carry an internal `id` and a separate
+    /// `tmdbId`; `effectiveTmdbId` resolves to `tmdbId ?? id` to handle both cases.
+    ///
+    /// Example:
+    /// ```swift
+    /// let ids = try await repo.fetchAllWatchlistTmdbIds()
+    /// // ids is a Set<Int> of TMDB IDs, e.g. {550, 27205, 680}
+    /// ```
+    ///
+    /// - Returns: A `Set<Int>` of TMDB IDs present on the user's watchlist.
+    /// - Throws: `SeerrAPIError` on the first page fetch failure; subsequent pages
+    ///   failing stop iteration but the IDs collected so far are still returned.
+    public func fetchAllWatchlistTmdbIds() async throws -> Set<Int> {
+        var ids = Set<Int>()
+        var page = 1
+        // Fetch the first page to learn totalPages; if it throws, propagate.
+        let firstPage = try await fetchWatchlist(page: page)
+        for item in firstPage.results {
+            ids.insert(item.effectiveTmdbId)
+        }
+        let totalPages = firstPage.totalPages
+        // Fetch remaining pages. Stop early on any error to stay non-blocking.
+        page = 2
+        while page <= totalPages {
+            do {
+                let response = try await fetchWatchlist(page: page)
+                for item in response.results {
+                    ids.insert(item.effectiveTmdbId)
+                }
+            } catch {
+                AppLogger.warning("DiscoverRepository: fetchAllWatchlistTmdbIds stopped at page \(page) — \(error)")
+                break
+            }
+            page += 1
+        }
+        return ids
+    }
+
     public func fetchAllContent(for sliders: [DiscoverSlider]) async -> [SliderContent] {
         await withTaskGroup(of: (Int, SliderContent?).self) { group in
             for (index, slider) in sliders.enumerated() {

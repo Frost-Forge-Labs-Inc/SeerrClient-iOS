@@ -60,11 +60,26 @@ public final class MovieDetailViewModel {
     @ObservationIgnored
     private let movieId: Int
 
+    /// Called whenever the watchlist toggle succeeds.
+    /// The view supplies a closure that updates `AppState.watchlistedTmdbIds`.
+    @ObservationIgnored
+    var onWatchlistChanged: ((Int, Bool) -> Void)?
+
     // MARK: - Init
 
-    public init(movieId: Int, repository: MediaDetailRepository) {
+    /// Creates a `MovieDetailViewModel`.
+    ///
+    /// - Parameters:
+    ///   - movieId: The TMDB movie ID to load.
+    ///   - repository: The `MediaDetailRepository` used for all API calls.
+    ///   - initiallyOnWatchlist: Whether this movie is already on the user's watchlist,
+    ///     determined from `AppState.watchlistedTmdbIds` before the detail network call
+    ///     completes. Seeds `isOnWatchlist` immediately so the toolbar icon is correct
+    ///     before the detail response arrives. Defaults to `false`.
+    public init(movieId: Int, repository: MediaDetailRepository, initiallyOnWatchlist: Bool = false) {
         self.movieId = movieId
         self.repository = repository
+        self.isOnWatchlist = initiallyOnWatchlist
     }
 
     // MARK: - Loading
@@ -78,8 +93,9 @@ public final class MovieDetailViewModel {
             let details = try await repository.fetchMovieDetails(movieId: movieId)
             guard !Task.isCancelled else { return }
             loadState = .loaded(details)
-            // Seed watchlist state from the API response.
-            isOnWatchlist = details.mediaInfo?.watchlisted ?? false
+            // NOTE: details.mediaInfo?.watchlisted is always nil in Jellyseerr's
+            // GET /movie/{id} response, so we do NOT overwrite isOnWatchlist here.
+            // The correct value was seeded at init time from AppState.watchlistedTmdbIds.
 
             // Fetch recommendations and similar concurrently; failures are non-fatal.
             async let recs = (try? await repository.fetchMovieRecommendations(movieId: movieId)) ?? []
@@ -105,10 +121,10 @@ public final class MovieDetailViewModel {
     ///
     /// Uses optimistic UI — the state flips immediately, then the API call confirms.
     /// If the call fails the state is reverted and a log warning is emitted.
-    /// Requires the media to have a Seerr media record (`mediaInfo.id` must be non-nil).
+    /// Uses the TMDB movie ID directly; no Seerr media record is required.
     public func toggleWatchlist() {
-        guard let mediaId = movie?.mediaInfo?.id else {
-            AppLogger.warning("MovieDetailViewModel: toggleWatchlist called but mediaInfo.id is nil")
+        guard movie != nil else {
+            AppLogger.warning("MovieDetailViewModel: toggleWatchlist called before movie loaded")
             return
         }
         guard !isTogglingWatchlist else { return }
@@ -121,12 +137,14 @@ public final class MovieDetailViewModel {
             defer { isTogglingWatchlist = false }
             do {
                 if wasOnWatchlist {
-                    try await repository.removeFromWatchlist(mediaId: mediaId)
+                    try await repository.removeFromWatchlist(tmdbId: movieId, mediaType: "movie")
                     AppLogger.info("MovieDetailViewModel: removed movie \(movieId) from watchlist")
                 } else {
-                    try await repository.addToWatchlist(mediaId: mediaId)
+                    try await repository.addToWatchlist(tmdbId: movieId, mediaType: "movie")
                     AppLogger.info("MovieDetailViewModel: added movie \(movieId) to watchlist")
                 }
+                // Notify the view so AppState.watchlistedTmdbIds stays in sync.
+                onWatchlistChanged?(movieId, !wasOnWatchlist)
             } catch {
                 // Revert on failure
                 isOnWatchlist = wasOnWatchlist
