@@ -69,11 +69,13 @@ public final class RequestRepository: Sendable {
         take: Int
     ) async throws -> PaginatedResponse<MediaRequest> {
         let path = apiClient.endpoints.request
+        // Note: "sort=added" is omitted — some Seerr versions return 400 for
+        // the "declined" filter when a sort parameter is supplied. The server
+        // default (most-recent-first) is the desired behaviour anyway.
         let queryItems = [
             URLQueryItem(name: "take", value: "\(take)"),
             URLQueryItem(name: "skip", value: "\(skip)"),
-            URLQueryItem(name: "filter", value: filter.rawValue),
-            URLQueryItem(name: "sort", value: "added")
+            URLQueryItem(name: "filter", value: filter.rawValue)
         ]
 
         return try await apiClient.get(path, queryItems: queryItems)

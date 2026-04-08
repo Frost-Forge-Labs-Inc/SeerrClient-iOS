@@ -41,34 +41,24 @@ struct ProfileView: View {
         .onDisappear {
             viewModel?.cancelAll()
         }
-        .confirmationDialog(
-            "Sign Out",
-            isPresented: signOutDialogBinding,
-            titleVisibility: .visible
-        ) {
+        .alert("Sign Out", isPresented: signOutDialogBinding) {
             if let viewModel {
                 Button("Sign Out", role: .destructive) {
                     viewModel.signOut()
                 }
                 .disabled(viewModel.isSigningOut || viewModel.isDisconnecting)
             }
-
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("You will need to sign in again to continue.")
         }
-        .confirmationDialog(
-            "Disconnect Server",
-            isPresented: disconnectDialogBinding,
-            titleVisibility: .visible
-        ) {
+        .alert("Disconnect Server", isPresented: disconnectDialogBinding) {
             if let viewModel {
                 Button("Disconnect", role: .destructive) {
                     viewModel.disconnectServer()
                 }
                 .disabled(viewModel.isSigningOut || viewModel.isDisconnecting)
             }
-
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("This removes the current server selection and returns to setup.")
