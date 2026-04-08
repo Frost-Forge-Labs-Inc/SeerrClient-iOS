@@ -95,6 +95,18 @@ public final class MediaDetailRepository: Sendable {
         return try await apiClient.get(path)
     }
 
+    // MARK: - Collection
+
+    /// Fetches full details for a TMDB collection by collection ID.
+    ///
+    /// - Parameter collectionId: The TMDB collection identifier (from `MovieCollection.id`).
+    /// - Returns: A `Collection` with name, overview, and member movie list.
+    /// - Throws: `SeerrAPIError` on network or decoding failure.
+    public func fetchCollection(collectionId: Int) async throws -> Collection {
+        let path = apiClient.endpoints.collection(id: collectionId)
+        return try await apiClient.get(path)
+    }
+
     // MARK: - Watchlist
 
     /// Adds a media item to the current user's watchlist.

@@ -23,6 +23,16 @@ public struct TvNavDestination: Hashable {
     public let title: String
 }
 
+// MARK: - Collection Navigation
+
+/// Navigation destination for a movie collection detail screen.
+public struct CollectionNavDestination: Hashable {
+    /// The TMDB collection identifier.
+    public let id: Int
+    /// The collection name (displayed in the navigation bar before details load).
+    public let name: String
+}
+
 // MARK: - Navigation Button Style
 
 /// Button style for NavigationLink-wrapped media cards.

@@ -36,6 +36,9 @@ struct MovieDetailView: View {
         }
         .navigationTitle(movieTitle)
         .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(for: CollectionNavDestination.self) { dest in
+            CollectionDetailView(collectionId: dest.id, collectionName: dest.name)
+        }
         .toolbar {
             if let vm = viewModel, vm.movie?.mediaInfo?.id != nil {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -142,6 +145,34 @@ struct MovieDetailView: View {
                 // Similar Movies
                 if !vm.similar.isEmpty {
                     MediaHorizontalRowView(title: "Similar Movies", items: vm.similar)
+                }
+
+                // Collection entry point
+                if let collection = movie.collection,
+                   let collectionId = collection.id,
+                   let collectionName = collection.name {
+                    NavigationLink(value: CollectionNavDestination(id: collectionId, name: collectionName)) {
+                        HStack {
+                            Image(systemName: "rectangle.stack.fill")
+                                .foregroundStyle(.tint)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Part of a Collection")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                Text(collectionName)
+                                    .font(.subheadline.weight(.semibold))
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.tertiary)
+                        }
+                        .padding()
+                        .background(Color(.secondarySystemGroupedBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.horizontal)
                 }
 
                 // Request Button

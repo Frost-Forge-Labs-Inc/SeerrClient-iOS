@@ -81,6 +81,9 @@ struct ContentView: View {
                     .navigationDestination(for: TvNavDestination.self) { dest in
                         TvShowDetailView(tvId: dest.id, showTitle: dest.title)
                     }
+                    .navigationDestination(for: CollectionNavDestination.self) { dest in
+                        CollectionDetailView(collectionId: dest.id, collectionName: dest.name)
+                    }
                     .navigationDestination(for: RequestNavDestination.self) { dest in
                         RequestDetailView(requestID: dest.requestID)
                     }
@@ -94,6 +97,9 @@ struct ContentView: View {
                     }
                     .navigationDestination(for: TvNavDestination.self) { dest in
                         TvShowDetailView(tvId: dest.id, showTitle: dest.title)
+                    }
+                    .navigationDestination(for: CollectionNavDestination.self) { dest in
+                        CollectionDetailView(collectionId: dest.id, collectionName: dest.name)
                     }
                     .navigationDestination(for: RequestNavDestination.self) { dest in
                         RequestDetailView(requestID: dest.requestID)
@@ -109,6 +115,9 @@ struct ContentView: View {
                     .navigationDestination(for: TvNavDestination.self) { dest in
                         TvShowDetailView(tvId: dest.id, showTitle: dest.title)
                     }
+                    .navigationDestination(for: CollectionNavDestination.self) { dest in
+                        CollectionDetailView(collectionId: dest.id, collectionName: dest.name)
+                    }
             }
             .tabItem { Label("Requests", systemImage: "tray.full") }
 
@@ -119,6 +128,9 @@ struct ContentView: View {
                     }
                     .navigationDestination(for: TvNavDestination.self) { dest in
                         TvShowDetailView(tvId: dest.id, showTitle: dest.title)
+                    }
+                    .navigationDestination(for: CollectionNavDestination.self) { dest in
+                        CollectionDetailView(collectionId: dest.id, collectionName: dest.name)
                     }
             }
             .tabItem { Label("Watchlist", systemImage: "bookmark") }
