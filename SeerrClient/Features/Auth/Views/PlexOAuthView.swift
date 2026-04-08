@@ -5,14 +5,14 @@
 //
 // Flow:
 //  1. POST https://plex.tv/api/v2/pins → receive pin { id, code }
-//  2. Open https://app.plex.tv/auth#?clientID=...&code=... in ASWebAuthenticationSession
+//  2. Open https://app.plex.tv/auth#?clientID=...&code=... in Safari via UIApplication.shared.open()
 //  3. Poll GET https://plex.tv/api/v2/pins/{id} at 2-second intervals until
 //     the `authToken` field is non-nil (or the user cancels)
 //  4. Call the `onAuthenticated(authToken:)` callback so the caller can POST
 //     /auth/plex on the Seerr server
 
 import SwiftUI
-import AuthenticationServices
+import UIKit
 
 // MARK: - Plex OAuth Constants
 
@@ -72,7 +72,6 @@ private final class PlexOAuthViewModel {
 
     private var pinID: Int?
     private var pollTask: Task<Void, Never>?
-    private var authSession: ASWebAuthenticationSession?
 
     // MARK: - Start Flow
 
@@ -146,28 +145,22 @@ private final class PlexOAuthViewModel {
         guard var components = URLComponents(string: PlexOAuth.plexAuthWebApp) else { return }
 
         // Plex auth URL uses a fragment for params (not query string).
+        // Use percentEncodedFragment (raw property) so pre-encoded characters like
+        // %5B and %5D are not double-encoded to %255B/%255D by the decoded setter.
         let params = [
             "clientID=\(PlexOAuth.clientID)",
             "code=\(code)",
             "context%5Bdevice%5D%5Bproduct%5D=\(PlexOAuth.product.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? PlexOAuth.product)"
         ].joined(separator: "&")
-        components.fragment = params
+        components.percentEncodedFragment = "?" + params
 
         guard let authURL = components.url else { return }
 
-        // We use ASWebAuthenticationSession in non-ephemeral mode so Plex can
-        // use existing browser cookies if the user is already signed in.
-        authSession = ASWebAuthenticationSession(
-            url: authURL,
-            callbackURLScheme: nil  // Plex does not redirect back — we poll instead.
-        ) { [weak self] _, _ in
-            // The session will end when the user closes the browser or navigates away.
-            // We don't rely on the redirect — polling handles completion.
-            self?.authSession = nil
-        }
-
-        authSession?.prefersEphemeralWebBrowserSession = false
-        authSession?.start()
+        // Open in Safari via UIApplication.shared.open() — this is the standard
+        // approach for Plex OAuth. The app does not expect a redirect callback;
+        // the polling loop handles completion independently. Using the system browser
+        // also lets Plex reuse existing browser cookies if the user is already signed in.
+        UIApplication.shared.open(authURL)
     }
 
     // MARK: - Step 3: Poll for Token
@@ -193,8 +186,6 @@ private final class PlexOAuthViewModel {
 
             if let token = pin.authToken, !token.isEmpty {
                 // Success — user has authorised the app.
-                authSession?.cancel()
-                authSession = nil
                 state = .success
                 onSuccess(token)
                 return
@@ -285,7 +276,7 @@ struct PlexOAuthView: View {
                     case .awaitingAuth:
                         statusContent(
                             icon: "safari",
-                            message: "Complete sign-in in the browser window that opened."
+                            message: "Complete sign-in in Safari, then return to this app."
                         )
 
                     case .polling:
