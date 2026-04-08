@@ -84,6 +84,13 @@ public final class TvShowDetailViewModel {
 
     public var showRequestSheet: Bool = false
 
+    /// Whether this TV show is on the user's watchlist.
+    /// Populated from `mediaInfo.watchlisted` on load; then updated optimistically on toggle.
+    public private(set) var isOnWatchlist: Bool = false
+
+    /// `true` while a watchlist add/remove request is in flight.
+    public private(set) var isTogglingWatchlist: Bool = false
+
     /// Convenience accessor for loaded TV details.
     public var tvShow: TvDetails? {
         if case .loaded(let details) = detailState { return details }
@@ -123,6 +130,8 @@ public final class TvShowDetailViewModel {
             let details = try await repository.fetchTvDetails(tvId: tvId)
             guard !Task.isCancelled else { return }
             detailState = .loaded(details)
+            // Seed watchlist state from the API response.
+            isOnWatchlist = details.mediaInfo?.watchlisted ?? false
 
             // Auto-select the first non-specials season, or season 1.
             // Write to _selectedSeasonNumber directly to avoid triggering didSet Task.
@@ -178,6 +187,42 @@ public final class TvShowDetailViewModel {
     public func retrySeason() async {
         seasonState = .idle
         await loadSeasonDetails()
+    }
+
+    // MARK: - Watchlist
+
+    /// Toggles watchlist membership for this TV show.
+    ///
+    /// Uses optimistic UI — the state flips immediately, then the API call confirms.
+    /// If the call fails the state is reverted and a log warning is emitted.
+    /// Requires the media to have a Seerr media record (`mediaInfo.id` must be non-nil).
+    public func toggleWatchlist() {
+        guard let mediaId = tvShow?.mediaInfo?.id else {
+            AppLogger.warning("TvShowDetailViewModel: toggleWatchlist called but mediaInfo.id is nil")
+            return
+        }
+        guard !isTogglingWatchlist else { return }
+
+        let wasOnWatchlist = isOnWatchlist
+        isOnWatchlist = !wasOnWatchlist      // Optimistic update
+        isTogglingWatchlist = true
+
+        Task {
+            defer { isTogglingWatchlist = false }
+            do {
+                if wasOnWatchlist {
+                    try await repository.removeFromWatchlist(mediaId: mediaId)
+                    AppLogger.info("TvShowDetailViewModel: removed TV \(tvId) from watchlist")
+                } else {
+                    try await repository.addToWatchlist(mediaId: mediaId)
+                    AppLogger.info("TvShowDetailViewModel: added TV \(tvId) to watchlist")
+                }
+            } catch {
+                // Revert on failure
+                isOnWatchlist = wasOnWatchlist
+                AppLogger.warning("TvShowDetailViewModel: watchlist toggle failed for TV \(tvId) — \(error)")
+            }
+        }
     }
 
     // MARK: - Private

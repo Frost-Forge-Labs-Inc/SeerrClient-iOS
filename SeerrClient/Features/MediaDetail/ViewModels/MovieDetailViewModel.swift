@@ -40,6 +40,13 @@ public final class MovieDetailViewModel {
     public private(set) var recommendations: [DiscoverMediaItem] = []
     public private(set) var similar: [DiscoverMediaItem] = []
 
+    /// Whether this movie is on the user's watchlist.
+    /// Populated from `mediaInfo.watchlisted` on load; then updated optimistically on toggle.
+    public private(set) var isOnWatchlist: Bool = false
+
+    /// `true` while a watchlist add/remove request is in flight.
+    public private(set) var isTogglingWatchlist: Bool = false
+
     /// Convenience accessor for loaded movie details.
     public var movie: MovieDetails? {
         if case .loaded(let details) = loadState { return details }
@@ -71,6 +78,8 @@ public final class MovieDetailViewModel {
             let details = try await repository.fetchMovieDetails(movieId: movieId)
             guard !Task.isCancelled else { return }
             loadState = .loaded(details)
+            // Seed watchlist state from the API response.
+            isOnWatchlist = details.mediaInfo?.watchlisted ?? false
 
             // Fetch recommendations and similar concurrently; failures are non-fatal.
             async let recs = (try? await repository.fetchMovieRecommendations(movieId: movieId)) ?? []
@@ -90,6 +99,40 @@ public final class MovieDetailViewModel {
     public func retry() async {
         loadState = .idle
         await loadDetails()
+    }
+
+    /// Toggles watchlist membership for this movie.
+    ///
+    /// Uses optimistic UI — the state flips immediately, then the API call confirms.
+    /// If the call fails the state is reverted and a log warning is emitted.
+    /// Requires the media to have a Seerr media record (`mediaInfo.id` must be non-nil).
+    public func toggleWatchlist() {
+        guard let mediaId = movie?.mediaInfo?.id else {
+            AppLogger.warning("MovieDetailViewModel: toggleWatchlist called but mediaInfo.id is nil")
+            return
+        }
+        guard !isTogglingWatchlist else { return }
+
+        let wasOnWatchlist = isOnWatchlist
+        isOnWatchlist = !wasOnWatchlist      // Optimistic update
+        isTogglingWatchlist = true
+
+        Task {
+            defer { isTogglingWatchlist = false }
+            do {
+                if wasOnWatchlist {
+                    try await repository.removeFromWatchlist(mediaId: mediaId)
+                    AppLogger.info("MovieDetailViewModel: removed movie \(movieId) from watchlist")
+                } else {
+                    try await repository.addToWatchlist(mediaId: mediaId)
+                    AppLogger.info("MovieDetailViewModel: added movie \(movieId) to watchlist")
+                }
+            } catch {
+                // Revert on failure
+                isOnWatchlist = wasOnWatchlist
+                AppLogger.warning("MovieDetailViewModel: watchlist toggle failed for movie \(movieId) — \(error)")
+            }
+        }
     }
 
     // MARK: - Private

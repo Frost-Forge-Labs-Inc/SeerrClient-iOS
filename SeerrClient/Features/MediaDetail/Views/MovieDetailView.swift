@@ -36,6 +36,24 @@ struct MovieDetailView: View {
         }
         .navigationTitle(movieTitle)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if let vm = viewModel, vm.movie?.mediaInfo?.id != nil {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        vm.toggleWatchlist()
+                    } label: {
+                        if vm.isTogglingWatchlist {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                        } else {
+                            Image(systemName: vm.isOnWatchlist ? "bookmark.fill" : "bookmark")
+                                .symbolRenderingMode(.hierarchical)
+                        }
+                    }
+                    .accessibilityLabel(vm.isOnWatchlist ? "Remove from Watchlist" : "Add to Watchlist")
+                }
+            }
+        }
         .task {
             if viewModel == nil {
                 guard let client = appState.apiClient else { return }

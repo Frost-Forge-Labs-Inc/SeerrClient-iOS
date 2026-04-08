@@ -193,7 +193,8 @@ private struct MediaCardButtonStyle: ButtonStyle {
             seasons: nil,
             requests: nil,
             createdAt: nil,
-            updatedAt: nil
+            updatedAt: nil,
+            watchlisted: false
         )
     )
 

@@ -94,4 +94,34 @@ public final class MediaDetailRepository: Sendable {
         let path = apiClient.endpoints.season(tvId: tvId, season: seasonNumber)
         return try await apiClient.get(path)
     }
+
+    // MARK: - Watchlist
+
+    /// Adds a media item to the current user's watchlist.
+    ///
+    /// Calls `POST /api/v1/media/{id}/watchlist`. The `mediaId` must be the Seerr
+    /// internal media record ID (from `MediaInfo.id`), NOT the TMDB ID.
+    ///
+    /// - Parameter mediaId: The Seerr internal media record identifier.
+    /// - Throws: `SeerrAPIError` on network or server failure.
+    public func addToWatchlist(mediaId: Int) async throws {
+        let path = apiClient.endpoints.mediaWatchlist(id: mediaId)
+        let _: WatchlistResponse = try await apiClient.post(path)
+    }
+
+    /// Removes a media item from the current user's watchlist.
+    ///
+    /// Calls `DELETE /api/v1/media/{id}/watchlist`. The `mediaId` must be the Seerr
+    /// internal media record ID (from `MediaInfo.id`), NOT the TMDB ID.
+    ///
+    /// - Parameter mediaId: The Seerr internal media record identifier.
+    /// - Throws: `SeerrAPIError` on network or server failure.
+    public func removeFromWatchlist(mediaId: Int) async throws {
+        try await apiClient.deleteVoid(apiClient.endpoints.mediaWatchlist(id: mediaId))
+    }
 }
+
+// MARK: - WatchlistResponse
+
+/// Minimal response type for the watchlist POST endpoint.
+private struct WatchlistResponse: Decodable {}

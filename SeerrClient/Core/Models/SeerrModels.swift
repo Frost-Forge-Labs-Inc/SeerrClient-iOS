@@ -825,6 +825,9 @@ public struct MediaInfo: Codable, Sendable, Hashable {
     public let createdAt: String?
     /// ISO 8601 timestamp of the last update (read-only).
     public let updatedAt: String?
+    /// Whether the current user has this item on their watchlist.
+    /// Present on media detail responses in Seerr 2.x and later.
+    public let watchlisted: Bool?
 }
 
 /// Per-season availability status within MediaInfo.

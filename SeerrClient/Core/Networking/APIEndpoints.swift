@@ -148,6 +148,11 @@ public struct APIEndpoints: Sendable {
     /// - Parameter id: The Seerr media record identifier.
     public func media(id: Int) -> String { "\(base)/media/\(id)" }
 
+    /// `POST /api/v1/media/{id}/watchlist` — Add a media item to the user's watchlist.
+    ///
+    /// - Parameter id: The Seerr internal media record identifier.
+    public func mediaWatchlist(id: Int) -> String { "\(base)/media/\(id)/watchlist" }
+
     // MARK: - Movies
 
     /// `GET /api/v1/movie/{movieId}` — Movie details (from TMDB via Seerr proxy).
