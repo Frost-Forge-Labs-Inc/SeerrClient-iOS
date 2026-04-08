@@ -68,6 +68,11 @@ public enum SeerrAPIError: Error, LocalizedError, Sendable {
     /// A request was cancelled (e.g. task was cancelled via Swift Concurrency).
     case cancelled
 
+    /// The slider was intentionally skipped — it requires configuration data
+    /// (e.g. `keywordId`) that is absent. This is not a failure; the slider
+    /// is simply omitted from the discover page.
+    case sliderSkipped(reason: String)
+
     // MARK: - LocalizedError
 
     /// A user-facing message suitable for display in an alert or inline error view.
@@ -105,6 +110,8 @@ public enum SeerrAPIError: Error, LocalizedError, Sendable {
             return "A secure connection could not be established. The server may use a self-signed certificate."
         case .cancelled:
             return "The request was cancelled."
+        case .sliderSkipped(let reason):
+            return "Slider skipped: \(reason)"
         }
     }
 

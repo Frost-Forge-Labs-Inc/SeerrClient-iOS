@@ -96,8 +96,11 @@ public final class DiscoverRepository: @unchecked Sendable {
         // (e.g. a keyword slider with no keywordId configured) — throw so
         // fetchAllContent silently skips it without hitting the server.
         guard let path = contentPath(for: sliderType, slider: slider, endpoints: endpoints) else {
-            AppLogger.info("DiscoverRepository: skipping slider '\(slider.title ?? "unknown")' (type \(slider.type)) — missing required configuration (e.g. keywordId)")
-            throw SeerrAPIError.serverError(statusCode: 0, message: "Slider skipped: missing required data")
+            let label = slider.title.flatMap { $0.isEmpty ? nil : $0 }
+                ?? sliderType?.defaultTitle
+                ?? "type \(slider.type)"
+            AppLogger.info("DiscoverRepository: skipping slider '\(label)' (type \(slider.type)) — missing required configuration (e.g. keywordId)")
+            throw SeerrAPIError.sliderSkipped(reason: "missing keywordId for slider '\(label)'")
         }
 
         let queryItems = [URLQueryItem(name: "page", value: "\(page)")]
@@ -149,8 +152,15 @@ public final class DiscoverRepository: @unchecked Sendable {
                     do {
                         let content = try await self.fetchContent(for: slider)
                         return (index, content)
+                    } catch SeerrAPIError.sliderSkipped {
+                        // Already logged at info level inside fetchContent — no second log needed.
+                        return (index, nil)
                     } catch {
-                        AppLogger.warning("DiscoverRepository: failed to load slider '\(slider.title ?? "unknown")': \(error)")
+                        let sliderType = DiscoverSliderType(rawValue: slider.type)
+                        let label = slider.title.flatMap { $0.isEmpty ? nil : $0 }
+                            ?? sliderType?.defaultTitle
+                            ?? "type \(slider.type)"
+                        AppLogger.warning("DiscoverRepository: failed to load slider '\(label)' (type \(slider.type)): \(error)")
                         return (index, nil)
                     }
                 }

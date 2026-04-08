@@ -260,6 +260,8 @@ public final class ProfileViewModel {
             return message ?? "A conflict occurred. Please try again."
         case .cancelled:
             return "Request cancelled."
+        case .sliderSkipped:
+            return "Something went wrong. Please try again."
         }
     }
 }
