@@ -211,6 +211,7 @@ public final class ServerSetupViewModel {
             apiVersion: .v1,
             authMethod: .none,
             availableAuthMethods: result.availableAuthMethods,
+            capabilities: result.capabilities,
             isDefault: serverStore.servers.isEmpty,
             lastConnected: nil
         )

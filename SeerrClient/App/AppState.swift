@@ -39,9 +39,18 @@ final class AppState {
     /// A user-facing error message from the most recent auth attempt. `nil` when no error.
     var authError: String?
 
-    /// The auth methods available on the active server, as detected during server setup.
-    /// Used by `LoginView` to show only the relevant login tabs.
-    var availableAuthMethods: [AuthMethod] = []
+    /// Cached runtime compatibility snapshot for the active server.
+    ///
+    /// This becomes the single source of truth for login gating and
+    /// backend-specific UI enable/disable decisions at runtime.
+    var activeServerCapabilities: ServerCapabilities?
+
+    /// The auth methods available on the active server.
+    var availableAuthMethods: [AuthMethod] {
+        activeServerCapabilities?.availableAuthMethods
+            ?? activeServer?.resolvedAuthMethods
+            ?? [.local]
+    }
 
     // MARK: - Watchlist Cache
 
@@ -53,6 +62,10 @@ final class AppState {
     /// this cache so the bookmark icon is correct immediately on open, without
     /// requiring a separate network call.
     var watchlistedTmdbIds: Set<Int> = []
+
+    /// Set after a local watchlist toggle succeeds so the Watchlist tab knows it
+    /// should perform a targeted re-sync the next time it becomes visible.
+    var watchlistNeedsRefresh: Bool = false
 
     // MARK: - Navigation Flags
 
@@ -90,15 +103,31 @@ final class AppState {
     /// Call this after the user picks or adds a server from the server list.
     /// - Parameters:
     ///   - server: The `ServerConfiguration` to make active.
-    ///   - authMethods: The auth methods available on this server, from detection.
-    ///     Defaults to `[.local]` when not provided (e.g. reconnecting a saved server).
-    func selectServer(_ server: ServerConfiguration, authMethods: [AuthMethod] = [.local]) {
-        activeServer = server
+    ///   - capabilities: Optional detected capabilities. If omitted, a
+    ///     best-effort snapshot is resolved from the saved server entry.
+    func selectServer(_ server: ServerConfiguration, capabilities: ServerCapabilities? = nil) {
+        let resolvedCapabilities = capabilities ?? server.resolvedCapabilities
+
+        var selectedServer = server
+        if selectedServer.capabilities != resolvedCapabilities
+            || selectedServer.availableAuthMethods != resolvedCapabilities.availableAuthMethods {
+            selectedServer.capabilities = resolvedCapabilities
+            selectedServer.availableAuthMethods = resolvedCapabilities.availableAuthMethods
+            if serverStore.servers.contains(where: { $0.id == selectedServer.id }) {
+                serverStore.update(selectedServer)
+            }
+        }
+
+        activeServer = selectedServer
+        activeServerCapabilities = resolvedCapabilities
         currentUser = nil
         authError = nil
-        availableAuthMethods = authMethods.isEmpty ? [.local] : authMethods
-        apiClient = SeerrAPIClient(server: server, serverStore: serverStore)
-        AppLogger.info("AppState: active server set to '\(server.displayName)' (\(server.baseURL))")
+        watchlistedTmdbIds = []
+        watchlistNeedsRefresh = false
+        apiClient = SeerrAPIClient(server: selectedServer, serverStore: serverStore)
+        AppLogger.info(
+            "AppState: active server set to '\(selectedServer.displayName)' (\(selectedServer.baseURL))"
+        )
     }
 
     /// Stores the authenticated user and clears any auth error.
@@ -123,15 +152,35 @@ final class AppState {
     /// Failures are non-fatal: the cache simply stays empty and the bookmark icon
     /// starts as unfilled until the user explicitly toggles it.
     func loadWatchlistCache() async {
+        guard activeServerCapabilities?.supportsWatchlistRead ?? false else {
+            watchlistedTmdbIds = []
+            watchlistNeedsRefresh = false
+            AppLogger.info("AppState: skipping watchlist cache — backend does not expose watchlist read")
+            return
+        }
         guard let client = apiClient else { return }
         let repo = DiscoverRepository(apiClient: client)
         do {
             let ids = try await repo.fetchAllWatchlistTmdbIds()
             watchlistedTmdbIds = ids
+            watchlistNeedsRefresh = false
             AppLogger.info("AppState: watchlist cache loaded — \(ids.count) item(s)")
         } catch {
             AppLogger.warning("AppState: failed to load watchlist cache — \(error)")
         }
+    }
+
+    /// Records a successful watchlist mutation from a detail screen.
+    ///
+    /// This keeps the bookmark cache accurate immediately and signals the
+    /// Watchlist tab to reconcile/refresh its paginated content.
+    func recordWatchlistMembershipChange(tmdbId: Int, isOnWatchlist: Bool) {
+        if isOnWatchlist {
+            watchlistedTmdbIds.insert(tmdbId)
+        } else {
+            watchlistedTmdbIds.remove(tmdbId)
+        }
+        watchlistNeedsRefresh = true
     }
 
     /// Clears authentication state, keeping the server selection intact.
@@ -142,6 +191,7 @@ final class AppState {
         authError = nil
         isAuthenticating = false
         watchlistedTmdbIds = []
+        watchlistNeedsRefresh = false
         AppLogger.info("AppState: signed out from '\(activeServer?.displayName ?? "unknown")'")
     }
 
@@ -149,12 +199,13 @@ final class AppState {
     /// to the server-setup onboarding flow.
     func disconnectFromServer() {
         activeServer = nil
+        activeServerCapabilities = nil
         currentUser = nil
         apiClient = nil
         authError = nil
-        availableAuthMethods = []
         isAuthenticating = false
         watchlistedTmdbIds = []
+        watchlistNeedsRefresh = false
         AppLogger.info("AppState: disconnected from server")
     }
 

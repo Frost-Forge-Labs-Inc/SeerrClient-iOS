@@ -265,3 +265,55 @@ public final class ProfileViewModel {
         }
     }
 }
+
+#if DEBUG
+
+extension ProfileViewModel {
+    static func makeAboutNavigationUITestModel(
+        apiClient: SeerrAPIClient,
+        appState: AppState,
+        server: ServerConfiguration
+    ) -> ProfileViewModel {
+        let viewModel = ProfileViewModel(
+            apiClient: apiClient,
+            appState: appState,
+            server: server
+        )
+
+        viewModel.user = appState.currentUser ?? User(
+            id: 1,
+            email: "uitest@example.com",
+            displayName: "UI Tester",
+            username: "uitester",
+            plexToken: nil,
+            plexUsername: nil,
+            userType: 2,
+            permissions: 2,
+            avatar: nil,
+            createdAt: "2026-04-08T00:00:00.000Z",
+            updatedAt: "2026-04-08T00:00:00.000Z",
+            requestCount: 0
+        )
+        viewModel.requestCounts = RequestCounts(
+            total: 0,
+            movie: 0,
+            tv: 0,
+            pending: 0,
+            approved: 0,
+            declined: 0,
+            processing: 0,
+            available: 0
+        )
+        viewModel.serverStatus = ServerStatus(
+            version: "2.0.0-uitest",
+            commitTag: "uitest",
+            updateAvailable: false,
+            commitsBehind: 0,
+            restartRequired: false
+        )
+        viewModel.loadState = .loaded
+        return viewModel
+    }
+}
+
+#endif

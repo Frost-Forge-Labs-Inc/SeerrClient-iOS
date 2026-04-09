@@ -17,9 +17,19 @@ final class MockWatchlistFetcher: WatchlistFetching, @unchecked Sendable {
     /// Set this to make `fetchWatchlist` throw.
     var stubbedError: Error?
 
+    /// Artificial delay for concurrency tests.
+    var delayNanoseconds: UInt64 = 0
+
+    /// Number of repository fetches observed by the view model.
+    private(set) var fetchWatchlistCallCount = 0
+
     // MARK: - WatchlistFetching
 
     func fetchWatchlist(page: Int) async throws -> DiscoverResponse<DiscoverMediaItem> {
+        fetchWatchlistCallCount += 1
+        if delayNanoseconds > 0 {
+            try? await Task.sleep(nanoseconds: delayNanoseconds)
+        }
         if let error = stubbedError { throw error }
         return stubbedResponse ?? DiscoverResponse(
             page: 1,

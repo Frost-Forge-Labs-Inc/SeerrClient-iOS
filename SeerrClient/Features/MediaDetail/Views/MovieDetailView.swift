@@ -37,7 +37,7 @@ struct MovieDetailView: View {
         .navigationTitle(movieTitle)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            if let vm = viewModel, vm.movie != nil {
+            if let vm = viewModel, vm.movie != nil, vm.allowsWatchlistMutations {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         vm.toggleWatchlist()
@@ -51,6 +51,7 @@ struct MovieDetailView: View {
                         }
                     }
                     .accessibilityLabel(vm.isOnWatchlist ? "Remove from Watchlist" : "Add to Watchlist")
+                    .accessibilityIdentifier("movieDetail.watchlistButton")
                 }
             }
         }
@@ -61,15 +62,15 @@ struct MovieDetailView: View {
                 let vm = MovieDetailViewModel(
                     movieId: movieId,
                     repository: repo,
-                    initiallyOnWatchlist: appState.watchlistedTmdbIds.contains(movieId)
+                    initiallyOnWatchlist: appState.watchlistedTmdbIds.contains(movieId),
+                    allowsWatchlistMutations: appState.activeServerCapabilities?.supportsWatchlistWrite ?? false
                 )
                 // Keep AppState.watchlistedTmdbIds in sync when the user taps the bookmark.
                 vm.onWatchlistChanged = { [weak appState] tmdbId, isNowOnWatchlist in
-                    if isNowOnWatchlist {
-                        appState?.watchlistedTmdbIds.insert(tmdbId)
-                    } else {
-                        appState?.watchlistedTmdbIds.remove(tmdbId)
-                    }
+                    appState?.recordWatchlistMembershipChange(
+                        tmdbId: tmdbId,
+                        isOnWatchlist: isNowOnWatchlist
+                    )
                 }
                 viewModel = vm
             }

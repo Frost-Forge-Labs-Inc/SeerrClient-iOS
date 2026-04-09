@@ -91,6 +91,9 @@ public final class TvShowDetailViewModel {
     /// `true` while a watchlist add/remove request is in flight.
     public private(set) var isTogglingWatchlist: Bool = false
 
+    /// Whether the active backend supports watchlist mutation endpoints.
+    public let allowsWatchlistMutations: Bool
+
     /// Convenience accessor for loaded TV details.
     public var tvShow: TvDetails? {
         if case .loaded(let details) = detailState { return details }
@@ -128,10 +131,16 @@ public final class TvShowDetailViewModel {
     ///     determined from `AppState.watchlistedTmdbIds` before the detail network call
     ///     completes. Seeds `isOnWatchlist` immediately so the toolbar icon is correct
     ///     before the detail response arrives. Defaults to `false`.
-    public init(tvId: Int, repository: MediaDetailRepository, initiallyOnWatchlist: Bool = false) {
+    public init(
+        tvId: Int,
+        repository: MediaDetailRepository,
+        initiallyOnWatchlist: Bool = false,
+        allowsWatchlistMutations: Bool = true
+    ) {
         self.tvId = tvId
         self.repository = repository
         self.isOnWatchlist = initiallyOnWatchlist
+        self.allowsWatchlistMutations = allowsWatchlistMutations
     }
 
     // MARK: - Show Details
@@ -213,6 +222,10 @@ public final class TvShowDetailViewModel {
     /// If the call fails the state is reverted and a log warning is emitted.
     /// Uses the TMDB TV show ID directly; no Seerr media record is required.
     public func toggleWatchlist() {
+        guard allowsWatchlistMutations else {
+            AppLogger.info("TvShowDetailViewModel: watchlist mutation skipped — unsupported by active backend")
+            return
+        }
         guard tvShow != nil else {
             AppLogger.warning("TvShowDetailViewModel: toggleWatchlist called before show loaded")
             return
@@ -227,7 +240,7 @@ public final class TvShowDetailViewModel {
             defer { isTogglingWatchlist = false }
             do {
                 if wasOnWatchlist {
-                    try await repository.removeFromWatchlist(tmdbId: tvId, mediaType: "tv")
+                    try await repository.removeFromWatchlist(tmdbId: tvId)
                     AppLogger.info("TvShowDetailViewModel: removed TV \(tvId) from watchlist")
                 } else {
                     try await repository.addToWatchlist(tmdbId: tvId, mediaType: "tv")

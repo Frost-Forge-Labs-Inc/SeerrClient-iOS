@@ -1,41 +1,13 @@
 // AboutSection.swift
 // SeerrClient
 //
-// Full About section for the Profile screen. Displays app info, features,
-// documentation links, acknowledgements, and support/funding options.
-//
-// Funding research summary:
-//   - GitHub Sponsors: zero-fee for first year, simple link, no Apple restrictions
-//   - Ko-fi / Buy Me a Coffee: link-out to web, no App Store rules apply
-//   - In-App Purchase Tip Jar: requires StoreKit 2, Apple takes 30%; most
-//     compliant path for in-app monetisation. Placeholder added here; wire up
-//     with a StoreKit product ID when the App Store listing is created.
-//   - Stripe / PayPal: web-only (Apple forbids in-app links to external payment
-//     flows that bypass IAP). Directing users to a Safari page is allowed.
-//
-// Decision: expose GitHub Sponsors + Ko-fi as external links now.
-// Add StoreKit tip jar in a future session once products are created in
-// App Store Connect.
+// Inline About/support content for the Profile screen.
 
 import SwiftUI
 
 // MARK: - AboutSection
 
 struct AboutSection: View {
-
-    // MARK: - URLs
-
-    private enum Links {
-        static let githubRepo    = URL(string: "https://github.com/Frost-Forge-Labs-Inc/SeerrClient-iOS")
-        static let githubIssues  = URL(string: "https://github.com/Frost-Forge-Labs-Inc/SeerrClient-iOS/issues/new/choose")
-        static let githubSponsors = URL(string: "https://github.com/sponsors/Frost-Forge-Labs-Inc")
-        static let kofi          = URL(string: "https://ko-fi.com/frostforgelabs")
-        static let seerrDocs     = URL(string: "https://docs.seerr.dev/")
-        static let seerrGithub   = URL(string: "https://github.com/seerr-team/seerr")
-        static let privacyPolicy = URL(string: "https://github.com/Frost-Forge-Labs-Inc/SeerrClient-iOS/blob/main/PRIVACY.md")
-    }
-
-    // MARK: - Body
 
     var body: some View {
         Group {
@@ -47,50 +19,47 @@ struct AboutSection: View {
         }
     }
 
-    // MARK: - App Info
-
     private var appInfoSection: some View {
         Section("About") {
-            HStack {
-                Text("Version")
-                Spacer()
-                Text(versionString)
-                    .foregroundStyle(.secondary)
-            }
+            infoRow(title: "Version", value: AppMetadata.versionString)
+            infoRow(title: "Build", value: AppMetadata.buildString)
 
-            HStack {
-                Text("Build")
-                Spacer()
-                Text(buildString)
-                    .foregroundStyle(.secondary)
-            }
-
-            if let url = Links.githubRepo {
-                Link(destination: url) {
-                    externalLinkRow(
+            if let sourceCodeURL = AboutContent.sourceCodeURL {
+                linkRow(
+                    link: AboutLink(
+                        id: "sourceCode",
                         label: "Source Code",
-                        icon: "chevron.left.forwardslash.chevron.right"
-                    )
-                }
+                        caption: "Browse the app repository",
+                        icon: "chevron.left.forwardslash.chevron.right",
+                        url: sourceCodeURL
+                    ),
+                    identifier: "about.app.sourceCode"
+                )
             }
 
-            if let url = Links.privacyPolicy {
-                Link(destination: url) {
-                    externalLinkRow(label: "Privacy Policy", icon: "hand.raised")
-                }
+            if let privacyPolicyURL = AboutContent.privacyPolicyURL {
+                linkRow(
+                    link: AboutLink(
+                        id: "privacyPolicy",
+                        label: "Privacy Policy",
+                        caption: "Review the app privacy statement",
+                        icon: "hand.raised",
+                        url: privacyPolicyURL
+                    ),
+                    identifier: "about.app.privacyPolicy"
+                )
             }
         }
     }
 
-    // MARK: - Features
-
     private var featuresSection: some View {
-        Section("Features") {
-            ForEach(AppFeature.allCases, id: \.self) { feature in
+        Section("Highlights") {
+            ForEach(AboutFeature.allCases, id: \.self) { feature in
                 HStack(alignment: .top, spacing: 12) {
                     Image(systemName: feature.icon)
                         .foregroundStyle(.tint)
                         .frame(width: 24)
+
                     VStack(alignment: .leading, spacing: 2) {
                         Text(feature.title)
                             .font(.subheadline.weight(.medium))
@@ -104,141 +73,267 @@ struct AboutSection: View {
         }
     }
 
-    // MARK: - Documentation
-
     private var documentationSection: some View {
-        Section("Documentation") {
-            if let url = Links.seerrDocs {
-                Link(destination: url) {
-                    externalLinkRow(label: "Seerr Documentation", icon: "book")
-                }
+        Section {
+            ForEach(AboutContent.documentationLinks) { link in
+                linkRow(link: link, identifier: "about.doc.\(link.id)")
             }
-            if let url = Links.seerrGithub {
-                Link(destination: url) {
-                    externalLinkRow(label: "Seerr on GitHub", icon: "safari")
-                }
-            }
-            if let url = Links.githubIssues {
-                Link(destination: url) {
-                    externalLinkRow(label: "Report a Bug", icon: "ladybug")
-                }
-            }
+        } header: {
+            Text("Documentation")
+        } footer: {
+            Text("Documentation links open in Safari and should remain useful even when the app is offline.")
         }
     }
 
-    // MARK: - Support
-
     private var supportSection: some View {
         Section {
-            if let url = Links.githubSponsors {
-                Link(destination: url) {
-                    HStack {
-                        Image(systemName: "heart.fill")
-                            .foregroundStyle(.pink)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Sponsor on GitHub")
-                                .font(.subheadline.weight(.medium))
-                            Text("Monthly support for ongoing development")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                        Spacer()
-                        Image(systemName: "arrow.up.right.square")
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
-
-            if let url = Links.kofi {
-                Link(destination: url) {
-                    HStack {
-                        Image(systemName: "cup.and.saucer.fill")
-                            .foregroundStyle(Color(red: 1.0, green: 0.55, blue: 0.0))
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Buy a Coffee")
-                                .font(.subheadline.weight(.medium))
-                            Text("One-time tip via Ko-fi")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                        Spacer()
-                        Image(systemName: "arrow.up.right.square")
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                    }
-                }
+            ForEach(AboutContent.supportLinks) { link in
+                supportLinkRow(link, identifier: "about.support.\(link.id)")
             }
         } header: {
             Text("Support Development")
         } footer: {
-            Text("SeerrClient is free and open-source. Your support helps fund ongoing development and new features.")
-                .font(.caption)
+            Text("Support helps fund ongoing SeerrClient development.")
         }
     }
 
-    // MARK: - Acknowledgements
-
     private var acknowledgementsSection: some View {
         Section("Acknowledgements") {
-            ForEach(Acknowledgement.all, id: \.name) { ack in
-                if let url = ack.url {
+            ForEach(AboutContent.acknowledgements) { acknowledgement in
+                if let url = acknowledgement.url {
                     Link(destination: url) {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(ack.name)
-                                    .font(.subheadline)
-                                Text(ack.role)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                            Spacer()
-                            Image(systemName: "arrow.up.right.square")
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
-                        }
+                        acknowledgementRow(for: acknowledgement)
+                            .accessibilityElement(children: .combine)
+                            .accessibilityIdentifier("about.ack.\(acknowledgement.id)")
                     }
                 } else {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(ack.name)
-                            .font(.subheadline)
-                        Text(ack.role)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
+                    acknowledgementRow(for: acknowledgement)
+                        .accessibilityElement(children: .combine)
+                        .accessibilityIdentifier("about.ack.\(acknowledgement.id)")
                 }
             }
         }
     }
 
-    // MARK: - Helpers
+    @ViewBuilder
+    private func linkRow(link: AboutLink, identifier: String) -> some View {
+        Link(destination: link.url) {
+            externalLinkRow(
+                title: link.label,
+                caption: link.caption,
+                icon: link.icon,
+                iconTint: Color.accentColor
+            )
+            .accessibilityElement(children: .combine)
+            .accessibilityIdentifier(identifier)
+        }
+    }
 
     @ViewBuilder
-    private func externalLinkRow(label: String, icon: String) -> some View {
+    private func supportLinkRow(_ link: SupportLink, identifier: String) -> some View {
+        Link(destination: link.url) {
+            externalLinkRow(
+                title: link.label,
+                caption: link.caption,
+                icon: link.icon,
+                iconTint: link.iconTint
+            )
+            .accessibilityElement(children: .combine)
+            .accessibilityIdentifier(identifier)
+        }
+    }
+
+    private func infoRow(title: String, value: String) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 12) {
+            Text(title)
+
+            Spacer(minLength: 8)
+
+            Text(value)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.trailing)
+        }
+    }
+
+    private func acknowledgementRow(for acknowledgement: Acknowledgement) -> some View {
         HStack {
-            Image(systemName: icon)
-                .foregroundStyle(.tint)
-                .frame(width: 24)
-            Text(label)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(acknowledgement.name)
+                    .font(.subheadline)
+                Text(acknowledgement.role)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
             Spacer()
+
+            if acknowledgement.url != nil {
+                Image(systemName: "arrow.up.right.square")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private func externalLinkRow(
+        title: String,
+        caption: String,
+        icon: String,
+        iconTint: Color
+    ) -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            Image(systemName: icon)
+                .foregroundStyle(iconTint)
+                .frame(width: 24)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.subheadline.weight(.medium))
+                Text(caption)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+
             Image(systemName: "arrow.up.right.square")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
         }
     }
+}
 
-    private var versionString: String {
+// MARK: - AppMetadata
+
+enum AppMetadata {
+    static var versionString: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "—"
     }
 
-    private var buildString: String {
+    static var buildString: String {
         Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "—"
     }
 }
 
-// MARK: - AppFeature
+// MARK: - AboutContent
 
-private enum AppFeature: CaseIterable {
+enum AboutContent {
+    static let sourceCodeURL = URL(string: "https://github.com/Frost-Forge-Labs-Inc/SeerrClient-iOS")
+    static let privacyPolicyURL = URL(string: "https://github.com/Frost-Forge-Labs-Inc/SeerrClient-iOS/blob/main/PRIVACY.md")
+
+    static let documentationLinks: [AboutLink] = [
+        AboutLink(
+            id: "gettingStarted",
+            label: "Getting Started",
+            caption: "Seerr documentation and setup help",
+            icon: "book",
+            url: URL(string: "https://docs.seerr.dev/")!
+        ),
+        AboutLink(
+            id: "seerrGithub",
+            label: "Seerr on GitHub",
+            caption: "Browse the upstream Seerr project",
+            icon: "safari",
+            url: URL(string: "https://github.com/seerr-team/seerr")!
+        ),
+        AboutLink(
+            id: "releaseNotes",
+            label: "Release Notes",
+            caption: "Track SeerrClient app releases",
+            icon: "sparkles.rectangle.stack",
+            url: URL(string: "https://github.com/Frost-Forge-Labs-Inc/SeerrClient-iOS/releases")!
+        ),
+        AboutLink(
+            id: "reportBug",
+            label: "Report a Bug",
+            caption: "Open an issue with reproduction details",
+            icon: "ladybug",
+            url: URL(string: "https://github.com/Frost-Forge-Labs-Inc/SeerrClient-iOS/issues/new/choose")!
+        ),
+    ]
+
+    static let supportLinks: [SupportLink] = [
+        SupportLink(
+            id: "githubSponsors",
+            label: "Sponsor on GitHub",
+            caption: "Monthly support for ongoing development",
+            icon: "heart.fill",
+            iconTint: .pink,
+            url: URL(string: "https://github.com/sponsors/Frost-Forge-Labs-Inc")!
+        ),
+        SupportLink(
+            id: "kofi",
+            label: "Buy a Coffee",
+            caption: "One-time tip via Ko-fi",
+            icon: "cup.and.saucer.fill",
+            iconTint: Color(red: 1.0, green: 0.55, blue: 0.0),
+            url: URL(string: "https://ko-fi.com/frostforgelabs")!
+        ),
+    ]
+
+    static let acknowledgements: [Acknowledgement] = [
+        Acknowledgement(
+            id: "seerr",
+            name: "Seerr",
+            role: "The active open-source media request platform this client primarily targets.",
+            url: URL(string: "https://github.com/seerr-team/seerr")
+        ),
+        Acknowledgement(
+            id: "jellyseerr",
+            name: "Jellyseerr",
+            role: "The Jellyfin and Emby-focused fork whose API lineage still matters for compatibility work.",
+            url: URL(string: "https://github.com/Fallenbagel/jellyseerr")
+        ),
+        Acknowledgement(
+            id: "overseerr",
+            name: "Overseerr",
+            role: "The original Plex-focused project that established the earlier API and UX baseline.",
+            url: URL(string: "https://github.com/sct/overseerr")
+        ),
+        Acknowledgement(
+            id: "tmdb",
+            name: "The Movie Database (TMDB)",
+            role: "Movie and TV metadata, images, and collection information.",
+            url: URL(string: "https://www.themoviedb.org/")
+        ),
+        Acknowledgement(
+            id: "frostForgeLabs",
+            name: "Frost Forge Labs Inc.",
+            role: "Design, implementation, and ongoing maintenance of SeerrClient.",
+            url: URL(string: "https://github.com/Frost-Forge-Labs-Inc")
+        ),
+    ]
+}
+
+// MARK: - About Models
+
+struct AboutLink: Identifiable, Equatable {
+    let id: String
+    let label: String
+    let caption: String
+    let icon: String
+    let url: URL
+}
+
+struct SupportLink: Identifiable {
+    let id: String
+    let label: String
+    let caption: String
+    let icon: String
+    let iconTint: Color
+    let url: URL
+}
+
+struct Acknowledgement: Identifiable, Equatable {
+    let id: String
+    let name: String
+    let role: String
+    let url: URL?
+}
+
+// MARK: - AboutFeature
+
+enum AboutFeature: CaseIterable {
     case discover
     case search
     case requests
@@ -247,67 +342,46 @@ private enum AppFeature: CaseIterable {
 
     var title: String {
         switch self {
-        case .discover:    return "Discover"
-        case .search:      return "Search"
-        case .requests:    return "Requests"
-        case .watchlist:   return "Watchlist"
-        case .multiServer: return "Multi-Server"
+        case .discover:
+            return "Discover"
+        case .search:
+            return "Search"
+        case .requests:
+            return "Requests"
+        case .watchlist:
+            return "Watchlist"
+        case .multiServer:
+            return "Multi-Server"
         }
     }
 
     var description: String {
         switch self {
         case .discover:
-            return "Browse trending movies and TV shows with personalised sliders"
+            return "Browse trending movies and TV shows with curated sliders."
         case .search:
-            return "Find any movie, TV show, or person using TMDB"
+            return "Find movies, shows, people, and collections through TMDB-backed search."
         case .requests:
-            return "Submit, track, approve, and decline media requests"
+            return "Submit, track, approve, and decline media requests from your phone."
         case .watchlist:
-            return "View and manage your Plex watchlist from the app"
+            return "View and manage watchlists when the connected server supports them."
         case .multiServer:
-            return "Connect to multiple Seerr, Jellyseerr, or Overseerr servers"
+            return "Switch between Seerr, Jellyseerr, and Overseerr servers from one client."
         }
     }
 
     var icon: String {
         switch self {
-        case .discover:    return "film.stack"
-        case .search:      return "magnifyingglass"
-        case .requests:    return "tray.full"
-        case .watchlist:   return "bookmark"
-        case .multiServer: return "server.rack"
+        case .discover:
+            return "film.stack"
+        case .search:
+            return "magnifyingglass"
+        case .requests:
+            return "tray.full"
+        case .watchlist:
+            return "bookmark"
+        case .multiServer:
+            return "server.rack"
         }
     }
-}
-
-// MARK: - Acknowledgement
-
-private struct Acknowledgement {
-    let name: String
-    let role: String
-    let url: URL?
-
-    static let all: [Acknowledgement] = [
-        Acknowledgement(
-            name: "Seerr Team",
-            role: "Seerr — the open-source media request platform",
-            url: URL(string: "https://github.com/seerr-team/seerr")
-        ),
-        Acknowledgement(
-            name: "Overseerr",
-            role: "Original project that Jellyseerr and Seerr are based on",
-            url: URL(string: "https://github.com/sct/overseerr")
-        ),
-        Acknowledgement(
-            name: "The Movie Database (TMDB)",
-            role: "Movie and TV metadata, images, and collections",
-            url: URL(string: "https://www.themoviedb.org/")
-        ),
-        Acknowledgement(
-            name: "Frost Forge Labs Inc.",
-            role: "Developed and maintained by Frost Forge Labs",
-            url: URL(string: "https://github.com/Frost-Forge-Labs-Inc")
-        ),
-    ]
 }

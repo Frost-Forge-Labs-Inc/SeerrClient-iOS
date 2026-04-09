@@ -130,6 +130,19 @@ final class WatchlistViewModelTests: XCTestCase {
         XCTAssertEqual(sut.loadState, .empty)
     }
 
+    func test_refresh_deduplicatesConcurrentCalls() async throws {
+        mock.stubbedResponse = makeResponse(items: [makeItem(id: 1)])
+        mock.delayNanoseconds = 50_000_000
+
+        async let firstRefresh: Void = sut.refresh()
+        async let secondRefresh: Void = sut.refresh()
+        _ = await (firstRefresh, secondRefresh)
+
+        XCTAssertEqual(mock.fetchWatchlistCallCount, 1)
+        XCTAssertEqual(sut.loadState, .loaded(sut.items))
+        XCTAssertEqual(sut.items.map(\.id), [1])
+    }
+
     // MARK: - items
 
     func test_items_populatedAfterLoad() async throws {
@@ -166,5 +179,78 @@ final class WatchlistViewModelTests: XCTestCase {
         mock.stubbedResponse = makeResponse(items: [makeItem(id: 1)])
         await sut.refresh()
         XCTAssertTrue(sut.years.isEmpty)
+    }
+
+    // MARK: - Watchlist Reconciliation
+
+    func test_reconcileWithWatchlistIds_removesItemsNoLongerPresent() async throws {
+        let first = makeItem(id: 1)
+        let second = makeItem(id: 2)
+        mock.stubbedResponse = makeResponse(items: [first, second])
+
+        await sut.refresh()
+        sut.reconcileWithWatchlistIds([second.effectiveTmdbId])
+
+        XCTAssertEqual(sut.items.map(\.id), [second.id])
+        XCTAssertEqual(sut.loadState, .loaded(sut.items))
+    }
+
+    func test_reconcileWithWatchlistIds_setsEmptyWhenAllItemsRemoved() async throws {
+        mock.stubbedResponse = makeResponse(items: [makeItem(id: 1)])
+
+        await sut.refresh()
+        sut.reconcileWithWatchlistIds([])
+
+        XCTAssertTrue(sut.items.isEmpty)
+        XCTAssertEqual(sut.loadState, .empty)
+    }
+
+    func test_reconcileWithWatchlistIds_usesEffectiveTmdbIdForJellyfinItems() async throws {
+        let jellyfinItem = DiscoverMediaItem(
+            id: 9001,
+            tmdbId: 550,
+            mediaType: "movie",
+            title: "Fight Club",
+            name: nil,
+            posterPath: nil,
+            backdropPath: nil,
+            overview: nil,
+            voteAverage: nil,
+            releaseDate: "1999-10-15",
+            firstAirDate: nil,
+            genreIds: nil,
+            mediaInfo: nil
+        )
+        mock.stubbedResponse = makeResponse(items: [jellyfinItem])
+
+        await sut.refresh()
+        sut.reconcileWithWatchlistIds([550])
+
+        XCTAssertEqual(sut.items.map(\.id), [jellyfinItem.id])
+        XCTAssertEqual(sut.loadState, .loaded(sut.items))
+    }
+}
+
+@MainActor
+final class AppStateWatchlistTests: XCTestCase {
+
+    func test_recordWatchlistMembershipChange_addsIdAndMarksRefreshNeeded() {
+        let sut = AppState(serverStore: ServerStore())
+
+        sut.recordWatchlistMembershipChange(tmdbId: 550, isOnWatchlist: true)
+
+        XCTAssertTrue(sut.watchlistedTmdbIds.contains(550))
+        XCTAssertTrue(sut.watchlistNeedsRefresh)
+    }
+
+    func test_recordWatchlistMembershipChange_removesIdAndMarksRefreshNeeded() {
+        let sut = AppState(serverStore: ServerStore())
+        sut.watchlistedTmdbIds = [550, 603]
+        sut.watchlistNeedsRefresh = false
+
+        sut.recordWatchlistMembershipChange(tmdbId: 550, isOnWatchlist: false)
+
+        XCTAssertEqual(sut.watchlistedTmdbIds, [603])
+        XCTAssertTrue(sut.watchlistNeedsRefresh)
     }
 }

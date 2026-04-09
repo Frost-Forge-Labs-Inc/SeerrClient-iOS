@@ -37,13 +37,16 @@ struct WatchlistView: View {
         .navigationTitle("Watchlist")
         .navigationBarTitleDisplayMode(.large)
         .task {
-            guard viewModel == nil else { return }
-            guard let client = appState.apiClient else { return }
-            let repo = DiscoverRepository(apiClient: client)
-            let mediaRepo = MediaDetailRepository(apiClient: client)
-            let vm = WatchlistViewModel(repository: repo, mediaDetailRepository: mediaRepo)
-            viewModel = vm
-            vm.loadIfNeeded()
+            guard let viewModel = makeViewModelIfNeeded() else { return }
+
+            if appState.watchlistNeedsRefresh {
+                await refreshWatchlist(viewModel)
+            } else {
+                viewModel.loadIfNeeded()
+            }
+        }
+        .onChange(of: appState.watchlistedTmdbIds) { _, newIds in
+            viewModel?.reconcileWithWatchlistIds(newIds)
         }
     }
 
@@ -83,6 +86,7 @@ struct WatchlistView: View {
                             )
                         }
                         .buttonStyle(.plain)
+                        .accessibilityIdentifier("watchlist.card.\(item.effectiveTmdbId)")
                         .onAppear { vm.onItemAppear(item) }
                     } else if item.isTv {
                         NavigationLink(value: TvNavDestination(id: item.effectiveTmdbId, title: item.displayTitle)) {
@@ -94,6 +98,7 @@ struct WatchlistView: View {
                             )
                         }
                         .buttonStyle(.plain)
+                        .accessibilityIdentifier("watchlist.card.\(item.effectiveTmdbId)")
                         .onAppear { vm.onItemAppear(item) }
                     } else {
                         MediaCardView(
@@ -102,6 +107,7 @@ struct WatchlistView: View {
                             posterPathOverride: vm.posterPaths[item.id],
                             yearOverride: vm.years[item.id]
                         )
+                        .accessibilityIdentifier("watchlist.card.\(item.effectiveTmdbId)")
                         .onAppear { vm.onItemAppear(item) }
                     }
                 }
@@ -116,8 +122,9 @@ struct WatchlistView: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
         }
+        .accessibilityIdentifier("watchlist.screen")
         .refreshable {
-            await vm.refresh()
+            await refreshWatchlist(vm)
         }
     }
 
@@ -136,6 +143,7 @@ struct WatchlistView: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
         }
+        .accessibilityIdentifier("watchlist.screen")
         .scrollDisabled(true)
     }
 
@@ -148,10 +156,12 @@ struct WatchlistView: View {
             } description: {
                 Text("Your Plex watchlist is empty. Add titles in Plex and they'll appear here.")
             }
+            .accessibilityIdentifier("watchlist.empty-state")
             .padding(.top, 60)
         }
+        .accessibilityIdentifier("watchlist.screen")
         .refreshable {
-            await vm.refresh()
+            await refreshWatchlist(vm)
         }
     }
 
@@ -168,6 +178,29 @@ struct WatchlistView: View {
             }
             .buttonStyle(.borderedProminent)
         }
+    }
+
+    // MARK: - Helpers
+
+    @MainActor
+    private func makeViewModelIfNeeded() -> WatchlistViewModel? {
+        if let viewModel {
+            return viewModel
+        }
+
+        guard let client = appState.apiClient else { return nil }
+        let repo = DiscoverRepository(apiClient: client)
+        let mediaRepo = MediaDetailRepository(apiClient: client)
+        let vm = WatchlistViewModel(repository: repo, mediaDetailRepository: mediaRepo)
+        viewModel = vm
+        return vm
+    }
+
+    @MainActor
+    private func refreshWatchlist(_ viewModel: WatchlistViewModel) async {
+        viewModel.reconcileWithWatchlistIds(appState.watchlistedTmdbIds)
+        await appState.loadWatchlistCache()
+        await viewModel.refresh()
     }
 
 }

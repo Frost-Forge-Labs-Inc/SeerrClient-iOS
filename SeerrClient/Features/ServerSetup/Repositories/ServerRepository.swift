@@ -31,37 +31,29 @@ public struct ServerDetectionResult: Sendable {
     /// The server's version string (e.g. `"1.33.2"`).
     public let version: String
 
+    /// Cached runtime capability snapshot for the detected server.
+    public let capabilities: ServerCapabilities
+
     /// The auto-detected backend flavour.
-    public let backendType: BackendType
+    public var backendType: BackendType { capabilities.backendType }
 
     /// Whether local email/password login is available.
-    public let localLoginEnabled: Bool
+    public var localLoginEnabled: Bool { capabilities.supportsLocalLogin }
 
     /// Whether Plex OAuth login is available.
-    public let plexLoginEnabled: Bool
+    public var plexLoginEnabled: Bool { capabilities.supportsPlexLogin }
 
     /// Whether Jellyfin credential login is available.
-    public let jellyfinLoginEnabled: Bool
+    public var jellyfinLoginEnabled: Bool { capabilities.supportsJellyfinLogin }
 
     /// The application title configured on the server (e.g. `"My Media Server"`).
-    /// Falls back to the backend type's display name when the server does not
-    /// provide one.
-    public let applicationTitle: String
+    public var applicationTitle: String { capabilities.applicationTitle }
 
     /// Whether the server has completed its first-time setup wizard.
-    public let isInitialized: Bool
+    public var isInitialized: Bool { capabilities.isInitialized }
 
     /// The auth methods that are currently enabled on the server, in display order.
-    ///
-    /// Only methods that are explicitly enabled are included. ViewModels use this
-    /// to show only the relevant login tabs in `LoginView`.
-    public var availableAuthMethods: [AuthMethod] {
-        var methods: [AuthMethod] = []
-        if localLoginEnabled    { methods.append(.local) }
-        if plexLoginEnabled     { methods.append(.plex) }
-        if jellyfinLoginEnabled { methods.append(.jellyfin) }
-        return methods
-    }
+    public var availableAuthMethods: [AuthMethod] { capabilities.availableAuthMethods }
 }
 
 // MARK: - ServerDetectionPublicSettings (private decoding model)
@@ -82,6 +74,18 @@ private struct ServerDetectionPublicSettings: Decodable {
     let mediaServerType: Int?
     /// Some backends expose the application display title in public settings.
     let applicationTitle: String?
+    let hideAvailable: Bool?
+    let hideBlacklisted: Bool?
+    let partialRequestsEnabled: Bool?
+    let discoverRegion: String?
+    let streamingRegion: String?
+    let region: String?
+    let originalLanguage: String?
+    let locale: String?
+    let jellyfinExternalHost: String?
+    let jellyfinForgotPasswordUrl: String?
+    let userEmailRequired: Bool?
+    let youtubeUrl: String?
 }
 
 // MARK: - ServerRepository
@@ -188,42 +192,44 @@ public struct ServerRepository {
         // mediaServerType field to correct this: only Jellyseerr/Emby forks
         // expose mediaServerType 2 (Jellyfin) or 3 (Emby); Overseerr always
         // uses Plex (1) and predates this field.
-        if backendType == .overseerr {
-            let mst = publicSettings.mediaServerType
-            if mst == 2 || mst == 3 {
-                backendType = .jellyseerr
-            }
+        let detectedMediaServerKind = mediaServerKind(from: publicSettings.mediaServerType)
+        if backendType == .overseerr,
+           detectedMediaServerKind == .jellyfin || detectedMediaServerKind == .emby {
+            backendType = .jellyseerr
         }
 
-        // Determine the application title: server-provided > backend display name.
-        let appTitle = publicSettings.applicationTitle.flatMap { $0.isEmpty ? nil : $0 }
-            ?? backendType.displayName
-
-        // Auth method availability:
-        // - localLogin: default true (all backends support it unless explicitly disabled)
-        // - mediaServerLogin: controls whether Plex/Jellyfin media-server login is enabled
-        // - mediaServerType: 1=Plex, 2=Jellyfin, 3=Emby — inferred from backend when absent
-        // - newPlexLogin: Plex OAuth specifically (Overseerr path)
-        let localEnabled = publicSettings.localLogin ?? true
-
-        let mediaServerEnabled = publicSettings.mediaServerLogin ?? true
-        // Infer mediaServerType from backend when the field is absent.
-        let mediaServerType = publicSettings.mediaServerType
-            ?? (backendType == .jellyseerr || backendType == .seerr ? 2 : 1)
-
-        let jellyfinEnabled = mediaServerEnabled && (mediaServerType == 2 || mediaServerType == 3)
-        let plexEnabled     = (publicSettings.newPlexLogin ?? false)
-            || (mediaServerEnabled && mediaServerType == 1)
+        let normalizedSettings = PublicSettingsNormalized(
+            initialized: publicSettings.initialized ?? true,
+            applicationTitle: publicSettings.applicationTitle,
+            localLoginEnabled: publicSettings.localLogin,
+            newPlexLoginEnabled: publicSettings.newPlexLogin,
+            mediaServerLoginEnabled: publicSettings.mediaServerLogin,
+            mediaServerKind: resolvedMediaServerKind(
+                detectedKind: detectedMediaServerKind,
+                backendType: backendType
+            ),
+            hideAvailable: publicSettings.hideAvailable,
+            hideBlacklisted: publicSettings.hideBlacklisted,
+            partialRequestsEnabled: publicSettings.partialRequestsEnabled,
+            discoverRegion: publicSettings.discoverRegion,
+            streamingRegion: publicSettings.streamingRegion,
+            region: publicSettings.region,
+            originalLanguage: publicSettings.originalLanguage,
+            locale: publicSettings.locale,
+            jellyfinExternalHost: publicSettings.jellyfinExternalHost,
+            jellyfinForgotPasswordURL: publicSettings.jellyfinForgotPasswordUrl,
+            userEmailRequired: publicSettings.userEmailRequired,
+            youtubeURL: publicSettings.youtubeUrl
+        )
+        let capabilities = ServerCapabilities(
+            backendType: backendType,
+            publicSettings: normalizedSettings
+        )
 
         return ServerDetectionResult(
             baseURL: baseURL,
             version: status.version,
-            backendType: backendType,
-            localLoginEnabled: localEnabled,
-            plexLoginEnabled: plexEnabled,
-            jellyfinLoginEnabled: jellyfinEnabled,
-            applicationTitle: appTitle,
-            isInitialized: publicSettings.initialized ?? true
+            capabilities: capabilities
         )
     }
 
@@ -247,6 +253,34 @@ public struct ServerRepository {
             return .seerr
         } else {
             return .overseerr
+        }
+    }
+
+    /// Maps the backend's integer media-server type into a stable client enum.
+    private func mediaServerKind(from rawValue: Int?) -> MediaServerKind {
+        switch rawValue {
+        case 1: return .plex
+        case 2: return .jellyfin
+        case 3: return .emby
+        default: return .unknown
+        }
+    }
+
+    /// Resolves the media-server family when the public-settings payload omits
+    /// `mediaServerType`.
+    private func resolvedMediaServerKind(
+        detectedKind: MediaServerKind,
+        backendType: BackendType
+    ) -> MediaServerKind {
+        guard detectedKind == .unknown else { return detectedKind }
+
+        switch backendType {
+        case .overseerr:
+            return .plex
+        case .jellyseerr, .seerr:
+            return .jellyfin
+        case .unknown:
+            return .unknown
         }
     }
 }

@@ -28,7 +28,8 @@ struct ContentView: View {
     /// True for the first 2.5 s of the app's life — drives the launch animation overlay.
     /// Lives here (not in LoginView) so task-cancellation from auth state transitions
     /// cannot shorten the minimum display time.
-    @State private var isInLaunchPhase = true
+    @State private var isInLaunchPhase = !UITestLaunchConfiguration.current.disableLaunchAnimation
+    @State private var selectedTab = UITestLaunchConfiguration.current.initialTab
 
     // MARK: - Body
 
@@ -39,7 +40,6 @@ struct ContentView: View {
             } else if appState.showLogin, let server = appState.activeServer {
                 LoginView(
                     server: server,
-                    availableAuthMethods: appState.availableAuthMethods,
                     appState: appState,
                     serverStore: serverStore
                 )
@@ -61,6 +61,7 @@ struct ContentView: View {
         }
         .animation(.easeInOut(duration: 0.45), value: isInLaunchPhase)
         .task {
+            guard isInLaunchPhase else { return }
             // Hold the launch animation for exactly 2.5 s then fade out.
             try? await Task.sleep(for: .seconds(2.5))
             isInLaunchPhase = false
@@ -72,7 +73,31 @@ struct ContentView: View {
     /// Main tab interface with Discover, Search, Requests, Watchlist, and Profile tabs.
     @ViewBuilder
     private var mainInterfacePlaceholder: some View {
-        TabView {
+#if DEBUG
+        switch UITestLaunchConfiguration.current.rootDestination {
+        case .collectionDetail(let collectionId, let collectionName):
+            NavigationStack {
+                CollectionDetailView(collectionId: collectionId, collectionName: collectionName)
+                    .navigationDestination(for: MovieNavDestination.self) { dest in
+                        MovieDetailView(movieId: dest.id, movieTitle: dest.title)
+                    }
+                    .navigationDestination(for: RequestNavDestination.self) { dest in
+                        RequestDetailView(requestID: dest.requestID)
+                    }
+            }
+        case .mainTabs:
+            standardMainInterface
+        }
+#else
+        standardMainInterface
+#endif
+    }
+
+    @ViewBuilder
+    private var standardMainInterface: some View {
+        let supportsWatchlistRead = appState.activeServerCapabilities?.supportsWatchlistRead ?? false
+
+        TabView(selection: $selectedTab) {
             NavigationStack {
                 DiscoverView()
                     .navigationDestination(for: MovieNavDestination.self) { dest in
@@ -89,6 +114,7 @@ struct ContentView: View {
                     }
             }
             .tabItem { Label("Discover", systemImage: "film.stack") }
+            .tag(AppTab.discover)
 
             NavigationStack {
                 SearchView()
@@ -106,6 +132,7 @@ struct ContentView: View {
                     }
             }
             .tabItem { Label("Search", systemImage: "magnifyingglass") }
+            .tag(AppTab.search)
 
             NavigationStack {
                 RequestListView()
@@ -120,25 +147,30 @@ struct ContentView: View {
                     }
             }
             .tabItem { Label("Requests", systemImage: "tray.full") }
+            .tag(AppTab.requests)
 
-            NavigationStack {
-                WatchlistView()
-                    .navigationDestination(for: MovieNavDestination.self) { dest in
-                        MovieDetailView(movieId: dest.id, movieTitle: dest.title)
-                    }
-                    .navigationDestination(for: TvNavDestination.self) { dest in
-                        TvShowDetailView(tvId: dest.id, showTitle: dest.title)
-                    }
-                    .navigationDestination(for: CollectionNavDestination.self) { dest in
-                        CollectionDetailView(collectionId: dest.id, collectionName: dest.name)
-                    }
+            if supportsWatchlistRead {
+                NavigationStack {
+                    WatchlistView()
+                        .navigationDestination(for: MovieNavDestination.self) { dest in
+                            MovieDetailView(movieId: dest.id, movieTitle: dest.title)
+                        }
+                        .navigationDestination(for: TvNavDestination.self) { dest in
+                            TvShowDetailView(tvId: dest.id, showTitle: dest.title)
+                        }
+                        .navigationDestination(for: CollectionNavDestination.self) { dest in
+                            CollectionDetailView(collectionId: dest.id, collectionName: dest.name)
+                        }
+                }
+                .tabItem { Label("Watchlist", systemImage: "bookmark") }
+                .tag(AppTab.watchlist)
             }
-            .tabItem { Label("Watchlist", systemImage: "bookmark") }
 
             NavigationStack {
                 ProfileView()
             }
             .tabItem { Label("Profile", systemImage: "person.circle") }
+            .tag(AppTab.profile)
         }
     }
 

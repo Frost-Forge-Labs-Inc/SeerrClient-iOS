@@ -38,7 +38,7 @@ struct TvShowDetailView: View {
         .navigationTitle(showTitle)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            if let vm = viewModel, vm.tvShow != nil {
+            if let vm = viewModel, vm.tvShow != nil, vm.allowsWatchlistMutations {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         vm.toggleWatchlist()
@@ -52,6 +52,7 @@ struct TvShowDetailView: View {
                         }
                     }
                     .accessibilityLabel(vm.isOnWatchlist ? "Remove from Watchlist" : "Add to Watchlist")
+                    .accessibilityIdentifier("tv-detail.watchlist-button")
                 }
             }
         }
@@ -62,15 +63,15 @@ struct TvShowDetailView: View {
                 let vm = TvShowDetailViewModel(
                     tvId: tvId,
                     repository: repo,
-                    initiallyOnWatchlist: appState.watchlistedTmdbIds.contains(tvId)
+                    initiallyOnWatchlist: appState.watchlistedTmdbIds.contains(tvId),
+                    allowsWatchlistMutations: appState.activeServerCapabilities?.supportsWatchlistWrite ?? false
                 )
                 // Keep AppState.watchlistedTmdbIds in sync when the user taps the bookmark.
                 vm.onWatchlistChanged = { [weak appState] tmdbId, isNowOnWatchlist in
-                    if isNowOnWatchlist {
-                        appState?.watchlistedTmdbIds.insert(tmdbId)
-                    } else {
-                        appState?.watchlistedTmdbIds.remove(tmdbId)
-                    }
+                    appState?.recordWatchlistMembershipChange(
+                        tmdbId: tmdbId,
+                        isOnWatchlist: isNowOnWatchlist
+                    )
                 }
                 viewModel = vm
             }

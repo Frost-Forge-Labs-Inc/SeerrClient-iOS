@@ -47,6 +47,9 @@ public final class MovieDetailViewModel {
     /// `true` while a watchlist add/remove request is in flight.
     public private(set) var isTogglingWatchlist: Bool = false
 
+    /// Whether the active backend supports watchlist mutation endpoints.
+    public let allowsWatchlistMutations: Bool
+
     /// Convenience accessor for loaded movie details.
     public var movie: MovieDetails? {
         if case .loaded(let details) = loadState { return details }
@@ -76,10 +79,16 @@ public final class MovieDetailViewModel {
     ///     determined from `AppState.watchlistedTmdbIds` before the detail network call
     ///     completes. Seeds `isOnWatchlist` immediately so the toolbar icon is correct
     ///     before the detail response arrives. Defaults to `false`.
-    public init(movieId: Int, repository: MediaDetailRepository, initiallyOnWatchlist: Bool = false) {
+    public init(
+        movieId: Int,
+        repository: MediaDetailRepository,
+        initiallyOnWatchlist: Bool = false,
+        allowsWatchlistMutations: Bool = true
+    ) {
         self.movieId = movieId
         self.repository = repository
         self.isOnWatchlist = initiallyOnWatchlist
+        self.allowsWatchlistMutations = allowsWatchlistMutations
     }
 
     // MARK: - Loading
@@ -123,6 +132,10 @@ public final class MovieDetailViewModel {
     /// If the call fails the state is reverted and a log warning is emitted.
     /// Uses the TMDB movie ID directly; no Seerr media record is required.
     public func toggleWatchlist() {
+        guard allowsWatchlistMutations else {
+            AppLogger.info("MovieDetailViewModel: watchlist mutation skipped — unsupported by active backend")
+            return
+        }
         guard movie != nil else {
             AppLogger.warning("MovieDetailViewModel: toggleWatchlist called before movie loaded")
             return
@@ -137,7 +150,7 @@ public final class MovieDetailViewModel {
             defer { isTogglingWatchlist = false }
             do {
                 if wasOnWatchlist {
-                    try await repository.removeFromWatchlist(tmdbId: movieId, mediaType: "movie")
+                    try await repository.removeFromWatchlist(tmdbId: movieId)
                     AppLogger.info("MovieDetailViewModel: removed movie \(movieId) from watchlist")
                 } else {
                     try await repository.addToWatchlist(tmdbId: movieId, mediaType: "movie")

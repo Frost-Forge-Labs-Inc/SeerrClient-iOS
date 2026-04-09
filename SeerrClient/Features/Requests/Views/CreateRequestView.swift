@@ -24,6 +24,7 @@ struct CreateRequestView: View {
     let seasons: [Season]?
     let mediaInfo: MediaInfo?
     let onSuccess: (@MainActor () -> Void)?
+    let dismissOnSuccess: Bool
 
     // MARK: - State
 
@@ -45,6 +46,7 @@ struct CreateRequestView: View {
         tvdbId: Int? = nil,
         seasons: [Season]? = nil,
         mediaInfo: MediaInfo? = nil,
+        dismissOnSuccess: Bool = true,
         onSuccess: (@MainActor () -> Void)? = nil
     ) {
         self.mediaType = mediaType
@@ -52,6 +54,7 @@ struct CreateRequestView: View {
         self.tvdbId = tvdbId
         self.seasons = seasons
         self.mediaInfo = mediaInfo
+        self.dismissOnSuccess = dismissOnSuccess
         self.onSuccess = onSuccess
     }
 
@@ -396,7 +399,9 @@ struct CreateRequestView: View {
                 guard !Task.isCancelled else { return }
                 AppLogger.info("CreateRequestView: request created for mediaID \(mediaId) type \(mediaType.rawValue)")
                 onSuccess?()
-                dismiss()
+                if dismissOnSuccess {
+                    dismiss()
+                }
             } catch {
                 guard !Task.isCancelled else { return }
                 AppLogger.warning("CreateRequestView: failed to create request for mediaID \(mediaId): \(error)")

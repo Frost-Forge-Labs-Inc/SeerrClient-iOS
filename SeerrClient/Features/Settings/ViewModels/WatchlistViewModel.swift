@@ -46,6 +46,8 @@ public final class WatchlistViewModel {
     private let repository: any WatchlistFetching
     @ObservationIgnored
     private let mediaDetailRepository: MediaDetailRepository?
+    @ObservationIgnored
+    private var refreshTask: Task<Void, Never>?
 
     // MARK: - Init
 
@@ -58,15 +60,49 @@ public final class WatchlistViewModel {
 
     public func loadIfNeeded() {
         guard case .idle = loadState else { return }
-        Task { await load(page: 1, reset: true) }
+        Task { await refresh() }
     }
 
     public func refresh() async {
-        await load(page: 1, reset: true)
+        if let refreshTask {
+            await refreshTask.value
+            return
+        }
+
+        let task = Task { @MainActor [weak self] in
+            guard let self else { return }
+            defer { self.refreshTask = nil }
+            await self.load(page: 1, reset: true)
+        }
+
+        refreshTask = task
+        await task.value
     }
 
     public func retry() {
-        Task { await load(page: 1, reset: true) }
+        Task { await refresh() }
+    }
+
+    /// Reconciles the currently visible watchlist items against the app-level
+    /// TMDB ID cache after a detail screen adds/removes watchlist membership.
+    ///
+    /// This keeps the Watchlist tab in sync when the user navigates back from a
+    /// detail screen without forcing a full network refresh.
+    func reconcileWithWatchlistIds(_ watchlistedTmdbIds: Set<Int>) {
+        guard !items.isEmpty else { return }
+
+        let filteredItems = items.filter { watchlistedTmdbIds.contains($0.effectiveTmdbId) }
+        guard filteredItems.count != items.count else { return }
+
+        let removedItemIds = Set(items.map(\.id)).subtracting(filteredItems.map(\.id))
+        items = filteredItems
+
+        if !removedItemIds.isEmpty {
+            posterPaths = posterPaths.filter { !removedItemIds.contains($0.key) }
+            years = years.filter { !removedItemIds.contains($0.key) }
+        }
+
+        loadState = items.isEmpty ? .empty : .loaded(items)
     }
 
     public func onItemAppear(_ item: DiscoverMediaItem) {

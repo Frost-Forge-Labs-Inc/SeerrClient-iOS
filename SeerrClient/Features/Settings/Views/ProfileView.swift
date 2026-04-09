@@ -34,6 +34,17 @@ struct ProfileView: View {
             guard let client = appState.apiClient else { return }
             guard let server = appState.activeServer else { return }
 
+#if DEBUG
+            if UITestLaunchConfiguration.current.scenario == .aboutNavigation {
+                viewModel = ProfileViewModel.makeAboutNavigationUITestModel(
+                    apiClient: client,
+                    appState: appState,
+                    server: server
+                )
+                return
+            }
+#endif
+
             let vm = ProfileViewModel(apiClient: client, appState: appState, server: server)
             viewModel = vm
             vm.loadProfile()
@@ -111,6 +122,7 @@ struct ProfileView: View {
             dangerSection(viewModel)
         }
         .listStyle(.insetGrouped)
+        .accessibilityIdentifier("profile.screen")
         .refreshable {
             await viewModel.refresh()
         }

@@ -12,8 +12,8 @@ import SwiftUI
 /// belongs to a TMDB collection.
 ///
 /// Shows the collection name, backdrop, overview, and a list of member movies.
-/// Each movie shows its availability chip and a per-item request button.
-/// A "Request All" toolbar button triggers the bulk request flow.
+/// Each movie shows its availability state and request-selection affordance.
+/// Users can request all requestable movies or a selected subset.
 struct CollectionDetailView: View {
 
     // MARK: - Dependencies
@@ -28,8 +28,6 @@ struct CollectionDetailView: View {
     // MARK: - State
 
     @State private var viewModel: CollectionDetailViewModel?
-    /// Index into `requestableMovies` for the currently presenting request sheet.
-    @State private var requestSheetMovieIndex: Int = 0
 
     // MARK: - Body
 
@@ -51,6 +49,7 @@ struct CollectionDetailView: View {
             }
             await viewModel?.loadCollection()
         }
+        .accessibilityIdentifier("collection.screen")
     }
 
     // MARK: - State Content
@@ -103,22 +102,11 @@ struct CollectionDetailView: View {
                     // Action row: Request All
                     let requestable = vm.requestableMovies
                     if !requestable.isEmpty {
-                        Button {
-                            vm.requestAll()
-                        } label: {
-                            Label("Request All", systemImage: "arrow.down.circle.fill")
-                                .font(.headline)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 14)
-                        }
-                        .buttonStyle(.borderedProminent)
-                        // Request-all sheet: iterates through requestable movies one at a time.
-                        .sheet(isPresented: Binding(
-                            get: { vm.showRequestSheet && vm.requestingMovieId == nil },
-                            set: { if !$0 { vm.dismissRequestSheet() } }
-                        )) {
-                            requestAllSheet(vm: vm)
-                        }
+                        requestControls(vm: vm, requestableCount: requestable.count)
+                    } else {
+                        Text("All movies in this collection are already available or have active requests.")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
                     }
 
                     // Movie list
@@ -136,6 +124,12 @@ struct CollectionDetailView: View {
                 .padding()
             }
         }
+        .sheet(isPresented: Binding(
+            get: { vm.showRequestSheet },
+            set: { if !$0 { vm.dismissRequestSheet() } }
+        )) {
+            requestQueueSheet(vm: vm)
+        }
     }
 
     // MARK: - Collection Movie Row
@@ -143,6 +137,8 @@ struct CollectionDetailView: View {
     @ViewBuilder
     private func collectionMovieRow(_ movie: MovieResult, vm: CollectionDetailViewModel) -> some View {
         HStack(spacing: 12) {
+            requestSelectionButton(for: movie, vm: vm)
+
             // Poster
             AsyncImage(url: movie.posterPath.flatMap { tmdbImageURL($0, size: "w92") }) { image in
                 image
@@ -166,22 +162,24 @@ struct CollectionDetailView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
-
-                // Status chip
-                statusChip(for: movie)
             }
 
             Spacer()
 
-            // Navigation to movie detail
-            NavigationLink(value: MovieNavDestination(id: movie.id, title: movie.title)) {
-                Image(systemName: "chevron.right")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(.tertiary)
+            VStack(alignment: .trailing, spacing: 10) {
+                statusChip(for: movie)
+
+                NavigationLink(value: MovieNavDestination(id: movie.id, title: movie.title)) {
+                    Image(systemName: "chevron.right")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.tertiary)
+                }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
         }
         .padding(.vertical, 4)
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("collection.row.\(movie.id)")
     }
 
     // MARK: - Status Chip
@@ -194,14 +192,22 @@ struct CollectionDetailView: View {
                 Label("Available", systemImage: "checkmark.circle.fill")
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.green)
-            case 2, 3:
-                Label("Requested", systemImage: "clock.fill")
+                    .accessibilityIdentifier("collection.status.\(movie.id).available")
+            case 2:
+                Label("Pending", systemImage: "clock.fill")
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.orange)
+                    .accessibilityIdentifier("collection.status.\(movie.id).pending")
+            case 3:
+                Label("Requested", systemImage: "arrow.triangle.2.circlepath")
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(.purple)
+                    .accessibilityIdentifier("collection.status.\(movie.id).requested")
             case 4:
                 Label("Partial", systemImage: "circle.lefthalf.filled")
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.blue)
+                    .accessibilityIdentifier("collection.status.\(movie.id).partial")
             default:
                 EmptyView()
             }
@@ -210,28 +216,108 @@ struct CollectionDetailView: View {
         }
     }
 
-    // MARK: - Request All Sheet
+    // MARK: - Request Controls
 
-    /// Iterates through the requestable movies in a single sheet session.
-    /// Uses a simple index counter — each dismiss increments to the next movie.
     @ViewBuilder
-    private func requestAllSheet(vm: CollectionDetailViewModel) -> some View {
-        let movies = vm.requestableMovies
-        if requestSheetMovieIndex < movies.count {
-            let movie = movies[requestSheetMovieIndex]
+    private func requestControls(vm: CollectionDetailViewModel, requestableCount: Int) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("\(requestableCount) movie\(requestableCount == 1 ? "" : "s") can be requested from this collection.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+
+            HStack(spacing: 12) {
+                Button(vm.allRequestableMoviesSelected ? "Clear Selection" : "Select All") {
+                    if vm.allRequestableMoviesSelected {
+                        vm.clearSelection()
+                    } else {
+                        vm.selectAll()
+                    }
+                }
+                .buttonStyle(.bordered)
+                .accessibilityIdentifier(
+                    vm.allRequestableMoviesSelected ? "collection.clearSelection" : "collection.selectAll"
+                )
+
+                Text(vm.hasSelection ? "\(vm.selectedRequestMovieIDs.count) selected" : "No movies selected")
+                    .font(.footnote.weight(.medium))
+                    .foregroundStyle(vm.hasSelection ? .primary : .secondary)
+                    .accessibilityIdentifier("collection.selectionSummary")
+
+                Spacer()
+            }
+
+            HStack(spacing: 12) {
+                Button {
+                    vm.requestSelected()
+                } label: {
+                    Label(
+                        vm.hasSelection ? "Request Selected (\(vm.selectedRequestMovieIDs.count))" : "Request Selected",
+                        systemImage: "checkmark.circle.fill"
+                    )
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                }
+                .buttonStyle(.bordered)
+                .disabled(!vm.hasSelection)
+                .accessibilityIdentifier("collection.requestSelected")
+
+                Button {
+                    vm.requestAll()
+                } label: {
+                    Label("Request All", systemImage: "arrow.down.circle.fill")
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                }
+                .buttonStyle(.borderedProminent)
+                .accessibilityIdentifier("collection.requestAll")
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func requestSelectionButton(for movie: MovieResult, vm: CollectionDetailViewModel) -> some View {
+        if vm.isUnavailable(movie) {
+            Image(systemName: "slash.circle")
+                .font(.title3)
+                .foregroundStyle(.tertiary)
+                .accessibilityHidden(true)
+        } else {
+            Button {
+                vm.toggleSelection(movieId: movie.id)
+            } label: {
+                Image(systemName: vm.isSelected(movieId: movie.id) ? "checkmark.circle.fill" : "circle")
+                    .font(.title3)
+                    .foregroundStyle(vm.isSelected(movieId: movie.id) ? Color.accentColor : Color.secondary)
+                    .frame(width: 28, height: 28)
+                    .accessibilityHidden(true)
+            }
+            .buttonStyle(.plain)
+            .frame(width: 44, height: 44)
+            .contentShape(Rectangle())
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(vm.isSelected(movieId: movie.id) ? "Deselect \(movie.title)" : "Select \(movie.title)")
+            .accessibilityValue(vm.isSelected(movieId: movie.id) ? "Selected" : "Not selected")
+            .accessibilityAddTraits(.isButton)
+            .accessibilityIdentifier("collection.select.\(movie.id)")
+        }
+    }
+
+    @ViewBuilder
+    private func requestQueueSheet(vm: CollectionDetailViewModel) -> some View {
+        if let movie = vm.activeRequestMovie {
             CreateRequestView(
                 mediaType: .movie,
-                mediaId: movie.id
+                mediaId: movie.id,
+                mediaInfo: movie.mediaInfo,
+                dismissOnSuccess: vm.queuedRequestMovieIDs.count <= 1
             ) {
-                // Advance to next movie or close the sheet
-                if requestSheetMovieIndex + 1 < movies.count {
-                    requestSheetMovieIndex += 1
-                } else {
-                    vm.dismissRequestSheet()
-                    requestSheetMovieIndex = 0
-                }
+                vm.handleRequestSuccess()
             }
             .presentationDetents([.medium, .large])
+            .id(movie.id)
+        } else {
+            ProgressView()
+                .presentationDetents([.medium])
         }
     }
 

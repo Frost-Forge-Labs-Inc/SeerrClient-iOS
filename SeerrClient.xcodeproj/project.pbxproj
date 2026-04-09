@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B100000000000000000000001 /* WatchlistRemovalUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000002 /* WatchlistRemovalUITests.swift */; };
+		C1A000000000000000000003 /* CollectionRequestSelectionUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A000000000000000000004 /* CollectionRequestSelectionUITests.swift */; };
+		D2A000000000000000000003 /* AboutNavigationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A000000000000000000004 /* AboutNavigationUITests.swift */; };
+		B10000000000000000000000E /* UITestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000010 /* UITestSupport.swift */; };
+		B10000000000000000000000F /* UITestURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000011 /* UITestURLProtocol.swift */; };
 		00CD2AC36BEF7ECB7469CBA7 /* RequestButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006621B1BAB219A3DA268155 /* RequestButtonView.swift */; };
 		04D761CC68BB6CC8A8394348 /* RequestRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611335D5B4B13E4CCE58A230 /* RequestRepository.swift */; };
 		0D2AAA4FFBC176FD640845F2 /* WatchlistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0008919C3BEB59A2D341CC18 /* WatchlistView.swift */; };
@@ -26,8 +31,10 @@
 		461FA6B96694952B917DE8E2 /* MovieDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 108613EEFAC5605F2FFE339D /* MovieDetailViewModel.swift */; };
 		818482B08AC04D3CAECA4BFA /* CollectionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD6AD08FC1494D6184ACE7B2 /* CollectionDetailView.swift */; };
 		275EE5D12E2C4FACBEA06CE3 /* CollectionDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D756A645A74A0BAA910B2F /* CollectionDetailViewModel.swift */; };
+		D2A000000000000000000001 /* AboutContentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A000000000000000000002 /* AboutContentTests.swift */; };
 		4A53C4364D7148F2F1325FC0 /* ProfileHeaderSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BB8BDD36E7E8BA1633E119B /* ProfileHeaderSection.swift */; };
 		4C7C52B874F8ADB62D37FB1F /* WatchlistViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487D98B554FDDAA3F90661D4 /* WatchlistViewModelTests.swift */; };
+		C1A000000000000000000001 /* CollectionDetailViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A000000000000000000002 /* CollectionDetailViewModelTests.swift */; };
 		50A385491AC7DE95CA94A5B8 /* CastCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D80AE934D8EE61E68CC5F /* CastCarouselView.swift */; };
 		5836E1B8DF927AD0FF62F670 /* DiscoverSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2F9EE06CCC51F03BC5B4F6 /* DiscoverSliderView.swift */; };
 		5B542C3F047A5AF18CCCDC1D /* ServerInfoSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B636B641B400144C5B4A9D6E /* ServerInfoSection.swift */; };
@@ -93,9 +100,22 @@
 			remoteGlobalIDString = 9EA76F0C1C79685436156160;
 			remoteInfo = SeerrClient;
 		};
+		B100000000000000000000005 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D4DC02BCE452C41F4C338432 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9EA76F0C1C79685436156160;
+			remoteInfo = SeerrClient;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B100000000000000000000002 /* WatchlistRemovalUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistRemovalUITests.swift; sourceTree = "<group>"; };
+		B100000000000000000000003 /* SeerrClientUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = SeerrClientUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C1A000000000000000000004 /* CollectionRequestSelectionUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionRequestSelectionUITests.swift; sourceTree = "<group>"; };
+		D2A000000000000000000004 /* AboutNavigationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutNavigationUITests.swift; sourceTree = "<group>"; };
+		B100000000000000000000010 /* UITestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestSupport.swift; sourceTree = "<group>"; };
+		B100000000000000000000011 /* UITestURLProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestURLProtocol.swift; sourceTree = "<group>"; };
 		0008919C3BEB59A2D341CC18 /* WatchlistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistView.swift; sourceTree = "<group>"; };
 		006621B1BAB219A3DA268155 /* RequestButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestButtonView.swift; sourceTree = "<group>"; };
 		01BAF214E68CE207CB709358 /* StatusBadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBadgeView.swift; sourceTree = "<group>"; };
@@ -112,9 +132,11 @@
 		2EBB05AAEDED3FBD74CE5011 /* EpisodeCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeCardView.swift; sourceTree = "<group>"; };
 		31A65F11D0875344C5E92CB0 /* SeerrModelsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeerrModelsTests.swift; sourceTree = "<group>"; };
 		35F23B78D85AD082DF788C99 /* SeerrAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeerrAPIClient.swift; sourceTree = "<group>"; };
+		D2A000000000000000000002 /* AboutContentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutContentTests.swift; sourceTree = "<group>"; };
 		3DA21C4FF404997FFF405DA9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		429FE31E1061D26176F2FF86 /* MediaDetailHeroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaDetailHeroView.swift; sourceTree = "<group>"; };
 		487D98B554FDDAA3F90661D4 /* WatchlistViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistViewModelTests.swift; sourceTree = "<group>"; };
+		C1A000000000000000000002 /* CollectionDetailViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionDetailViewModelTests.swift; sourceTree = "<group>"; };
 		4D82C291E836C1E1D59DFF4B /* SeerrClientTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = SeerrClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F9CACE529E1925DFDD5CF20 /* RequestCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestCardView.swift; sourceTree = "<group>"; };
 		51003BCD28BD393CA457D535 /* PlexOAuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlexOAuthView.swift; sourceTree = "<group>"; };
@@ -177,6 +199,16 @@
 		98D756A645A74A0BAA910B2F /* CollectionDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionDetailViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFrameworksBuildPhase section */
+		B10000000000000000000000D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
 /* Begin PBXGroup section */
 		004F44999B4462628033354E /* ViewModels */ = {
 			isa = PBXGroup;
@@ -221,6 +253,7 @@
 			children = (
 				DA8611358F3E4231FA577FBB /* SeerrClient */,
 				FD3A4C18DDD171219C21D6ED /* SeerrClientTests */,
+				B100000000000000000000004 /* SeerrClientUITests */,
 				6AAAC7B585A309055090811A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -232,6 +265,7 @@
 				FFC276DA8E190B9425423E1A /* APIError.swift */,
 				35F23B78D85AD082DF788C99 /* SeerrAPIClient.swift */,
 				B0A21FB0924B241FDC4D8DC9 /* TrustManager.swift */,
+				B100000000000000000000011 /* UITestURLProtocol.swift */,
 				27074C23E43436441EF6F02F /* URLNormalizer.swift */,
 			);
 			path = Networking;
@@ -267,6 +301,7 @@
 				5DB4DD510E4FB75A20BEB26F /* LaunchAnimationView.swift */,
 				ECDB627E4650345B0B45592B /* LaunchScreen.storyboard */,
 				FFB67CD0DFFCE6295E9E87C8 /* SeerrClientApp.swift */,
+				B100000000000000000000010 /* UITestSupport.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -352,8 +387,19 @@
 			children = (
 				E418DBD74F0261757BAE65C2 /* SeerrClient.app */,
 				4D82C291E836C1E1D59DFF4B /* SeerrClientTests.xctest */,
+				B100000000000000000000003 /* SeerrClientUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		B100000000000000000000004 /* SeerrClientUITests */ = {
+			isa = PBXGroup;
+			children = (
+				D2A000000000000000000004 /* AboutNavigationUITests.swift */,
+				C1A000000000000000000004 /* CollectionRequestSelectionUITests.swift */,
+				B100000000000000000000002 /* WatchlistRemovalUITests.swift */,
+			);
+			path = SeerrClientUITests;
 			sourceTree = "<group>";
 		};
 		7280BFAF535389DAA22B815A /* ViewModels */ = {
@@ -375,6 +421,8 @@
 		78FA1B1F81C77921CDA259C2 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				D2A000000000000000000002 /* AboutContentTests.swift */,
+				C1A000000000000000000002 /* CollectionDetailViewModelTests.swift */,
 				487D98B554FDDAA3F90661D4 /* WatchlistViewModelTests.swift */,
 			);
 			path = ViewModels;
@@ -610,6 +658,26 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		B100000000000000000000006 /* SeerrClientUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B10000000000000000000000A /* Build configuration list for PBXNativeTarget "SeerrClientUITests" */;
+			buildPhases = (
+				B100000000000000000000008 /* Sources */,
+				B10000000000000000000000D /* Frameworks */,
+				B100000000000000000000007 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B100000000000000000000009 /* PBXTargetDependency */,
+			);
+			name = SeerrClientUITests;
+			packageProductDependencies = (
+			);
+			productName = SeerrClientUITests;
+			productReference = B100000000000000000000003 /* SeerrClientUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		5C6985FED49AADD9C9BE0632 /* SeerrClientTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = EE52F2BE271CDAB0EA7F9298 /* Build configuration list for PBXNativeTarget "SeerrClientTests" */;
@@ -655,6 +723,10 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
+					B100000000000000000000006 = {
+						CreatedOnToolsVersion = 17.5;
+						TestTargetID = 9EA76F0C1C79685436156160;
+					};
 				};
 			};
 			buildConfigurationList = 044E315C0EFBF975E1AB45AE /* Build configuration list for PBXProject "SeerrClient" */;
@@ -673,11 +745,19 @@
 			targets = (
 				9EA76F0C1C79685436156160 /* SeerrClient */,
 				5C6985FED49AADD9C9BE0632 /* SeerrClientTests */,
+				B100000000000000000000006 /* SeerrClientUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		B100000000000000000000007 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0717205E76D788C2F605C15E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -690,6 +770,16 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		B100000000000000000000008 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D2A000000000000000000003 /* AboutNavigationUITests.swift in Sources */,
+				C1A000000000000000000003 /* CollectionRequestSelectionUITests.swift in Sources */,
+				B100000000000000000000001 /* WatchlistRemovalUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C72512DF27A1142E3C8F6A1B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -747,6 +837,7 @@
 				603E724DBE734E63A8450DD1 /* SearchViewModel.swift in Sources */,
 				835E30BA4370E001018A15FB /* SeerrAPIClient.swift in Sources */,
 				DE5050F748DD9EEACEBE82DB /* SeerrClientApp.swift in Sources */,
+				B10000000000000000000000E /* UITestSupport.swift in Sources */,
 				37D1C04FE387044755C68A47 /* SeerrModels.swift in Sources */,
 				83957F5CCC7E0D4152487E92 /* ServerConfiguration.swift in Sources */,
 				5B542C3F047A5AF18CCCDC1D /* ServerInfoSection.swift in Sources */,
@@ -758,6 +849,7 @@
 				9C1ABC8EA6F97142A90A8646 /* StatusBadgeView.swift in Sources */,
 				438E49E22858126B23CF4BFF /* TMDBImageURL.swift in Sources */,
 				EC8FF0FE880AC023DF8143C9 /* TrustManager.swift in Sources */,
+				B10000000000000000000000F /* UITestURLProtocol.swift in Sources */,
 				1A415686E9F112924723ACF9 /* TvShowDetailView.swift in Sources */,
 				F0EA0C332F429674B0BD38F3 /* TvShowDetailViewModel.swift in Sources */,
 				1F1ED67C740C5C90822E0EFC /* URLNormalizer.swift in Sources */,
@@ -770,6 +862,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D2A000000000000000000001 /* AboutContentTests.swift in Sources */,
+				C1A000000000000000000001 /* CollectionDetailViewModelTests.swift in Sources */,
 				2D532E27BE8FF1399DA2A3BF /* DiscoverMediaItemTests.swift in Sources */,
 				A9A94BAEC92FCCFE259FEA6C /* MockWatchlistFetcher.swift in Sources */,
 				DF45A146DF57543F5ED69041 /* SeerrModelsTests.swift in Sources */,
@@ -781,6 +875,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		B100000000000000000000009 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9EA76F0C1C79685436156160 /* SeerrClient */;
+			targetProxy = B100000000000000000000005 /* PBXContainerItemProxy */;
+		};
 		CF7EE1586F73C8D0E4A8E2A6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 9EA76F0C1C79685436156160 /* SeerrClient */;
@@ -789,6 +888,30 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		B10000000000000000000000B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rodrigoindustries.SeerrClientUITests;
+				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = targeted;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = SeerrClient;
+			};
+			name = Debug;
+		};
+		B10000000000000000000000C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rodrigoindustries.SeerrClientUITests;
+				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = targeted;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = SeerrClient;
+			};
+			name = Release;
+		};
 		30C3123984006355238E16C4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1009,6 +1132,15 @@
 			buildConfigurations = (
 				3F611DA3265137CA0B18A322 /* Debug */,
 				6D3596B9EB4BE6DB558FBFC0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		B10000000000000000000000A /* Build configuration list for PBXNativeTarget "SeerrClientUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B10000000000000000000000B /* Debug */,
+				B10000000000000000000000C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

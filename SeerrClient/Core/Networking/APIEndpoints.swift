@@ -148,10 +148,21 @@ public struct APIEndpoints: Sendable {
     /// - Parameter id: The Seerr media record identifier.
     public func media(id: Int) -> String { "\(base)/media/\(id)" }
 
-    /// `POST /api/v1/media/{id}/watchlist` — Add a media item to the user's watchlist.
+    // MARK: - Watchlist
+
+    /// `POST /api/v1/watchlist` — Add an item to the current user's watchlist.
     ///
-    /// - Parameter id: The Seerr internal media record identifier.
-    public func mediaWatchlist(id: Int) -> String { "\(base)/media/\(id)/watchlist" }
+    /// Expects a JSON body with `mediaType` ("movie" or "tv") and `tmdbId`.
+    /// Returns 201 on success, 409 if the item is already on the watchlist.
+    public var watchlist: String { "\(base)/watchlist" }
+
+    /// `DELETE /api/v1/watchlist/{tmdbId}` — Remove an item from the current user's watchlist.
+    ///
+    /// Pass `mediaType` as a query parameter ("movie" or "tv").
+    /// Returns 204 on success, 404 if the item was not on the watchlist.
+    ///
+    /// - Parameter tmdbId: The TMDB ID of the item to remove.
+    public func watchlistItem(tmdbId: Int) -> String { "\(base)/watchlist/\(tmdbId)" }
 
     // MARK: - Movies
 

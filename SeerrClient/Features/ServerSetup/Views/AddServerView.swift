@@ -30,8 +30,7 @@ struct AddServerView: View {
     // MARK: - Callback
 
     /// Called when the server has been saved and the user taps "Save & Continue".
-    /// The second parameter contains the auth methods available on the server.
-    let onServerSaved: (ServerConfiguration, [AuthMethod]) -> Void
+    let onServerSaved: (ServerConfiguration) -> Void
 
     // MARK: - State
 
@@ -44,7 +43,7 @@ struct AddServerView: View {
     /// - Parameters:
     ///   - serverStore: The shared `ServerStore` where the new server will be saved.
     ///   - onServerSaved: Callback fired after the server is persisted.
-    init(serverStore: ServerStore, onServerSaved: @escaping (ServerConfiguration, [AuthMethod]) -> Void) {
+    init(serverStore: ServerStore, onServerSaved: @escaping (ServerConfiguration) -> Void) {
         self.onServerSaved = onServerSaved
         _viewModel = State(initialValue: ServerSetupViewModel(serverStore: serverStore))
     }
@@ -261,7 +260,7 @@ struct AddServerView: View {
             // Save & Continue button
             Button {
                 if let config = viewModel.saveDetectedServer() {
-                    onServerSaved(config, result.availableAuthMethods)
+                    onServerSaved(config)
                     dismiss()
                 }
             } label: {
@@ -354,7 +353,7 @@ private struct FlowRow<Item: Identifiable, Content: View>: View {
 #if DEBUG
 #Preview("URL Input") {
     let store = ServerStore()
-    AddServerView(serverStore: store) { _, _ in }
+    AddServerView(serverStore: store) { _ in }
 }
 
 #Preview("Success") {
@@ -362,6 +361,6 @@ private struct FlowRow<Item: Identifiable, Content: View>: View {
 
     // We can't directly set viewModel state in preview without reflection,
     // so this preview shows the input state. Run the app for full flow.
-    return AddServerView(serverStore: store) { _, _ in }
+    AddServerView(serverStore: store) { _ in }
 }
 #endif

@@ -136,6 +136,7 @@ public final class ServerStore {
             apiVersion: updated.apiVersion,
             authMethod: updated.authMethod,
             availableAuthMethods: updated.availableAuthMethods,
+            capabilities: updated.capabilities,
             isDefault: updated.isDefault,
             lastConnected: Date(),
             certFingerprint: updated.certFingerprint
@@ -179,6 +180,7 @@ public final class ServerStore {
             apiVersion: server.apiVersion,
             authMethod: server.authMethod,
             availableAuthMethods: server.availableAuthMethods,
+            capabilities: server.capabilities,
             isDefault: server.isDefault,
             lastConnected: server.lastConnected,
             certFingerprint: fingerprint

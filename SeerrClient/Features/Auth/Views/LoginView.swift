@@ -35,19 +35,19 @@ struct LoginView: View {
 
     // MARK: - Init
 
-    /// Creates a `LoginView` for the given server with detected auth methods.
+    /// Creates a `LoginView` for the given server using the active server's
+    /// cached capability snapshot.
     ///
     /// - Parameters:
     ///   - server: The server configuration to authenticate against.
-    ///   - availableAuthMethods: Methods returned by `/settings/public`.
     ///   - appState: Shared application state.
     ///   - serverStore: Shared server store.
     init(
         server: ServerConfiguration,
-        availableAuthMethods: [AuthMethod],
         appState: AppState,
         serverStore: ServerStore
     ) {
+        let capabilities = appState.activeServerCapabilities ?? server.resolvedCapabilities
         // `apiClient` is guaranteed non-nil here because `AppState.selectServer`
         // always creates one. Assert in DEBUG, fall back gracefully in release.
         guard let client = appState.apiClient else {
@@ -56,7 +56,7 @@ struct LoginView: View {
             let tempClient = SeerrAPIClient(server: server, serverStore: serverStore)
             _viewModel = State(initialValue: AuthViewModel(
                 server: server,
-                availableAuthMethods: availableAuthMethods,
+                serverCapabilities: capabilities,
                 apiClient: tempClient,
                 appState: appState,
                 serverStore: serverStore
@@ -65,7 +65,7 @@ struct LoginView: View {
         }
         _viewModel = State(initialValue: AuthViewModel(
             server: server,
-            availableAuthMethods: availableAuthMethods,
+            serverCapabilities: capabilities,
             apiClient: client,
             appState: appState,
             serverStore: serverStore
@@ -414,59 +414,88 @@ struct LoginView: View {
 // MARK: - Previews
 
 #if DEBUG
-#Preview("Local Login") {
+@MainActor
+private func makeLoginPreview(server: ServerConfiguration) -> some View {
     let store = ServerStore()
     let appState = AppState(serverStore: store)
-    let server = ServerConfiguration.preview
     appState.selectServer(server)
 
     return LoginView(
         server: server,
-        availableAuthMethods: [.local, .plex],
         appState: appState,
         serverStore: store
     )
     .environment(appState)
     .environment(store)
+}
+
+private func makeLocalLoginPreviewServer() -> ServerConfiguration {
+    ServerConfiguration(
+        displayName: "Local Login",
+        baseURL: "http://192.168.1.50:5055",
+        backendType: .overseerr,
+        capabilities: ServerCapabilities(
+            backendType: .overseerr,
+            publicSettings: PublicSettingsNormalized(
+                initialized: true,
+                applicationTitle: "Local Login",
+                localLoginEnabled: true,
+                newPlexLoginEnabled: true,
+                mediaServerLoginEnabled: true,
+                mediaServerKind: .plex
+            )
+        )
+    )
+}
+
+private func makePlexOnlyPreviewServer() -> ServerConfiguration {
+    ServerConfiguration(
+        displayName: "Plex Server",
+        baseURL: "http://192.168.1.100:5055",
+        backendType: .overseerr,
+        capabilities: ServerCapabilities(
+            backendType: .overseerr,
+            publicSettings: PublicSettingsNormalized(
+                initialized: true,
+                applicationTitle: "Plex Server",
+                localLoginEnabled: false,
+                newPlexLoginEnabled: true,
+                mediaServerLoginEnabled: true,
+                mediaServerKind: .plex
+            )
+        )
+    )
+}
+
+private func makeJellyfinPreviewServer() -> ServerConfiguration {
+    ServerConfiguration(
+        displayName: "Jellyseerr",
+        baseURL: "http://192.168.1.50:5055",
+        backendType: .jellyseerr,
+        capabilities: ServerCapabilities(
+            backendType: .jellyseerr,
+            publicSettings: PublicSettingsNormalized(
+                initialized: true,
+                applicationTitle: "Jellyseerr",
+                localLoginEnabled: true,
+                newPlexLoginEnabled: true,
+                mediaServerLoginEnabled: true,
+                mediaServerKind: .jellyfin,
+                jellyfinForgotPasswordURL: "http://192.168.1.50:8096/web/#/forgotpassword"
+            )
+        )
+    )
+}
+
+#Preview("Local Login") {
+    makeLoginPreview(server: makeLocalLoginPreviewServer())
 }
 
 #Preview("Plex Only") {
-    let store = ServerStore()
-    let appState = AppState(serverStore: store)
-    let server = ServerConfiguration(
-        displayName: "Plex Server",
-        baseURL: "http://192.168.1.100:5055",
-        backendType: .overseerr
-    )
-    appState.selectServer(server)
-
-    return LoginView(
-        server: server,
-        availableAuthMethods: [.plex],
-        appState: appState,
-        serverStore: store
-    )
-    .environment(appState)
-    .environment(store)
+    makeLoginPreview(server: makePlexOnlyPreviewServer())
 }
 
 #Preview("Jellyfin") {
-    let store = ServerStore()
-    let appState = AppState(serverStore: store)
-    let server = ServerConfiguration(
-        displayName: "Jellyseerr",
-        baseURL: "http://192.168.1.50:5055",
-        backendType: .jellyseerr
-    )
-    appState.selectServer(server)
-
-    return LoginView(
-        server: server,
-        availableAuthMethods: [.jellyfin, .local],
-        appState: appState,
-        serverStore: store
-    )
-    .environment(appState)
-    .environment(store)
+    makeLoginPreview(server: makeJellyfinPreviewServer())
 }
 #endif

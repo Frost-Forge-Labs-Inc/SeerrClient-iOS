@@ -76,7 +76,13 @@ public actor SeerrAPIClient {
     /// - Parameters:
     ///   - server: The `ServerConfiguration` describing the target server.
     ///   - serverStore: The store used to read/write certificate fingerprints.
-    public init(server: ServerConfiguration, serverStore: ServerStore) {
+    ///   - additionalProtocolClasses: Optional protocol classes inserted ahead
+    ///     of the default configuration. Intended for local deterministic tests.
+    public init(
+        server: ServerConfiguration,
+        serverStore: ServerStore,
+        additionalProtocolClasses: [AnyClass] = []
+    ) {
         self.baseURL = server.baseURL
         self.serverConfig = server
 
@@ -92,6 +98,16 @@ public actor SeerrAPIClient {
         config.httpCookieAcceptPolicy = .never
         config.timeoutIntervalForRequest = SeerrAPIClient.defaultTimeout
         config.timeoutIntervalForResource = SeerrAPIClient.mediaOperationTimeout
+
+        var protocolClasses = additionalProtocolClasses
+#if DEBUG
+        if UITestLaunchConfiguration.current.isEnabled {
+            protocolClasses.insert(UITestURLProtocol.self, at: 0)
+        }
+#endif
+        if !protocolClasses.isEmpty {
+            config.protocolClasses = protocolClasses + (config.protocolClasses ?? [])
+        }
 
         self.session = URLSession(
             configuration: config,
@@ -248,8 +264,30 @@ public actor SeerrAPIClient {
             body: nil as Data?,
             timeout: timeout
         )
-        let (_, response) = try await executeDataTask(for: request)
-        try validateHTTPStatus(response, data: Data())
+        let (data, response) = try await executeDataTask(for: request)
+        try validateHTTPStatus(response, data: data)
+    }
+
+    /// Performs a `DELETE` request with query parameters and discards the response body.
+    ///
+    /// - Parameters:
+    ///   - path: An endpoint path from `APIEndpoints`.
+    ///   - queryItems: Query parameters appended to the URL (e.g. `mediaType=movie`).
+    ///   - timeout: Override the default request timeout.
+    public func deleteVoid(
+        _ path: String,
+        queryItems: [URLQueryItem],
+        timeout: TimeInterval? = nil
+    ) async throws {
+        let request = try buildRequest(
+            method: "DELETE",
+            path: path,
+            queryItems: queryItems,
+            body: nil as Data?,
+            timeout: timeout
+        )
+        let (data, response) = try await executeDataTask(for: request)
+        try validateHTTPStatus(response, data: data)
     }
 
     // MARK: - Cookie Management

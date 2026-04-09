@@ -43,9 +43,14 @@ public final class CollectionDetailViewModel {
     /// Whether the "Request Selected" sheet is presented.
     public var showRequestSheet: Bool = false
 
-    /// The movie ID currently being requested individually via the sheet.
-    /// `nil` when using the multi-select flow.
-    public private(set) var requestingMovieId: Int? = nil
+    /// Ordered queue of movie IDs currently being requested through the shared
+    /// single-movie request sheet.
+    public private(set) var queuedRequestMovieIDs: [Int] = []
+
+    /// The movie ID currently being requested via the request sheet.
+    public var requestingMovieId: Int? {
+        queuedRequestMovieIDs.first
+    }
 
     /// Convenience accessor for the loaded collection.
     public var collection: Collection? {
@@ -60,6 +65,22 @@ public final class CollectionDetailViewModel {
 
     /// `true` when at least one movie is selected for a partial request.
     public var hasSelection: Bool { !selectedMovieIDs.isEmpty }
+
+    /// Requestable selected movie IDs in collection order.
+    public var selectedRequestMovieIDs: [Int] {
+        orderedRequestableMovieIDs.filter { selectedMovieIDs.contains($0) }
+    }
+
+    /// `true` when every requestable movie is currently selected.
+    public var allRequestableMoviesSelected: Bool {
+        !requestableMovies.isEmpty && selectedRequestMovieIDs.count == requestableMovies.count
+    }
+
+    /// The movie currently shown in the request sheet.
+    public var activeRequestMovie: MovieResult? {
+        guard let requestingMovieId else { return nil }
+        return collection?.parts?.first(where: { $0.id == requestingMovieId })
+    }
 
     // MARK: - Dependencies
 
@@ -99,12 +120,21 @@ public final class CollectionDetailViewModel {
         await loadCollection()
     }
 
+    /// Replaces the currently loaded collection state while preserving view-model
+    /// ownership of selection and request-queue reconciliation.
+    func replaceLoadedCollection(_ collection: Collection) {
+        loadState = .loaded(collection)
+        reconcileSelectionAndQueue()
+    }
+
     // MARK: - Selection
 
     /// Toggles a movie's selection state.
     ///
     /// - Parameter movieId: The TMDB movie identifier.
     public func toggleSelection(movieId: Int) {
+        guard isRequestable(movieId: movieId) else { return }
+
         if selectedMovieIDs.contains(movieId) {
             selectedMovieIDs.remove(movieId)
         } else {
@@ -114,7 +144,7 @@ public final class CollectionDetailViewModel {
 
     /// Selects all requestable movies.
     public func selectAll() {
-        selectedMovieIDs = Set(requestableMovies.compactMap { $0.id as Int? })
+        selectedMovieIDs = Set(orderedRequestableMovieIDs)
     }
 
     /// Clears all selections.
@@ -128,27 +158,39 @@ public final class CollectionDetailViewModel {
     /// Each movie is individually requestable via the collection's parts list.
     public func requestAll() {
         selectAll()
-        showRequestSheet = true
+        beginRequestFlow(movieIDs: orderedRequestableMovieIDs)
     }
 
     /// Opens the request sheet for a single movie.
     ///
     /// - Parameter movieId: The TMDB movie identifier to request.
     public func requestSingle(movieId: Int) {
-        requestingMovieId = movieId
-        showRequestSheet = true
+        beginRequestFlow(movieIDs: [movieId])
     }
 
     /// Opens the request sheet for the currently selected movies.
     public func requestSelected() {
-        requestingMovieId = nil
-        showRequestSheet = true
+        beginRequestFlow(movieIDs: selectedRequestMovieIDs)
     }
 
     /// Dismisses the request sheet and resets transient request state.
     public func dismissRequestSheet() {
         showRequestSheet = false
-        requestingMovieId = nil
+        queuedRequestMovieIDs = []
+    }
+
+    /// Applies a successful request submission for the currently active movie,
+    /// updates its visible status to pending, and advances the request queue.
+    public func handleRequestSuccess() {
+        guard let movieId = requestingMovieId else { return }
+
+        selectedMovieIDs.remove(movieId)
+        queuedRequestMovieIDs = Array(queuedRequestMovieIDs.dropFirst())
+        markMovieAsPending(movieId: movieId)
+
+        if queuedRequestMovieIDs.isEmpty {
+            showRequestSheet = false
+        }
     }
 
     // MARK: - Status Helpers
@@ -169,6 +211,16 @@ public final class CollectionDetailViewModel {
         isAvailable(movie) || isPending(movie)
     }
 
+    /// `true` when the movie can be selected/requested from the collection flow.
+    public func isRequestable(movieId: Int) -> Bool {
+        requestableMovies.contains(where: { $0.id == movieId })
+    }
+
+    /// `true` when the movie is currently selected in the collection flow.
+    public func isSelected(movieId: Int) -> Bool {
+        selectedMovieIDs.contains(movieId)
+    }
+
     // MARK: - Private
 
     private func userFacingMessage(from error: Error) -> String {
@@ -183,5 +235,80 @@ public final class CollectionDetailViewModel {
             }
         }
         return "Something went wrong. Please try again."
+    }
+
+    private var orderedRequestableMovieIDs: [Int] {
+        requestableMovies.map(\.id)
+    }
+
+    private func beginRequestFlow(movieIDs: [Int]) {
+        let filteredMovieIDs = orderedRequestableMovieIDs.filter { movieIDs.contains($0) }
+        guard !filteredMovieIDs.isEmpty else { return }
+
+        queuedRequestMovieIDs = filteredMovieIDs
+        showRequestSheet = true
+    }
+
+    private func reconcileSelectionAndQueue() {
+        let requestable = Set(orderedRequestableMovieIDs)
+        selectedMovieIDs.formIntersection(requestable)
+        queuedRequestMovieIDs = queuedRequestMovieIDs.filter { requestable.contains($0) }
+
+        if queuedRequestMovieIDs.isEmpty {
+            showRequestSheet = false
+        }
+    }
+
+    private func markMovieAsPending(movieId: Int) {
+        guard case .loaded(let collection) = loadState else { return }
+
+        let updatedParts = collection.parts?.map { movie in
+            guard movie.id == movieId else { return movie }
+            return movieByUpdatingStatus(movie, status: 2)
+        }
+
+        let updatedCollection = Collection(
+            id: collection.id,
+            name: collection.name,
+            overview: collection.overview,
+            posterPath: collection.posterPath,
+            backdropPath: collection.backdropPath,
+            parts: updatedParts
+        )
+
+        replaceLoadedCollection(updatedCollection)
+    }
+
+    private func movieByUpdatingStatus(_ movie: MovieResult, status: Int) -> MovieResult {
+        let updatedMediaInfo = MediaInfo(
+            id: movie.mediaInfo?.id,
+            tmdbId: movie.mediaInfo?.tmdbId ?? movie.id,
+            tvdbId: movie.mediaInfo?.tvdbId,
+            status: status,
+            seasons: movie.mediaInfo?.seasons,
+            requests: movie.mediaInfo?.requests,
+            createdAt: movie.mediaInfo?.createdAt,
+            updatedAt: movie.mediaInfo?.updatedAt,
+            watchlisted: movie.mediaInfo?.watchlisted
+        )
+
+        return MovieResult(
+            id: movie.id,
+            mediaType: movie.mediaType,
+            popularity: movie.popularity,
+            posterPath: movie.posterPath,
+            backdropPath: movie.backdropPath,
+            voteCount: movie.voteCount,
+            voteAverage: movie.voteAverage,
+            genreIds: movie.genreIds,
+            overview: movie.overview,
+            originalLanguage: movie.originalLanguage,
+            title: movie.title,
+            originalTitle: movie.originalTitle,
+            releaseDate: movie.releaseDate,
+            adult: movie.adult,
+            video: movie.video,
+            mediaInfo: updatedMediaInfo
+        )
     }
 }

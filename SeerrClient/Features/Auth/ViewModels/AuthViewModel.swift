@@ -71,8 +71,10 @@ public final class AuthViewModel {
     /// The server being authenticated against.
     public let server: ServerConfiguration
 
-    /// Auth methods available on this server (from `ServerDetectionResult`).
-    /// Falls back to all methods if none were specified (conservative default).
+    /// Runtime compatibility snapshot for the active server.
+    public let serverCapabilities: ServerCapabilities
+
+    /// Auth methods available on this server, derived from `serverCapabilities`.
     public let availableAuthMethods: [AuthMethod]
 
     // MARK: - Auth State
@@ -156,22 +158,27 @@ public final class AuthViewModel {
     ///
     /// - Parameters:
     ///   - server: The `ServerConfiguration` to authenticate against.
-    ///   - availableAuthMethods: Auth methods exposed by the server's `/settings/public`.
+    ///   - serverCapabilities: Normalised runtime capability snapshot for the active server.
     ///   - apiClient: The `SeerrAPIClient` for the active server.
     ///   - appState: Global app state; receives the authenticated user on success.
     ///   - serverStore: Used for logging `lastConnected` timestamps.
     init(
         server: ServerConfiguration,
-        availableAuthMethods: [AuthMethod],
+        serverCapabilities: ServerCapabilities,
         apiClient: SeerrAPIClient,
         appState: AppState,
         serverStore: ServerStore
     ) {
         self.server = server
-        self.availableAuthMethods = availableAuthMethods.isEmpty
-            ? [.local]      // Safe fallback
-            : availableAuthMethods
-        self.selectedMethod = availableAuthMethods.first ?? .local
+        self.serverCapabilities = serverCapabilities
+        self.availableAuthMethods = serverCapabilities.availableAuthMethods.isEmpty
+            ? [.local]
+            : serverCapabilities.availableAuthMethods
+        if self.availableAuthMethods.contains(server.authMethod) {
+            self.selectedMethod = server.authMethod
+        } else {
+            self.selectedMethod = self.availableAuthMethods.first ?? .local
+        }
         self.authRepository = AuthRepository(apiClient: apiClient, server: server)
         self.appState = appState
         self.serverStore = serverStore
