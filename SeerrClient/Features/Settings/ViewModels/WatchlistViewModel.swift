@@ -1,7 +1,7 @@
 // WatchlistViewModel.swift
 // SeerrClient
 //
-// Manages loading and pagination for the user's Plex watchlist.
+// Manages loading, segmentation, and pagination for the user's watchlist.
 
 import Foundation
 
@@ -15,6 +15,49 @@ public enum WatchlistLoadState: Equatable {
     case error(String)
 }
 
+// MARK: - WatchlistMediaSegment
+
+public enum WatchlistMediaSegment: String, CaseIterable, Sendable, Hashable {
+    case movies
+    case tvShows
+
+    public var title: String {
+        switch self {
+        case .movies:
+            return "Movies"
+        case .tvShows:
+            return "TV Shows"
+        }
+    }
+
+    public var emptyTitle: String {
+        switch self {
+        case .movies:
+            return "No Movies in Watchlist"
+        case .tvShows:
+            return "No TV Shows in Watchlist"
+        }
+    }
+
+    public var emptyMessage: String {
+        switch self {
+        case .movies:
+            return "Switch to TV Shows or add movies to your watchlist."
+        case .tvShows:
+            return "Switch to Movies or add TV shows to your watchlist."
+        }
+    }
+
+    public func matches(_ item: DiscoverMediaItem) -> Bool {
+        switch self {
+        case .movies:
+            return item.isMovie
+        case .tvShows:
+            return item.isTv
+        }
+    }
+}
+
 // MARK: - WatchlistViewModel
 
 @MainActor
@@ -24,6 +67,7 @@ public final class WatchlistViewModel {
     // MARK: - Public State
 
     public private(set) var loadState: WatchlistLoadState = .idle
+    public private(set) var selectedMediaSegment: WatchlistMediaSegment = .movies
     public private(set) var items: [DiscoverMediaItem] = []
     public private(set) var isLoadingMore = false
     public private(set) var currentPage = 1
@@ -36,8 +80,12 @@ public final class WatchlistViewModel {
     /// which does not include `releaseDate` or `firstAirDate`. Keyed by watchlist item ID.
     public private(set) var years: [Int: String] = [:]
 
+    public var visibleItems: [DiscoverMediaItem] {
+        items.filter(selectedMediaSegment.matches)
+    }
+
     public var canLoadMore: Bool {
-        currentPage < totalPages && !isLoadingMore
+        hasMorePages && !isLoadingMore
     }
 
     // MARK: - Dependencies
@@ -48,6 +96,8 @@ public final class WatchlistViewModel {
     private let mediaDetailRepository: MediaDetailRepository?
     @ObservationIgnored
     private var refreshTask: Task<Void, Never>?
+    @ObservationIgnored
+    private var mediaSegmentSelectionTask: Task<Void, Never>?
 
     // MARK: - Init
 
@@ -73,6 +123,7 @@ public final class WatchlistViewModel {
             guard let self else { return }
             defer { self.refreshTask = nil }
             await self.load(page: 1, reset: true)
+            await self.loadAdditionalPagesIfNeeded(previousVisibleCount: 0)
         }
 
         refreshTask = task
@@ -81,6 +132,15 @@ public final class WatchlistViewModel {
 
     public func retry() {
         Task { await refresh() }
+    }
+
+    public func selectMediaSegment(_ mediaSegment: WatchlistMediaSegment) {
+        mediaSegmentSelectionTask?.cancel()
+        mediaSegmentSelectionTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+            defer { self.mediaSegmentSelectionTask = nil }
+            await self.applySelectedMediaSegment(mediaSegment)
+        }
     }
 
     /// Reconciles the currently visible watchlist items against the app-level
@@ -107,13 +167,20 @@ public final class WatchlistViewModel {
 
     public func onItemAppear(_ item: DiscoverMediaItem) {
         guard canLoadMore else { return }
-        guard let index = items.firstIndex(where: { $0.id == item.id }) else { return }
-        if index >= items.count - 4 {
+        let visibleItems = visibleItems
+        guard let index = visibleItems.firstIndex(where: { $0.id == item.id }) else { return }
+
+        let thresholdIndex = max(visibleItems.count - 4, 0)
+        if index >= thresholdIndex {
             Task { await loadMore() }
         }
     }
 
     // MARK: - Private
+
+    private var hasMorePages: Bool {
+        currentPage < totalPages
+    }
 
     private func load(page: Int, reset: Bool) async {
         if reset {
@@ -135,7 +202,6 @@ public final class WatchlistViewModel {
 
             currentPage = response.page
             totalPages = response.totalPages
-
             loadState = items.isEmpty ? .empty : .loaded(items)
 
             // Watchlist endpoint doesn't include posterPath — enrich in background.
@@ -194,10 +260,10 @@ public final class WatchlistViewModel {
             }
             for await (id, posterPath, year) in group {
                 if let posterPath {
-                    posterPaths[id] = posterPath
+                    posterPaths[id] = posterPaths[id] ?? posterPath
                 }
                 if let year {
-                    years[id] = year
+                    years[id] = years[id] ?? year
                 }
             }
         }
@@ -207,6 +273,34 @@ public final class WatchlistViewModel {
         guard canLoadMore else { return }
         isLoadingMore = true
         defer { isLoadingMore = false }
+
+        let previousVisibleCount = visibleItems.count
         await load(page: currentPage + 1, reset: false)
+        await loadAdditionalPagesIfNeeded(previousVisibleCount: previousVisibleCount)
+    }
+
+    func applySelectedMediaSegment(_ mediaSegment: WatchlistMediaSegment) async {
+        guard mediaSegment != selectedMediaSegment else { return }
+        selectedMediaSegment = mediaSegment
+
+        let shouldShowLoadingIndicator = visibleItems.isEmpty && canLoadMore
+        if shouldShowLoadingIndicator {
+            isLoadingMore = true
+        }
+        defer {
+            if shouldShowLoadingIndicator {
+                isLoadingMore = false
+            }
+        }
+
+        await loadAdditionalPagesIfNeeded(previousVisibleCount: 0)
+    }
+
+    private func loadAdditionalPagesIfNeeded(previousVisibleCount: Int) async {
+        guard !items.isEmpty else { return }
+
+        while visibleItems.count == previousVisibleCount && hasMorePages {
+            await load(page: currentPage + 1, reset: false)
+        }
     }
 }

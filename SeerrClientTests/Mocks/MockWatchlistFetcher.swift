@@ -14,6 +14,9 @@ final class MockWatchlistFetcher: WatchlistFetching, @unchecked Sendable {
     /// Set this to control what `fetchWatchlist` returns.
     var stubbedResponse: DiscoverResponse<DiscoverMediaItem>?
 
+    /// Optional per-page overrides for pagination tests.
+    var stubbedResponsesByPage: [Int: DiscoverResponse<DiscoverMediaItem>] = [:]
+
     /// Set this to make `fetchWatchlist` throw.
     var stubbedError: Error?
 
@@ -31,6 +34,9 @@ final class MockWatchlistFetcher: WatchlistFetching, @unchecked Sendable {
             try? await Task.sleep(nanoseconds: delayNanoseconds)
         }
         if let error = stubbedError { throw error }
+        if let response = stubbedResponsesByPage[page] {
+            return response
+        }
         return stubbedResponse ?? DiscoverResponse(
             page: 1,
             totalPages: 1,

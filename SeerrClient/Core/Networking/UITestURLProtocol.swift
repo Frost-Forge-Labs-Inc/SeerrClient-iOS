@@ -186,23 +186,34 @@ private struct StubbedResponse {
 
 private final class UITestScenarioState: @unchecked Sendable {
     private let lock = NSLock()
+    private var activeScenario: UITestScenario = .watchlistRemoval
     private var watchlistContainsMovie = true
+    private var watchlistContainsTvShow = false
     private var requestedCollectionMovieIDs: Set<Int> = []
     private var nextRequestIdentifier = 7000
 
     func reset(for scenario: UITestScenario) {
         lock.withLock {
+            activeScenario = scenario
             switch scenario {
             case .watchlistRemoval:
                 watchlistContainsMovie = true
+                watchlistContainsTvShow = false
+                requestedCollectionMovieIDs = []
+                nextRequestIdentifier = 7000
+            case .watchlistMediaFilter:
+                watchlistContainsMovie = true
+                watchlistContainsTvShow = true
                 requestedCollectionMovieIDs = []
                 nextRequestIdentifier = 7000
             case .collectionRequestSelection:
                 watchlistContainsMovie = true
+                watchlistContainsTvShow = false
                 requestedCollectionMovieIDs = []
                 nextRequestIdentifier = 7000
             case .aboutNavigation:
                 watchlistContainsMovie = true
+                watchlistContainsTvShow = false
                 requestedCollectionMovieIDs = []
                 nextRequestIdentifier = 7000
             }
@@ -217,20 +228,41 @@ private final class UITestScenarioState: @unchecked Sendable {
 
     func watchlistPayload() -> [String: Any] {
         lock.withLock {
-            let results: [[String: Any]] = watchlistContainsMovie ? [[
-                "id": 9001,
-                "tmdbId": 550,
-                "mediaType": "movie",
-                "title": "Fight Club",
-                "overview": "A UI test movie used to validate watchlist removal.",
-                "releaseDate": "1999-10-15",
-                "mediaInfo": [
-                    "id": 1,
+            var results: [[String: Any]] = []
+
+            if watchlistContainsMovie {
+                results.append([
+                    "id": 9001,
                     "tmdbId": 550,
-                    "status": 1,
-                    "watchlisted": true
-                ]
-            ]] : []
+                    "mediaType": "movie",
+                    "title": "Fight Club",
+                    "overview": "A UI test movie used to validate watchlist removal.",
+                    "releaseDate": "1999-10-15",
+                    "mediaInfo": [
+                        "id": 1,
+                        "tmdbId": 550,
+                        "status": 1,
+                        "watchlisted": true
+                    ]
+                ])
+            }
+
+            if watchlistContainsTvShow {
+                results.append([
+                    "id": 9101,
+                    "tmdbId": 1399,
+                    "mediaType": "tv",
+                    "name": activeScenario == .watchlistMediaFilter ? "Segmented TV Test" : "Game of Thrones",
+                    "overview": "A UI test show used to validate watchlist filtering.",
+                    "firstAirDate": "2011-04-17",
+                    "mediaInfo": [
+                        "id": 2,
+                        "tmdbId": 1399,
+                        "status": 1,
+                        "watchlisted": true
+                    ]
+                ])
+            }
 
             return [
                 "page": 1,

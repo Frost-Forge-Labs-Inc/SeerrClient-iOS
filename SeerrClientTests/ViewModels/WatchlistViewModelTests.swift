@@ -152,6 +152,32 @@ final class WatchlistViewModelTests: XCTestCase {
         XCTAssertEqual(sut.items.count, 3)
     }
 
+    func test_visibleItems_defaultsToMovies() async throws {
+        mock.stubbedResponse = makeResponse(items: [
+            makeItem(id: 1, mediaType: "movie"),
+            makeItem(id: 2, mediaType: "tv"),
+            makeItem(id: 3, mediaType: "movie")
+        ])
+
+        await sut.refresh()
+
+        XCTAssertEqual(sut.selectedMediaSegment, .movies)
+        XCTAssertEqual(sut.visibleItems.map(\.id), [1, 3])
+    }
+
+    func test_selectMediaSegment_updatesVisibleItemsToTvShows() async throws {
+        mock.stubbedResponse = makeResponse(items: [
+            makeItem(id: 1, mediaType: "movie"),
+            makeItem(id: 2, mediaType: "tv"),
+            makeItem(id: 3, mediaType: "tv")
+        ])
+
+        await sut.refresh()
+        await sut.applySelectedMediaSegment(.tvShows)
+
+        XCTAssertEqual(sut.visibleItems.map(\.id), [2, 3])
+    }
+
     // MARK: - Pagination
 
     func test_pagination_pageAndTotalPagesSet() async throws {
@@ -163,6 +189,55 @@ final class WatchlistViewModelTests: XCTestCase {
         await sut.refresh()
         XCTAssertEqual(sut.currentPage, 2)
         XCTAssertEqual(sut.totalPages, 5)
+    }
+
+    func test_onItemAppear_usesVisibleItemsForPaginationThreshold() async throws {
+        mock.stubbedResponse = makeResponse(
+            items: [
+                makeItem(id: 1, mediaType: "movie"),
+                makeItem(id: 2, mediaType: "movie"),
+                makeItem(id: 3, mediaType: "tv"),
+                makeItem(id: 4, mediaType: "tv"),
+                makeItem(id: 5, mediaType: "tv"),
+                makeItem(id: 6, mediaType: "tv"),
+                makeItem(id: 7, mediaType: "tv")
+            ],
+            page: 1,
+            totalPages: 2
+        )
+
+        await sut.refresh()
+        sut.onItemAppear(makeItem(id: 2, mediaType: "movie"))
+        try? await Task.sleep(nanoseconds: 50_000_000)
+
+        XCTAssertEqual(mock.fetchWatchlistCallCount, 2)
+    }
+
+    func test_selectMediaSegment_loadsAdditionalPagesUntilMatchingItemsFound() async throws {
+        mock.stubbedResponsesByPage = [
+            1: makeResponse(
+                items: [
+                    makeItem(id: 1, mediaType: "movie"),
+                    makeItem(id: 2, mediaType: "movie")
+                ],
+                page: 1,
+                totalPages: 2
+            ),
+            2: makeResponse(
+                items: [
+                    makeItem(id: 3, mediaType: "tv")
+                ],
+                page: 2,
+                totalPages: 2
+            )
+        ]
+
+        await sut.refresh()
+        await sut.applySelectedMediaSegment(.tvShows)
+
+        XCTAssertEqual(mock.fetchWatchlistCallCount, 2)
+        XCTAssertEqual(sut.currentPage, 2)
+        XCTAssertEqual(sut.visibleItems.map(\.id), [3])
     }
 
     // MARK: - Enrichment (nil mediaDetailRepository)

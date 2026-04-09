@@ -9,7 +9,7 @@ final class WatchlistRemovalUITests: XCTestCase {
 
     @MainActor
     func testRemovingMovieFromWatchlistRemovesItAfterNavigatingBack() throws {
-        let app = launchApp()
+        let app = launchApp(scenario: "watchlist_removal")
         let watchlistScreen = app.scrollViews["watchlist.screen"]
         let movieCard = watchlistCard(tmdbId: 550, in: app)
 
@@ -34,9 +34,30 @@ final class WatchlistRemovalUITests: XCTestCase {
     }
 
     @MainActor
-    private func launchApp() -> XCUIApplication {
+    func testSegmentedControlFiltersMoviesAndTvShows() throws {
+        let app = launchApp(scenario: "watchlist_media_filter")
+        let segmentedControl = app.segmentedControls["watchlist.mediaSegment"]
+        let moviesButton = segmentedControl.buttons["Movies"]
+        let tvShowsButton = segmentedControl.buttons["TV Shows"]
+        let movieCard = watchlistCard(tmdbId: 550, in: app)
+        let tvCard = watchlistCard(tmdbId: 1399, in: app)
+
+        XCTAssertTrue(segmentedControl.waitForExistence(timeout: timeout))
+        XCTAssertTrue(moviesButton.exists)
+        XCTAssertTrue(tvShowsButton.exists)
+        XCTAssertTrue(movieCard.waitForExistence(timeout: timeout))
+        XCTAssertFalse(tvCard.exists)
+
+        tvShowsButton.tap()
+
+        XCTAssertTrue(tvCard.waitForExistence(timeout: timeout))
+        XCTAssertFalse(movieCard.exists)
+    }
+
+    @MainActor
+    private func launchApp(scenario: String) -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchEnvironment["SEERR_UI_TEST_SCENARIO"] = "watchlist_removal"
+        app.launchEnvironment["SEERR_UI_TEST_SCENARIO"] = scenario
         app.launchEnvironment["SEERR_UI_TEST_DISABLE_LAUNCH_ANIMATION"] = "1"
         app.launch()
         return app

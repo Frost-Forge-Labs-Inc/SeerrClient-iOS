@@ -1,9 +1,7 @@
 // WatchlistView.swift
 // SeerrClient
 //
-// Dedicated screen showing the user's Plex watchlist items in a two-column grid.
-// Matches the JellySeerr web UI watchlist page behaviour: paginated grid with
-// poster cards, pull-to-refresh, and navigation to media detail.
+// Dedicated screen showing the user's watchlist items in a two-column grid.
 
 import SwiftUI
 
@@ -56,10 +54,10 @@ struct WatchlistView: View {
     private func contentForState(_ vm: WatchlistViewModel) -> some View {
         switch vm.loadState {
         case .idle, .loading:
-            loadingContent
+            loadingContent(vm)
 
-        case .loaded(let items):
-            loadedContent(items, vm: vm)
+        case .loaded:
+            loadedContent(vm)
 
         case .empty:
             emptyContent(vm)
@@ -72,51 +70,30 @@ struct WatchlistView: View {
     // MARK: - Loaded
 
     @ViewBuilder
-    private func loadedContent(_ items: [DiscoverMediaItem], vm: WatchlistViewModel) -> some View {
+    private func loadedContent(_ vm: WatchlistViewModel) -> some View {
         ScrollView {
-            LazyVGrid(columns: columns, spacing: 14) {
-                ForEach(items) { item in
-                    if item.isMovie {
-                        NavigationLink(value: MovieNavDestination(id: item.effectiveTmdbId, title: item.displayTitle)) {
-                            MediaCardView(
-                                item: item,
-                                size: .medium,
-                                posterPathOverride: vm.posterPaths[item.id],
-                                yearOverride: vm.years[item.id]
-                            )
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityIdentifier("watchlist.card.\(item.effectiveTmdbId)")
-                        .onAppear { vm.onItemAppear(item) }
-                    } else if item.isTv {
-                        NavigationLink(value: TvNavDestination(id: item.effectiveTmdbId, title: item.displayTitle)) {
-                            MediaCardView(
-                                item: item,
-                                size: .medium,
-                                posterPathOverride: vm.posterPaths[item.id],
-                                yearOverride: vm.years[item.id]
-                            )
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityIdentifier("watchlist.card.\(item.effectiveTmdbId)")
-                        .onAppear { vm.onItemAppear(item) }
-                    } else {
-                        MediaCardView(
-                            item: item,
-                            size: .medium,
-                            posterPathOverride: vm.posterPaths[item.id],
-                            yearOverride: vm.years[item.id]
-                        )
-                        .accessibilityIdentifier("watchlist.card.\(item.effectiveTmdbId)")
-                        .onAppear { vm.onItemAppear(item) }
-                    }
-                }
+            VStack(alignment: .leading, spacing: 12) {
+                mediaSegmentControl(vm)
 
-                if vm.isLoadingMore {
-                    ProgressView()
-                        .frame(maxWidth: .infinity)
-                        .gridCellColumns(2)
-                        .padding(.vertical, 8)
+                if vm.visibleItems.isEmpty {
+                    if vm.isLoadingMore {
+                        filteredLoadingContent(vm)
+                    } else {
+                        filteredEmptyContent(vm)
+                    }
+                } else {
+                    LazyVGrid(columns: columns, spacing: 14) {
+                        ForEach(vm.visibleItems) { item in
+                            watchlistCard(for: item, vm: vm)
+                        }
+
+                        if vm.isLoadingMore {
+                            ProgressView()
+                                .frame(maxWidth: .infinity)
+                                .gridCellColumns(2)
+                                .padding(.vertical, 8)
+                        }
+                    }
                 }
             }
             .padding(.horizontal, 16)
@@ -130,14 +107,18 @@ struct WatchlistView: View {
 
     // MARK: - Loading
 
-    private var loadingContent: some View {
+    private func loadingContent(_ vm: WatchlistViewModel) -> some View {
         ScrollView {
-            LazyVGrid(columns: columns, spacing: 14) {
-                ForEach(0..<8, id: \.self) { _ in
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color(.systemGray5))
-                        .aspectRatio(2/3, contentMode: .fit)
-                        .overlay { ShimmerView() }
+            VStack(alignment: .leading, spacing: 12) {
+                mediaSegmentControl(vm)
+
+                LazyVGrid(columns: columns, spacing: 14) {
+                    ForEach(0..<8, id: \.self) { _ in
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color(.systemGray5))
+                            .aspectRatio(2/3, contentMode: .fit)
+                            .overlay { ShimmerView() }
+                    }
                 }
             }
             .padding(.horizontal, 16)
@@ -151,13 +132,19 @@ struct WatchlistView: View {
 
     private func emptyContent(_ vm: WatchlistViewModel) -> some View {
         ScrollView {
-            ContentUnavailableView {
-                Label("No Watchlist Items", systemImage: "bookmark.slash")
-            } description: {
-                Text("Your Plex watchlist is empty. Add titles in Plex and they'll appear here.")
+            VStack(alignment: .leading, spacing: 12) {
+                mediaSegmentControl(vm)
+
+                ContentUnavailableView {
+                    Label("No Watchlist Items", systemImage: "bookmark.slash")
+                } description: {
+                    Text("Your watchlist is empty. Add titles on your server and they'll appear here.")
+                }
+                .accessibilityIdentifier("watchlist.empty-state")
+                .padding(.top, 60)
             }
-            .accessibilityIdentifier("watchlist.empty-state")
-            .padding(.top, 60)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
         }
         .accessibilityIdentifier("watchlist.screen")
         .refreshable {
@@ -168,19 +155,105 @@ struct WatchlistView: View {
     // MARK: - Error
 
     private func errorContent(message: String, vm: WatchlistViewModel) -> some View {
-        ContentUnavailableView {
-            Label("Couldn't Load Watchlist", systemImage: "exclamationmark.triangle")
-        } description: {
-            Text(message)
-        } actions: {
-            Button("Try Again") {
-                vm.retry()
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                mediaSegmentControl(vm)
+
+                ContentUnavailableView {
+                    Label("Couldn't Load Watchlist", systemImage: "exclamationmark.triangle")
+                } description: {
+                    Text(message)
+                } actions: {
+                    Button("Try Again") {
+                        vm.retry()
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
             }
-            .buttonStyle(.borderedProminent)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
         }
+        .accessibilityIdentifier("watchlist.screen")
     }
 
     // MARK: - Helpers
+
+    @ViewBuilder
+    private func watchlistCard(for item: DiscoverMediaItem, vm: WatchlistViewModel) -> some View {
+        if item.isMovie {
+            NavigationLink(value: MovieNavDestination(id: item.effectiveTmdbId, title: item.displayTitle)) {
+                MediaCardView(
+                    item: item,
+                    size: .medium,
+                    posterPathOverride: vm.posterPaths[item.id],
+                    yearOverride: vm.years[item.id]
+                )
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("watchlist.card.\(item.effectiveTmdbId)")
+            .onAppear { vm.onItemAppear(item) }
+        } else if item.isTv {
+            NavigationLink(value: TvNavDestination(id: item.effectiveTmdbId, title: item.displayTitle)) {
+                MediaCardView(
+                    item: item,
+                    size: .medium,
+                    posterPathOverride: vm.posterPaths[item.id],
+                    yearOverride: vm.years[item.id]
+                )
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("watchlist.card.\(item.effectiveTmdbId)")
+            .onAppear { vm.onItemAppear(item) }
+        } else {
+            MediaCardView(
+                item: item,
+                size: .medium,
+                posterPathOverride: vm.posterPaths[item.id],
+                yearOverride: vm.years[item.id]
+            )
+            .accessibilityIdentifier("watchlist.card.\(item.effectiveTmdbId)")
+            .onAppear { vm.onItemAppear(item) }
+        }
+    }
+
+    private func mediaSegmentControl(_ vm: WatchlistViewModel) -> some View {
+        Picker(
+            "Media Type",
+            selection: Binding(
+                get: { vm.selectedMediaSegment },
+                set: vm.selectMediaSegment
+            )
+        ) {
+            ForEach(WatchlistMediaSegment.allCases, id: \.self) { segment in
+                Text(segment.title)
+                    .tag(segment)
+            }
+        }
+        .pickerStyle(.segmented)
+        .accessibilityIdentifier("watchlist.mediaSegment")
+    }
+
+    private func filteredEmptyContent(_ vm: WatchlistViewModel) -> some View {
+        ContentUnavailableView {
+            Label(vm.selectedMediaSegment.emptyTitle, systemImage: "line.3.horizontal.decrease.circle")
+        } description: {
+            Text(vm.selectedMediaSegment.emptyMessage)
+        }
+        .accessibilityIdentifier("watchlist.filtered-empty")
+        .padding(.top, 60)
+    }
+
+    private func filteredLoadingContent(_ vm: WatchlistViewModel) -> some View {
+        VStack(spacing: 12) {
+            ProgressView()
+            Text("Loading \(vm.selectedMediaSegment.title)...")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.top, 60)
+        .accessibilityIdentifier("watchlist.filtered-loading")
+    }
 
     @MainActor
     private func makeViewModelIfNeeded() -> WatchlistViewModel? {
@@ -202,5 +275,4 @@ struct WatchlistView: View {
         await appState.loadWatchlistCache()
         await viewModel.refresh()
     }
-
 }

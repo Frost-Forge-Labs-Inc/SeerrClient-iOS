@@ -29,6 +29,7 @@ enum UITestRootDestination: Equatable {
 
 enum UITestScenario: String {
     case watchlistRemoval = "watchlist_removal"
+    case watchlistMediaFilter = "watchlist_media_filter"
     case collectionRequestSelection = "collection_request_selection"
     case aboutNavigation = "about_navigation"
 }
@@ -52,6 +53,8 @@ struct UITestLaunchConfiguration {
             switch scenario {
             case .watchlistRemoval:
                 return .watchlist
+            case .watchlistMediaFilter:
+                return .watchlist
             case .collectionRequestSelection:
                 return .discover
             case .aboutNavigation:
@@ -64,7 +67,7 @@ struct UITestLaunchConfiguration {
             switch scenario {
             case .collectionRequestSelection:
                 return .collectionDetail(id: 1000, name: "Collection UI Test")
-            case .watchlistRemoval, .aboutNavigation, nil:
+            case .watchlistRemoval, .watchlistMediaFilter, .aboutNavigation, nil:
                 return .mainTabs
             }
         }()
@@ -96,6 +99,8 @@ enum UITestAppBootstrapper {
         switch scenario {
         case .watchlistRemoval:
             bootstrapWatchlistRemovalScenario(appState: appState)
+        case .watchlistMediaFilter:
+            bootstrapWatchlistMediaFilterScenario(appState: appState)
         case .collectionRequestSelection:
             bootstrapCollectionRequestScenario(appState: appState)
         case .aboutNavigation:
@@ -104,6 +109,17 @@ enum UITestAppBootstrapper {
     }
 
     private static func bootstrapWatchlistRemovalScenario(appState: AppState) {
+        bootstrapAuthenticatedMainTabsScenario(appState: appState, watchlistedTmdbIds: [550])
+    }
+
+    private static func bootstrapWatchlistMediaFilterScenario(appState: AppState) {
+        bootstrapAuthenticatedMainTabsScenario(appState: appState, watchlistedTmdbIds: [550, 1399])
+    }
+
+    private static func bootstrapAuthenticatedMainTabsScenario(
+        appState: AppState,
+        watchlistedTmdbIds: Set<Int>
+    ) {
         let publicSettings = PublicSettingsNormalized(
             initialized: true,
             applicationTitle: "UI Test Jellyseerr",
@@ -140,7 +156,7 @@ enum UITestAppBootstrapper {
 
         appState.selectServer(server, capabilities: capabilities)
         appState.setAuthenticatedUser(user)
-        appState.watchlistedTmdbIds = [550]
+        appState.watchlistedTmdbIds = watchlistedTmdbIds
         appState.watchlistNeedsRefresh = false
     }
 
