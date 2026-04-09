@@ -1,9 +1,53 @@
 // WatchlistView.swift
 // SeerrClient
 //
-// Dedicated screen showing the user's watchlist items in a two-column grid.
+// Dedicated screen showing the user's watchlist items in a responsive poster grid.
 
 import SwiftUI
+
+// MARK: - WatchlistGridLayout
+
+struct WatchlistGridLayout: Equatable {
+    let columnCount: Int
+    let cardWidth: CGFloat
+    let spacing: CGFloat
+    let columns: [GridItem]
+
+    init(
+        containerWidth: CGFloat,
+        horizontalPadding: CGFloat = 16,
+        spacing: CGFloat = 12,
+        preferredColumnCount: Int = 3,
+        minimumCardWidth: CGFloat = 96
+    ) {
+        self.spacing = spacing
+
+        let availableWidth = max(containerWidth - (horizontalPadding * 2), minimumCardWidth)
+        var resolvedCount = preferredColumnCount
+
+        while resolvedCount > 1 {
+            let candidateWidth = floor(
+                (availableWidth - (CGFloat(resolvedCount - 1) * spacing)) / CGFloat(resolvedCount)
+            )
+
+            if candidateWidth >= minimumCardWidth {
+                self.columnCount = resolvedCount
+                self.cardWidth = candidateWidth
+                self.columns = Array(
+                    repeating: GridItem(.fixed(candidateWidth), spacing: spacing, alignment: .top),
+                    count: resolvedCount
+                )
+                return
+            }
+
+            resolvedCount -= 1
+        }
+
+        self.columnCount = 1
+        self.cardWidth = availableWidth
+        self.columns = [GridItem(.fixed(availableWidth), spacing: spacing, alignment: .top)]
+    }
+}
 
 // MARK: - WatchlistView
 
@@ -17,20 +61,25 @@ struct WatchlistView: View {
 
     @State private var viewModel: WatchlistViewModel?
 
-    private let columns = [
-        GridItem(.flexible(), spacing: 14),
-        GridItem(.flexible(), spacing: 14)
-    ]
-
     // MARK: - Body
 
     var body: some View {
-        Group {
-            if let viewModel {
-                contentForState(viewModel)
-            } else {
-                ProgressView()
+        GeometryReader { proxy in
+            let renderedWidth = min(
+                proxy.size.width,
+                UITestLaunchConfiguration.current.watchlistContainerWidth ?? proxy.size.width
+            )
+            let layout = WatchlistGridLayout(containerWidth: renderedWidth)
+
+            Group {
+                if let viewModel {
+                    contentForState(viewModel, layout: layout)
+                } else {
+                    ProgressView()
+                }
             }
+            .frame(width: renderedWidth)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
         .navigationTitle("Watchlist")
         .navigationBarTitleDisplayMode(.large)
@@ -51,13 +100,13 @@ struct WatchlistView: View {
     // MARK: - State Content
 
     @ViewBuilder
-    private func contentForState(_ vm: WatchlistViewModel) -> some View {
+    private func contentForState(_ vm: WatchlistViewModel, layout: WatchlistGridLayout) -> some View {
         switch vm.loadState {
         case .idle, .loading:
-            loadingContent(vm)
+            loadingContent(vm, layout: layout)
 
         case .loaded:
-            loadedContent(vm)
+            loadedContent(vm, layout: layout)
 
         case .empty:
             emptyContent(vm)
@@ -70,7 +119,7 @@ struct WatchlistView: View {
     // MARK: - Loaded
 
     @ViewBuilder
-    private func loadedContent(_ vm: WatchlistViewModel) -> some View {
+    private func loadedContent(_ vm: WatchlistViewModel, layout: WatchlistGridLayout) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
                 mediaSegmentControl(vm)
@@ -82,15 +131,15 @@ struct WatchlistView: View {
                         filteredEmptyContent(vm)
                     }
                 } else {
-                    LazyVGrid(columns: columns, spacing: 14) {
+                    LazyVGrid(columns: layout.columns, spacing: layout.spacing) {
                         ForEach(vm.visibleItems) { item in
-                            watchlistCard(for: item, vm: vm)
+                            watchlistCard(for: item, vm: vm, layout: layout)
                         }
 
                         if vm.isLoadingMore {
                             ProgressView()
                                 .frame(maxWidth: .infinity)
-                                .gridCellColumns(2)
+                                .gridCellColumns(layout.columnCount)
                                 .padding(.vertical, 8)
                         }
                     }
@@ -107,16 +156,16 @@ struct WatchlistView: View {
 
     // MARK: - Loading
 
-    private func loadingContent(_ vm: WatchlistViewModel) -> some View {
+    private func loadingContent(_ vm: WatchlistViewModel, layout: WatchlistGridLayout) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
                 mediaSegmentControl(vm)
 
-                LazyVGrid(columns: columns, spacing: 14) {
+                LazyVGrid(columns: layout.columns, spacing: layout.spacing) {
                     ForEach(0..<8, id: \.self) { _ in
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: 8)
                             .fill(Color(.systemGray5))
-                            .aspectRatio(2/3, contentMode: .fit)
+                            .frame(height: layout.cardWidth * 1.5)
                             .overlay { ShimmerView() }
                     }
                 }
@@ -179,12 +228,16 @@ struct WatchlistView: View {
     // MARK: - Helpers
 
     @ViewBuilder
-    private func watchlistCard(for item: DiscoverMediaItem, vm: WatchlistViewModel) -> some View {
+    private func watchlistCard(
+        for item: DiscoverMediaItem,
+        vm: WatchlistViewModel,
+        layout: WatchlistGridLayout
+    ) -> some View {
         if item.isMovie {
             NavigationLink(value: MovieNavDestination(id: item.effectiveTmdbId, title: item.displayTitle)) {
                 MediaCardView(
                     item: item,
-                    size: .medium,
+                    size: .custom(layout.cardWidth),
                     posterPathOverride: vm.posterPaths[item.id],
                     yearOverride: vm.years[item.id]
                 )
@@ -196,7 +249,7 @@ struct WatchlistView: View {
             NavigationLink(value: TvNavDestination(id: item.effectiveTmdbId, title: item.displayTitle)) {
                 MediaCardView(
                     item: item,
-                    size: .medium,
+                    size: .custom(layout.cardWidth),
                     posterPathOverride: vm.posterPaths[item.id],
                     yearOverride: vm.years[item.id]
                 )
@@ -207,7 +260,7 @@ struct WatchlistView: View {
         } else {
             MediaCardView(
                 item: item,
-                size: .medium,
+                size: .custom(layout.cardWidth),
                 posterPathOverride: vm.posterPaths[item.id],
                 yearOverride: vm.years[item.id]
             )

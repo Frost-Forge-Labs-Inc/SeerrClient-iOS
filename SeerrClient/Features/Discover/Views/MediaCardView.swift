@@ -15,12 +15,14 @@ enum MediaCardSize {
     case small   // 100 pt wide — compact lists
     case medium  // 130 pt wide — default discover row
     case large   // 160 pt wide — featured / hero rows
+    case custom(CGFloat)
 
     var width: CGFloat {
         switch self {
         case .small:  return 100
         case .medium: return 130
         case .large:  return 160
+        case .custom(let width): return width
         }
     }
 
