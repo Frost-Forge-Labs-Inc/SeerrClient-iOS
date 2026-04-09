@@ -27,6 +27,51 @@ public enum RequestListLoadState: Equatable {
     }
 }
 
+// MARK: - RequestMediaSegment
+
+public enum RequestMediaSegment: String, CaseIterable, Sendable, Hashable {
+    case movies
+    case tvShows
+
+    public var title: String {
+        switch self {
+        case .movies:
+            return "Movies"
+        case .tvShows:
+            return "TV Shows"
+        }
+    }
+
+    public var emptyTitle: String {
+        switch self {
+        case .movies:
+            return "No Movie Requests"
+        case .tvShows:
+            return "No TV Requests"
+        }
+    }
+
+    public var emptyMessage: String {
+        switch self {
+        case .movies:
+            return "Switch to TV Shows or load more requests."
+        case .tvShows:
+            return "Switch to Movies or load more requests."
+        }
+    }
+
+    public func matches(_ request: MediaRequest) -> Bool {
+        switch (self, request.inferredMediaType) {
+        case (.movies, .movie), (.tvShows, .tv):
+            return true
+        case (.movies, .none):
+            return true
+        default:
+            return false
+        }
+    }
+}
+
 // MARK: - RequestListViewModel
 
 @MainActor
@@ -36,6 +81,7 @@ public final class RequestListViewModel {
     // MARK: - Public State
 
     public private(set) var loadState: RequestListLoadState = .idle
+    public private(set) var selectedMediaSegment: RequestMediaSegment = .movies
     public private(set) var selectedFilter: RequestFilter = .all
     public private(set) var requests: [MediaRequest] = []
     public private(set) var metadataByRequestID: [Int: RequestMediaMetadata] = [:]
@@ -49,12 +95,16 @@ public final class RequestListViewModel {
         hasMoreResults && !isLoadingMore && !isInitialLoading
     }
 
+    public var visibleRequests: [MediaRequest] {
+        requests.filter(selectedMediaSegment.matches)
+    }
+
     // MARK: - Dependencies
 
     @ObservationIgnored
-    private let repository: RequestRepository
+    private let repository: any RequestListFetching
     @ObservationIgnored
-    private let mediaDetailRepository: MediaDetailRepository
+    private let mediaDetailRepository: MediaDetailRepository?
 
     // MARK: - Private State
 
@@ -69,6 +119,14 @@ public final class RequestListViewModel {
     private var loadMoreTask: Task<Void, Never>?
     @ObservationIgnored
     private var metadataTask: Task<Void, Never>?
+    @ObservationIgnored
+    private var mediaSegmentSelectionTask: Task<Void, Never>?
+
+    private enum FetchPageOutcome {
+        case success(appendedCount: Int)
+        case failed
+        case cancelled
+    }
 
     private var isInitialLoading: Bool {
         if case .loading = loadState {
@@ -80,8 +138,8 @@ public final class RequestListViewModel {
     // MARK: - Init
 
     public init(
-        repository: RequestRepository,
-        mediaDetailRepository: MediaDetailRepository,
+        repository: any RequestListFetching,
+        mediaDetailRepository: MediaDetailRepository?,
         userPermissions: Int?
     ) {
         self.repository = repository
@@ -96,6 +154,7 @@ public final class RequestListViewModel {
         loadTask?.cancel()
         loadMoreTask?.cancel()
         metadataTask?.cancel()
+        mediaSegmentSelectionTask?.cancel()
     }
 
     // MARK: - Inline Moderation Actions
@@ -164,11 +223,13 @@ public final class RequestListViewModel {
         default:
             return
         }
+        mediaSegmentSelectionTask?.cancel()
         loadTask?.cancel()
         loadTask = Task { await reloadRequests(showLoading: true) }
     }
 
     public func retry() {
+        mediaSegmentSelectionTask?.cancel()
         loadTask?.cancel()
         loadMoreTask?.cancel()
         loadTask = Task { await reloadRequests(showLoading: true) }
@@ -177,12 +238,29 @@ public final class RequestListViewModel {
     public func selectFilter(_ filter: RequestFilter) {
         guard filter != selectedFilter else { return }
         selectedFilter = filter
+        mediaSegmentSelectionTask?.cancel()
         loadTask?.cancel()
         loadMoreTask?.cancel()
         loadTask = Task { await reloadRequests(showLoading: true) }
     }
 
+    public func selectMediaSegment(_ mediaSegment: RequestMediaSegment) {
+        guard mediaSegment != selectedMediaSegment else { return }
+        mediaSegmentSelectionTask?.cancel()
+        mediaSegmentSelectionTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+            defer { self.mediaSegmentSelectionTask = nil }
+            self.loadMoreTask?.cancel()
+            if let loadMoreTask = self.loadMoreTask {
+                await loadMoreTask.value
+            }
+            guard !Task.isCancelled else { return }
+            await self.applySelectedMediaSegment(mediaSegment)
+        }
+    }
+
     public func refresh() async {
+        mediaSegmentSelectionTask?.cancel()
         loadTask?.cancel()
         loadMoreTask?.cancel()
         await reloadRequests(showLoading: requests.isEmpty)
@@ -190,8 +268,10 @@ public final class RequestListViewModel {
 
     public func onRequestAppear(_ request: MediaRequest) {
         guard canLoadMore else { return }
-        guard let index = requests.firstIndex(where: { $0.id == request.id }) else { return }
-        if index >= requests.count - 4 {
+        let visibleRequests = visibleRequests
+        guard let index = visibleRequests.firstIndex(where: { $0.id == request.id }) else { return }
+        let thresholdIndex = max(visibleRequests.count - 4, 0)
+        if index >= thresholdIndex {
             loadMoreIfNeeded()
         }
     }
@@ -207,22 +287,33 @@ public final class RequestListViewModel {
             loadState = .loading
         }
 
-        await fetchPage(skip: 0, append: false)
+        let initialPage = await fetchPage(skip: 0, append: false)
+        guard case .success = initialPage else { return }
+        await loadAdditionalPagesIfNeeded(previousVisibleCount: 0)
     }
 
     private func loadMoreIfNeeded() {
         guard canLoadMore else { return }
         isLoadingMore = true
 
+        let previousVisibleCount = visibleRequests.count
         let nextSkip = currentSkip
         loadMoreTask?.cancel()
-        loadMoreTask = Task {
-            defer { isLoadingMore = false }
-            await fetchPage(skip: nextSkip, append: true)
+        loadMoreTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+            defer {
+                self.isLoadingMore = false
+                self.loadMoreTask = nil
+            }
+
+            let pageOutcome = await self.fetchPage(skip: nextSkip, append: true)
+            guard case .success = pageOutcome else { return }
+            await loadAdditionalPagesIfNeeded(previousVisibleCount: previousVisibleCount)
         }
     }
 
-    private func fetchPage(skip: Int, append: Bool) async {
+    @discardableResult
+    private func fetchPage(skip: Int, append: Bool) async -> FetchPageOutcome {
         do {
             let response = try await repository.fetchRequests(
                 filter: selectedFilter,
@@ -230,7 +321,7 @@ public final class RequestListViewModel {
                 take: pageSize
             )
 
-            guard !Task.isCancelled else { return }
+            guard !Task.isCancelled else { return .cancelled }
 
             let fetched = response.results ?? []
 
@@ -247,8 +338,9 @@ public final class RequestListViewModel {
             metadataTask = Task {
                 await fetchMetadata(for: requests)
             }
+            return .success(appendedCount: append ? fetched.count : requests.count)
         } catch {
-            guard !Task.isCancelled else { return }
+            guard !Task.isCancelled else { return .cancelled }
             AppLogger.warning("RequestListViewModel: failed to fetch requests (skip=\(skip), filter=\(selectedFilter.rawValue)): \(error)")
 
             if requests.isEmpty || !append {
@@ -256,6 +348,7 @@ public final class RequestListViewModel {
             } else {
                 loadState = .loaded(requests)
             }
+            return .failed
         }
     }
 
@@ -285,6 +378,7 @@ public final class RequestListViewModel {
     }
 
     private func fetchMetadata(for requests: [MediaRequest]) async {
+        guard let mediaDetailRepository else { return }
         let unresolvedRequests = requests.filter { metadataByRequestID[$0.id] == nil }
         guard !unresolvedRequests.isEmpty else { return }
 
@@ -345,7 +439,7 @@ public final class RequestListViewModel {
     }
 
     private func fallbackMetadata(for request: MediaRequest) -> RequestMediaMetadata {
-        let inferredType: MediaRequestMediaType = request.media?.tvdbId == nil ? .movie : .tv
+        let inferredType: MediaRequestMediaType = request.inferredMediaType ?? .movie
         let prefix = inferredType == .movie ? "Movie" : "TV"
         let title: String
 
@@ -385,5 +479,39 @@ public final class RequestListViewModel {
             }
         }
         return "Something went wrong while loading requests."
+    }
+
+    func applySelectedMediaSegment(_ mediaSegment: RequestMediaSegment) async {
+        selectedMediaSegment = mediaSegment
+
+        let shouldShowLoadingIndicator = visibleRequests.isEmpty && hasMoreResults
+        if shouldShowLoadingIndicator {
+            isLoadingMore = true
+        }
+        defer {
+            if shouldShowLoadingIndicator {
+                isLoadingMore = false
+            }
+        }
+
+        await loadAdditionalPagesIfNeeded(previousVisibleCount: 0)
+    }
+
+    private func loadAdditionalPagesIfNeeded(previousVisibleCount: Int) async {
+        guard !requests.isEmpty else { return }
+
+        while visibleRequests.count == previousVisibleCount && hasMoreResults {
+            let previousSkip = currentSkip
+            let previousRequestCount = requests.count
+            let pageOutcome = await fetchPage(skip: currentSkip, append: true)
+
+            guard case .success(let appendedCount) = pageOutcome else { break }
+
+            let didAdvancePagination = currentSkip > previousSkip || requests.count > previousRequestCount
+            if !didAdvancePagination || appendedCount == 0 {
+                hasMoreResults = false
+                break
+            }
+        }
     }
 }

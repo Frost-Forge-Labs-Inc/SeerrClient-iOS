@@ -47,9 +47,41 @@ public struct RequestMediaMetadata: Sendable, Hashable {
     }
 }
 
+public extension MediaRequest {
+    var inferredMediaType: MediaRequestMediaType? {
+        if media?.tvdbId != nil {
+            return .tv
+        }
+        if let seasons, !seasons.isEmpty {
+            return .tv
+        }
+        if let mediaSeasons = media?.seasons, !mediaSeasons.isEmpty {
+            return .tv
+        }
+        if media?.tmdbId != nil {
+            return .movie
+        }
+        return nil
+    }
+}
+
+// MARK: - RequestListFetching
+
+public protocol RequestListFetching: Sendable {
+    func fetchRequests(
+        filter: RequestFilter,
+        skip: Int,
+        take: Int
+    ) async throws -> PaginatedResponse<MediaRequest>
+
+    func approveRequest(id: Int) async throws -> MediaRequest
+    func declineRequest(id: Int) async throws -> MediaRequest
+    func deleteRequest(id: Int) async throws
+}
+
 // MARK: - RequestRepository
 
-public final class RequestRepository: Sendable {
+public final class RequestRepository: RequestListFetching, Sendable {
 
     // MARK: - Dependencies
 

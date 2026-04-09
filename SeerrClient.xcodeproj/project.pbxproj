@@ -10,6 +10,9 @@
 		B100000000000000000000001 /* WatchlistRemovalUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000002 /* WatchlistRemovalUITests.swift */; };
 		C1A000000000000000000003 /* CollectionRequestSelectionUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A000000000000000000004 /* CollectionRequestSelectionUITests.swift */; };
 		D2A000000000000000000003 /* AboutNavigationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A000000000000000000004 /* AboutNavigationUITests.swift */; };
+		E3A000000000000000000001 /* RequestListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A000000000000000000004 /* RequestListViewModelTests.swift */; };
+		E3A000000000000000000002 /* MockRequestListFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A000000000000000000005 /* MockRequestListFetcher.swift */; };
+		E3A000000000000000000003 /* RequestListSegmentedUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A000000000000000000006 /* RequestListSegmentedUITests.swift */; };
 		B10000000000000000000000E /* UITestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000010 /* UITestSupport.swift */; };
 		B10000000000000000000000F /* UITestURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000011 /* UITestURLProtocol.swift */; };
 		00CD2AC36BEF7ECB7469CBA7 /* RequestButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006621B1BAB219A3DA268155 /* RequestButtonView.swift */; };
@@ -114,6 +117,9 @@
 		B100000000000000000000003 /* SeerrClientUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = SeerrClientUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C1A000000000000000000004 /* CollectionRequestSelectionUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionRequestSelectionUITests.swift; sourceTree = "<group>"; };
 		D2A000000000000000000004 /* AboutNavigationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutNavigationUITests.swift; sourceTree = "<group>"; };
+		E3A000000000000000000004 /* RequestListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestListViewModelTests.swift; sourceTree = "<group>"; };
+		E3A000000000000000000005 /* MockRequestListFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRequestListFetcher.swift; sourceTree = "<group>"; };
+		E3A000000000000000000006 /* RequestListSegmentedUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestListSegmentedUITests.swift; sourceTree = "<group>"; };
 		B100000000000000000000010 /* UITestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestSupport.swift; sourceTree = "<group>"; };
 		B100000000000000000000011 /* UITestURLProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestURLProtocol.swift; sourceTree = "<group>"; };
 		0008919C3BEB59A2D341CC18 /* WatchlistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistView.swift; sourceTree = "<group>"; };
@@ -367,6 +373,7 @@
 		5710BB3CEBE2DB7884A66557 /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
+				E3A000000000000000000005 /* MockRequestListFetcher.swift */,
 				D61F6815EFC57AC8DF4F8424 /* MockWatchlistFetcher.swift */,
 			);
 			path = Mocks;
@@ -397,6 +404,7 @@
 			children = (
 				D2A000000000000000000004 /* AboutNavigationUITests.swift */,
 				C1A000000000000000000004 /* CollectionRequestSelectionUITests.swift */,
+				E3A000000000000000000006 /* RequestListSegmentedUITests.swift */,
 				B100000000000000000000002 /* WatchlistRemovalUITests.swift */,
 			);
 			path = SeerrClientUITests;
@@ -423,6 +431,7 @@
 			children = (
 				D2A000000000000000000002 /* AboutContentTests.swift */,
 				C1A000000000000000000002 /* CollectionDetailViewModelTests.swift */,
+				E3A000000000000000000004 /* RequestListViewModelTests.swift */,
 				487D98B554FDDAA3F90661D4 /* WatchlistViewModelTests.swift */,
 			);
 			path = ViewModels;
@@ -776,6 +785,7 @@
 			files = (
 				D2A000000000000000000003 /* AboutNavigationUITests.swift in Sources */,
 				C1A000000000000000000003 /* CollectionRequestSelectionUITests.swift in Sources */,
+				E3A000000000000000000003 /* RequestListSegmentedUITests.swift in Sources */,
 				B100000000000000000000001 /* WatchlistRemovalUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -865,7 +875,9 @@
 				D2A000000000000000000001 /* AboutContentTests.swift in Sources */,
 				C1A000000000000000000001 /* CollectionDetailViewModelTests.swift in Sources */,
 				2D532E27BE8FF1399DA2A3BF /* DiscoverMediaItemTests.swift in Sources */,
+				E3A000000000000000000002 /* MockRequestListFetcher.swift in Sources */,
 				A9A94BAEC92FCCFE259FEA6C /* MockWatchlistFetcher.swift in Sources */,
+				E3A000000000000000000001 /* RequestListViewModelTests.swift in Sources */,
 				DF45A146DF57543F5ED69041 /* SeerrModelsTests.swift in Sources */,
 				904A35C863CBE48F8DC6ADC7 /* ServerDetectionResultTests.swift in Sources */,
 				4C7C52B874F8ADB62D37FB1F /* WatchlistViewModelTests.swift in Sources */,

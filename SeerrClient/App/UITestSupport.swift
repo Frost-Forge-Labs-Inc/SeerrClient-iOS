@@ -30,6 +30,7 @@ enum UITestRootDestination: Equatable {
 enum UITestScenario: String {
     case watchlistRemoval = "watchlist_removal"
     case watchlistMediaFilter = "watchlist_media_filter"
+    case requestMediaFilter = "request_media_filter"
     case collectionRequestSelection = "collection_request_selection"
     case aboutNavigation = "about_navigation"
 }
@@ -55,6 +56,8 @@ struct UITestLaunchConfiguration {
                 return .watchlist
             case .watchlistMediaFilter:
                 return .watchlist
+            case .requestMediaFilter:
+                return .requests
             case .collectionRequestSelection:
                 return .discover
             case .aboutNavigation:
@@ -67,7 +70,7 @@ struct UITestLaunchConfiguration {
             switch scenario {
             case .collectionRequestSelection:
                 return .collectionDetail(id: 1000, name: "Collection UI Test")
-            case .watchlistRemoval, .watchlistMediaFilter, .aboutNavigation, nil:
+            case .watchlistRemoval, .watchlistMediaFilter, .requestMediaFilter, .aboutNavigation, nil:
                 return .mainTabs
             }
         }()
@@ -101,6 +104,8 @@ enum UITestAppBootstrapper {
             bootstrapWatchlistRemovalScenario(appState: appState)
         case .watchlistMediaFilter:
             bootstrapWatchlistMediaFilterScenario(appState: appState)
+        case .requestMediaFilter:
+            bootstrapRequestMediaFilterScenario(appState: appState)
         case .collectionRequestSelection:
             bootstrapCollectionRequestScenario(appState: appState)
         case .aboutNavigation:
@@ -114,6 +119,10 @@ enum UITestAppBootstrapper {
 
     private static func bootstrapWatchlistMediaFilterScenario(appState: AppState) {
         bootstrapAuthenticatedMainTabsScenario(appState: appState, watchlistedTmdbIds: [550, 1399])
+    }
+
+    private static func bootstrapRequestMediaFilterScenario(appState: AppState) {
+        bootstrapAuthenticatedMainTabsScenario(appState: appState, watchlistedTmdbIds: [])
     }
 
     private static func bootstrapAuthenticatedMainTabsScenario(

@@ -46,7 +46,7 @@ enum RequestPresentation {
         if let explicitType {
             return explicitType
         }
-        return request.media?.tvdbId == nil ? .movie : .tv
+        return request.inferredMediaType
     }
 
     static func mediaTypeLabel(for request: MediaRequest, explicitType: MediaRequestMediaType?) -> String {

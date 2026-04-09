@@ -104,6 +104,12 @@ final class UITestURLProtocol: URLProtocol {
                 ]
             )
 
+        case ("GET", "/api/v1/request"):
+            return try jsonResponse(
+                statusCode: 200,
+                object: state.requestListPayload(for: url)
+            )
+
         case ("GET", "/api/v1/settings/discover"):
             return try jsonResponse(statusCode: 200, object: [])
 
@@ -126,6 +132,38 @@ final class UITestURLProtocol: URLProtocol {
             return try jsonResponse(
                 statusCode: 200,
                 object: state.movieDetailsPayload()
+            )
+
+        case ("GET", "/api/v1/movie/1001"):
+            return try jsonResponse(
+                statusCode: 200,
+                object: [
+                    "id": 1001,
+                    "title": "Request Filter Movie",
+                    "posterPath": nil,
+                    "mediaInfo": [
+                        "id": 1001,
+                        "tmdbId": 1001,
+                        "status": 2
+                    ]
+                ]
+            )
+
+        case ("GET", "/api/v1/tv/1002"):
+            return try jsonResponse(
+                statusCode: 200,
+                object: [
+                    "id": 1002,
+                    "name": "Request Filter TV",
+                    "posterPath": nil,
+                    "firstAirDate": "2024-01-01",
+                    "mediaInfo": [
+                        "id": 1002,
+                        "tmdbId": 1002,
+                        "tvdbId": 2002,
+                        "status": 1
+                    ]
+                ]
             )
 
         case ("GET", "/api/v1/movie/550/recommendations"),
@@ -204,6 +242,11 @@ private final class UITestScenarioState: @unchecked Sendable {
             case .watchlistMediaFilter:
                 watchlistContainsMovie = true
                 watchlistContainsTvShow = true
+                requestedCollectionMovieIDs = []
+                nextRequestIdentifier = 7000
+            case .requestMediaFilter:
+                watchlistContainsMovie = true
+                watchlistContainsTvShow = false
                 requestedCollectionMovieIDs = []
                 nextRequestIdentifier = 7000
             case .collectionRequestSelection:
@@ -326,6 +369,45 @@ private final class UITestScenarioState: @unchecked Sendable {
         }
     }
 
+    func requestListPayload(for url: URL) -> [String: Any] {
+        lock.withLock {
+            let page = 1
+            let pages = 1
+            let results: [[String: Any]]
+
+            switch activeScenario {
+            case .requestMediaFilter:
+                results = [
+                    requestPayload(
+                        id: 1001,
+                        status: 1,
+                        tmdbId: 1001,
+                        tvdbId: nil,
+                        requesterName: "MovieRequester"
+                    ),
+                    requestPayload(
+                        id: 1002,
+                        status: 2,
+                        tmdbId: 1002,
+                        tvdbId: 2002,
+                        requesterName: "TvRequester"
+                    )
+                ]
+            default:
+                results = []
+            }
+
+            return [
+                "pageInfo": [
+                    "page": page,
+                    "pages": pages,
+                    "results": results.count
+                ],
+                "results": results
+            ]
+        }
+    }
+
     func recordCollectionRequest(from request: URLRequest) {
         guard let body = request.httpBody,
               let jsonObject = try? JSONSerialization.jsonObject(with: body) as? [String: Any],
@@ -356,6 +438,30 @@ private final class UITestScenarioState: @unchecked Sendable {
                 "id": id,
                 "tmdbId": id,
                 "status": status
+            ]
+        ]
+    }
+
+    private func requestPayload(
+        id: Int,
+        status: Int,
+        tmdbId: Int,
+        tvdbId: Int?,
+        requesterName: String
+    ) -> [String: Any] {
+        [
+            "id": id,
+            "status": status,
+            "media": [
+                "id": id,
+                "tmdbId": tmdbId,
+                "tvdbId": tvdbId,
+                "status": status
+            ],
+            "createdAt": "2026-04-09T00:00:00.000Z",
+            "requestedBy": [
+                "id": id,
+                "username": requesterName
             ]
         ]
     }

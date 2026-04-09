@@ -68,7 +68,7 @@ struct RequestListView: View {
             if requests.isEmpty {
                 emptyState(vm)
             } else {
-                loadedState(vm, requests: requests)
+                loadedState(vm)
             }
 
         case .error(let message):
@@ -79,66 +79,77 @@ struct RequestListView: View {
     // MARK: - Loaded
 
     @ViewBuilder
-    private func loadedState(_ vm: RequestListViewModel, requests: [MediaRequest]) -> some View {
+    private func loadedState(_ vm: RequestListViewModel) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
+                mediaSegmentControl(vm)
                 filterRow(vm)
 
-                LazyVStack(spacing: 12) {
-                    ForEach(requests, id: \.id) { request in
-                        let metadata = vm.metadataByRequestID[request.id]
-                        NavigationLink(value: RequestNavDestination(requestID: request.id)) {
-                            RequestCardView(
-                                request: request,
-                                title: metadata?.title,
-                                posterPath: metadata?.posterPath,
-                                mediaType: metadata?.mediaType
-                            )
-                        }
-                        .buttonStyle(.plain)
-                        .onAppear { vm.onRequestAppear(request) }
-                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                            // Delete — admin or request owner (pending only)
-                            if vm.canDelete(request, currentUserID: appState.currentUser?.id) {
-                                Button(role: .destructive) {
-                                    vm.deleteRequest(request, currentUserID: appState.currentUser?.id)
-                                } label: {
-                                    Label("Delete", systemImage: "trash")
-                                }
-                            }
-                        }
-                        .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                            // Approve — admin, pending requests only
-                            if vm.isAdmin && request.status == 1 {
-                                Button {
-                                    vm.approveRequest(request)
-                                } label: {
-                                    Label("Approve", systemImage: "checkmark")
-                                }
-                                .tint(.green)
-                            }
-                            // Decline — admin, pending or approved requests
-                            if vm.isAdmin && (request.status == 1 || request.status == 2) {
-                                Button {
-                                    vm.declineRequest(request)
-                                } label: {
-                                    Label("Decline", systemImage: "xmark")
-                                }
-                                .tint(.orange)
-                            }
-                        }
-                    }
-
+                if vm.visibleRequests.isEmpty {
                     if vm.isLoadingMore {
-                        ProgressView()
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 8)
+                        filteredLoadingState(vm)
+                    } else {
+                        filteredEmptyState(vm)
+                    }
+                } else {
+                    LazyVStack(spacing: 12) {
+                        ForEach(vm.visibleRequests, id: \.id) { request in
+                            let metadata = vm.metadataByRequestID[request.id]
+                            NavigationLink(value: RequestNavDestination(requestID: request.id)) {
+                                RequestCardView(
+                                    request: request,
+                                    title: metadata?.title,
+                                    posterPath: metadata?.posterPath,
+                                    mediaType: metadata?.mediaType
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityIdentifier("requests.card.\(request.id)")
+                            .onAppear { vm.onRequestAppear(request) }
+                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                // Delete — admin or request owner (pending only)
+                                if vm.canDelete(request, currentUserID: appState.currentUser?.id) {
+                                    Button(role: .destructive) {
+                                        vm.deleteRequest(request, currentUserID: appState.currentUser?.id)
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                }
+                            }
+                            .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                                // Approve — admin, pending requests only
+                                if vm.isAdmin && request.status == 1 {
+                                    Button {
+                                        vm.approveRequest(request)
+                                    } label: {
+                                        Label("Approve", systemImage: "checkmark")
+                                    }
+                                    .tint(.green)
+                                }
+                                // Decline — admin, pending or approved requests
+                                if vm.isAdmin && (request.status == 1 || request.status == 2) {
+                                    Button {
+                                        vm.declineRequest(request)
+                                    } label: {
+                                        Label("Decline", systemImage: "xmark")
+                                    }
+                                    .tint(.orange)
+                                }
+                            }
+                        }
+
+                        if vm.isLoadingMore {
+                            ProgressView()
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 8)
+                        }
                     }
                 }
             }
             .padding(.horizontal)
             .padding(.top, 8)
         }
+        .accessibilityIdentifier("requests.screen")
         .refreshable {
             await vm.refresh()
         }
@@ -150,6 +161,7 @@ struct RequestListView: View {
     private func emptyState(_ vm: RequestListViewModel) -> some View {
         ScrollView {
             VStack(spacing: 24) {
+                mediaSegmentControl(vm)
                 filterRow(vm)
 
                 ContentUnavailableView {
@@ -161,6 +173,7 @@ struct RequestListView: View {
             .padding(.horizontal)
             .padding(.top, 8)
         }
+        .accessibilityIdentifier("requests.screen")
         .refreshable {
             await vm.refresh()
         }
@@ -172,6 +185,7 @@ struct RequestListView: View {
     private func loadingState(_ vm: RequestListViewModel) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
+                mediaSegmentControl(vm)
                 filterRow(vm)
 
                 ForEach(0..<6, id: \.self) { _ in
@@ -184,6 +198,7 @@ struct RequestListView: View {
             .padding(.horizontal)
             .padding(.top, 8)
         }
+        .accessibilityIdentifier("requests.screen")
     }
 
     // MARK: - Error
@@ -192,6 +207,7 @@ struct RequestListView: View {
     private func errorState(_ vm: RequestListViewModel, message: String) -> some View {
         ScrollView {
             VStack(spacing: 24) {
+                mediaSegmentControl(vm)
                 filterRow(vm)
 
                 ContentUnavailableView {
@@ -208,12 +224,31 @@ struct RequestListView: View {
             .padding(.horizontal)
             .padding(.top, 8)
         }
+        .accessibilityIdentifier("requests.screen")
         .refreshable {
             await vm.refresh()
         }
     }
 
-    // MARK: - Filters
+    // MARK: - Segment + Filters
+
+    @ViewBuilder
+    private func mediaSegmentControl(_ vm: RequestListViewModel) -> some View {
+        Picker(
+            "Media Type",
+            selection: Binding(
+                get: { vm.selectedMediaSegment },
+                set: vm.selectMediaSegment
+            )
+        ) {
+            ForEach(RequestMediaSegment.allCases, id: \.self) { segment in
+                Text(segment.title)
+                    .tag(segment)
+            }
+        }
+        .pickerStyle(.segmented)
+        .accessibilityIdentifier("requests.mediaSegment")
+    }
 
     @ViewBuilder
     private func filterRow(_ vm: RequestListViewModel) -> some View {
@@ -230,6 +265,27 @@ struct RequestListView: View {
             }
             .padding(.vertical, 4)
         }
+    }
+
+    private func filteredEmptyState(_ vm: RequestListViewModel) -> some View {
+        ContentUnavailableView {
+            Label(vm.selectedMediaSegment.emptyTitle, systemImage: "line.3.horizontal.decrease.circle")
+        } description: {
+            Text(vm.selectedMediaSegment.emptyMessage)
+        }
+        .accessibilityIdentifier("requests.filtered-empty")
+    }
+
+    private func filteredLoadingState(_ vm: RequestListViewModel) -> some View {
+        VStack(spacing: 12) {
+            ProgressView()
+            Text("Loading \(vm.selectedMediaSegment.title)...")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 40)
+        .accessibilityIdentifier("requests.filtered-loading")
     }
 }
 
