@@ -1,6 +1,7 @@
 # Xcode
 *.xcuserstate
 xcuserdata/
+SeerrClient.xcodeproj/project.xcworkspace/xcuserdata/rakshitharodrigo.xcuserdatad/UserInterfaceState.xcuserstate
 *.xccheckout
 *.moved-aside
 DerivedData/
