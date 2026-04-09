@@ -273,38 +273,84 @@ private final class UITestScenarioState: @unchecked Sendable {
         lock.withLock {
             var results: [[String: Any]] = []
 
-            if watchlistContainsMovie {
-                results.append([
-                    "id": 9001,
-                    "tmdbId": 550,
-                    "mediaType": "movie",
-                    "title": "Fight Club",
-                    "overview": "A UI test movie used to validate watchlist removal.",
-                    "releaseDate": "1999-10-15",
-                    "mediaInfo": [
-                        "id": 1,
-                        "tmdbId": 550,
-                        "status": 1,
-                        "watchlisted": true
-                    ]
-                ])
-            }
+            switch activeScenario {
+            case .watchlistMediaFilter:
+                if watchlistContainsMovie {
+                    results.append(contentsOf: [
+                        watchlistItemPayload(
+                            id: 9001,
+                            tmdbId: 550,
+                            mediaType: "movie",
+                            title: "Forbidden Daughters",
+                            year: "1927-01-01",
+                            overview: "A UI test movie used to validate 3-up watchlist layout."
+                        ),
+                        watchlistItemPayload(
+                            id: 9002,
+                            tmdbId: 551,
+                            mediaType: "movie",
+                            title: "King Kong vs. Godzilla",
+                            year: "1962-01-01",
+                            overview: "A second movie in the same watchlist test row."
+                        ),
+                        watchlistItemPayload(
+                            id: 9003,
+                            tmdbId: 552,
+                            mediaType: "movie",
+                            title: "RoboCop 2",
+                            year: "1990-01-01",
+                            overview: "A third movie in the same watchlist test row."
+                        ),
+                        watchlistItemPayload(
+                            id: 9004,
+                            tmdbId: 553,
+                            mediaType: "movie",
+                            title: "RoboCop 3",
+                            year: "1993-01-01",
+                            overview: "A fourth movie to validate row wrapping."
+                        )
+                    ])
+                }
 
-            if watchlistContainsTvShow {
-                results.append([
-                    "id": 9101,
-                    "tmdbId": 1399,
-                    "mediaType": "tv",
-                    "name": activeScenario == .watchlistMediaFilter ? "Segmented TV Test" : "Game of Thrones",
-                    "overview": "A UI test show used to validate watchlist filtering.",
-                    "firstAirDate": "2011-04-17",
-                    "mediaInfo": [
-                        "id": 2,
-                        "tmdbId": 1399,
-                        "status": 1,
-                        "watchlisted": true
-                    ]
-                ])
+                if watchlistContainsTvShow {
+                    results.append(
+                        watchlistItemPayload(
+                            id: 9101,
+                            tmdbId: 1399,
+                            mediaType: "tv",
+                            title: "Segmented TV Test",
+                            year: "2011-04-17",
+                            overview: "A UI test show used to validate watchlist filtering."
+                        )
+                    )
+                }
+
+            default:
+                if watchlistContainsMovie {
+                    results.append(
+                        watchlistItemPayload(
+                            id: 9001,
+                            tmdbId: 550,
+                            mediaType: "movie",
+                            title: "Fight Club",
+                            year: "1999-10-15",
+                            overview: "A UI test movie used to validate watchlist removal."
+                        )
+                    )
+                }
+
+                if watchlistContainsTvShow {
+                    results.append(
+                        watchlistItemPayload(
+                            id: 9101,
+                            tmdbId: 1399,
+                            mediaType: "tv",
+                            title: "Game of Thrones",
+                            year: "2011-04-17",
+                            overview: "A UI test show used to validate watchlist filtering."
+                        )
+                    )
+                }
             }
 
             return [
@@ -440,6 +486,38 @@ private final class UITestScenarioState: @unchecked Sendable {
                 "status": status
             ]
         ]
+    }
+
+    private func watchlistItemPayload(
+        id: Int,
+        tmdbId: Int,
+        mediaType: String,
+        title: String,
+        year: String,
+        overview: String
+    ) -> [String: Any] {
+        var payload: [String: Any] = [
+            "id": id,
+            "tmdbId": tmdbId,
+            "mediaType": mediaType,
+            "overview": overview,
+            "mediaInfo": [
+                "id": id,
+                "tmdbId": tmdbId,
+                "status": 1,
+                "watchlisted": true
+            ]
+        ]
+
+        if mediaType == "movie" {
+            payload["title"] = title
+            payload["releaseDate"] = year
+        } else {
+            payload["name"] = title
+            payload["firstAirDate"] = year
+        }
+
+        return payload
     }
 
     private func requestPayload(

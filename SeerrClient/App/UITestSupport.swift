@@ -40,9 +40,11 @@ enum UITestScenario: String {
 struct UITestLaunchConfiguration {
     static let scenarioKey = "SEERR_UI_TEST_SCENARIO"
     static let disableLaunchAnimationKey = "SEERR_UI_TEST_DISABLE_LAUNCH_ANIMATION"
+    static let watchlistContainerWidthKey = "SEERR_UI_TEST_WATCHLIST_CONTAINER_WIDTH"
 
     let scenario: UITestScenario?
     let disableLaunchAnimation: Bool
+    let watchlistContainerWidth: CGFloat?
     let initialTab: AppTab
     let rootDestination: UITestRootDestination
 
@@ -50,6 +52,9 @@ struct UITestLaunchConfiguration {
         let environment = ProcessInfo.processInfo.environment
         let scenario = environment[scenarioKey].flatMap(UITestScenario.init(rawValue:))
         let disableLaunchAnimation = environment[disableLaunchAnimationKey] == "1"
+        let watchlistContainerWidth = environment[watchlistContainerWidthKey]
+            .flatMap(Double.init)
+            .map { CGFloat($0) }
         let initialTab: AppTab = {
             switch scenario {
             case .watchlistRemoval:
@@ -78,6 +83,7 @@ struct UITestLaunchConfiguration {
         return UITestLaunchConfiguration(
             scenario: scenario,
             disableLaunchAnimation: disableLaunchAnimation,
+            watchlistContainerWidth: watchlistContainerWidth,
             initialTab: initialTab,
             rootDestination: rootDestination
         )
@@ -118,7 +124,10 @@ enum UITestAppBootstrapper {
     }
 
     private static func bootstrapWatchlistMediaFilterScenario(appState: AppState) {
-        bootstrapAuthenticatedMainTabsScenario(appState: appState, watchlistedTmdbIds: [550, 1399])
+        bootstrapAuthenticatedMainTabsScenario(
+            appState: appState,
+            watchlistedTmdbIds: [550, 551, 552, 553, 1399]
+        )
     }
 
     private static func bootstrapRequestMediaFilterScenario(appState: AppState) {
@@ -260,6 +269,7 @@ enum UITestAppBootstrapper {
 
 struct UITestLaunchConfiguration {
     let disableLaunchAnimation = false
+    let watchlistContainerWidth: CGFloat? = nil
     let initialTab: AppTab = .discover
     let rootDestination: UITestRootDestination = .mainTabs
 

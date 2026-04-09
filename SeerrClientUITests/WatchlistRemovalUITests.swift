@@ -55,10 +55,61 @@ final class WatchlistRemovalUITests: XCTestCase {
     }
 
     @MainActor
-    private func launchApp(scenario: String) -> XCUIApplication {
+    func testMoviesSegmentUsesThreeColumnsBeforeWrappingNextRow() throws {
+        let app = launchApp(scenario: "watchlist_media_filter")
+        let firstCard = watchlistCard(tmdbId: 550, in: app)
+        let secondCard = watchlistCard(tmdbId: 551, in: app)
+        let thirdCard = watchlistCard(tmdbId: 552, in: app)
+        let fourthCard = watchlistCard(tmdbId: 553, in: app)
+
+        XCTAssertTrue(firstCard.waitForExistence(timeout: timeout))
+        XCTAssertTrue(secondCard.waitForExistence(timeout: timeout))
+        XCTAssertTrue(thirdCard.waitForExistence(timeout: timeout))
+        XCTAssertTrue(fourthCard.waitForExistence(timeout: timeout))
+
+        let firstFrame = firstCard.frame
+        let secondFrame = secondCard.frame
+        let thirdFrame = thirdCard.frame
+        let fourthFrame = fourthCard.frame
+
+        XCTAssertLessThan(abs(firstFrame.minY - secondFrame.minY), 12)
+        XCTAssertLessThan(abs(secondFrame.minY - thirdFrame.minY), 12)
+        XCTAssertGreaterThan(fourthFrame.minY, firstFrame.maxY)
+        XCTAssertTrue(firstFrame.minX < secondFrame.minX)
+        XCTAssertTrue(secondFrame.minX < thirdFrame.minX)
+    }
+
+    @MainActor
+    func testMoviesSegmentFallsBackToTwoColumnsAtCompactWidth() throws {
+        let app = launchApp(scenario: "watchlist_media_filter", watchlistContainerWidth: 320)
+        let firstCard = watchlistCard(tmdbId: 550, in: app)
+        let secondCard = watchlistCard(tmdbId: 551, in: app)
+        let thirdCard = watchlistCard(tmdbId: 552, in: app)
+
+        XCTAssertTrue(firstCard.waitForExistence(timeout: timeout))
+        XCTAssertTrue(secondCard.waitForExistence(timeout: timeout))
+        XCTAssertTrue(thirdCard.waitForExistence(timeout: timeout))
+
+        let firstFrame = firstCard.frame
+        let secondFrame = secondCard.frame
+        let thirdFrame = thirdCard.frame
+
+        XCTAssertLessThan(abs(firstFrame.minY - secondFrame.minY), 12)
+        XCTAssertGreaterThan(thirdFrame.minY, firstFrame.maxY)
+        XCTAssertTrue(firstFrame.minX < secondFrame.minX)
+    }
+
+    @MainActor
+    private func launchApp(
+        scenario: String,
+        watchlistContainerWidth: CGFloat? = nil
+    ) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchEnvironment["SEERR_UI_TEST_SCENARIO"] = scenario
         app.launchEnvironment["SEERR_UI_TEST_DISABLE_LAUNCH_ANIMATION"] = "1"
+        if let watchlistContainerWidth {
+            app.launchEnvironment["SEERR_UI_TEST_WATCHLIST_CONTAINER_WIDTH"] = String(format: "%.0f", watchlistContainerWidth)
+        }
         app.launch()
         return app
     }
