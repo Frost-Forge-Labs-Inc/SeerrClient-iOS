@@ -64,6 +64,19 @@ final class UITestURLProtocol: URLProtocol {
 
         switch (method, path) {
         case ("GET", "/api/v1/auth/me"):
+            if UITestLaunchConfiguration.current.scenario == .launchFlowServerSelection {
+                let hasSavedSignIn =
+                    KeychainManager.shared.read(.authMethod, server: Self.baseURLString) != nil
+                    || KeychainManager.shared.read(.sessionToken, server: Self.baseURLString) != nil
+
+                if !hasSavedSignIn {
+                    return try jsonResponse(
+                        statusCode: 401,
+                        object: ["message": "No remembered sign-in"]
+                    )
+                }
+            }
+
             return try jsonResponse(
                 statusCode: 200,
                 object: [
@@ -255,6 +268,11 @@ private final class UITestScenarioState: @unchecked Sendable {
                 requestedCollectionMovieIDs = []
                 nextRequestIdentifier = 7000
             case .aboutNavigation:
+                watchlistContainsMovie = true
+                watchlistContainsTvShow = false
+                requestedCollectionMovieIDs = []
+                nextRequestIdentifier = 7000
+            case .launchFlowServerSelection:
                 watchlistContainsMovie = true
                 watchlistContainsTvShow = false
                 requestedCollectionMovieIDs = []

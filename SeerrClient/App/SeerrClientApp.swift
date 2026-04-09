@@ -34,16 +34,7 @@ struct SeerrClientApp: App {
         let uiTestConfiguration = UITestLaunchConfiguration.current
 
         if uiTestConfiguration.isEnabled {
-            UITestAppBootstrapper.configureIfNeeded(appState: state)
-        } else {
-            // Auto-connect only when stored credentials exist (i.e. "Remember Me" was on
-            // at last login). This makes the launch animation visible while restore runs.
-            // When no credentials are stored, the server list is shown instead so the user
-            // can choose a server and sign in manually.
-            if let server = store.defaultServer,
-               KeychainManager.shared.read(.authMethod, server: server.baseURL) != nil {
-                state.selectServer(server)
-            }
+            UITestAppBootstrapper.configureIfNeeded(appState: state, serverStore: store)
         }
         _appState = State(initialValue: state)
     }

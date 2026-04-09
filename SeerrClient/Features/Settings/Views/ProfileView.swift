@@ -57,22 +57,11 @@ struct ProfileView: View {
                 Button("Sign Out", role: .destructive) {
                     viewModel.signOut()
                 }
-                .disabled(viewModel.isSigningOut || viewModel.isDisconnecting)
+                .disabled(viewModel.isSigningOut)
             }
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("You will need to sign in again to continue.")
-        }
-        .alert("Disconnect Server", isPresented: disconnectDialogBinding) {
-            if let viewModel {
-                Button("Disconnect", role: .destructive) {
-                    viewModel.disconnectServer()
-                }
-                .disabled(viewModel.isSigningOut || viewModel.isDisconnecting)
-            }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("This removes the current server selection and returns to setup.")
         }
     }
 
@@ -103,6 +92,10 @@ struct ProfileView: View {
                     Text("Profile information is unavailable.")
                         .foregroundStyle(.secondary)
                 }
+            }
+
+            if let server = appState.activeServer {
+                activeServerSection(server: server, viewModel: viewModel)
             }
 
             RequestSummarySection(requestCounts: viewModel.requestCounts, isAdmin: viewModel.isAdmin)
@@ -195,6 +188,50 @@ struct ProfileView: View {
                 viewModel.loadProfile()
             }
             .buttonStyle(.borderedProminent)
+
+            Button("Back to Server List") {
+                viewModel.returnToServerList()
+            }
+        }
+    }
+
+    // MARK: - Active Server
+
+    private func activeServerSection(
+        server: ServerConfiguration,
+        viewModel: ProfileViewModel
+    ) -> some View {
+        Section {
+            Button {
+                viewModel.returnToServerList()
+            } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: "arrow.left.arrow.right.circle.fill")
+                        .font(.title3)
+                        .foregroundStyle(.tint)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Switch Server / Account")
+                            .font(.body.weight(.semibold))
+
+                        Text(server.displayName)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.tertiary)
+                }
+            }
+            .accessibilityIdentifier("profile.switchServer")
+            .buttonStyle(.plain)
+        } header: {
+            Text("Active Server")
+        } footer: {
+            Text("Return to the server list to choose another server or forget a saved sign-in.")
         }
     }
 
@@ -214,21 +251,7 @@ struct ProfileView: View {
                     }
                 }
             }
-            .disabled(viewModel.isSigningOut || viewModel.isDisconnecting)
-
-            Button(role: .destructive) {
-                viewModel.showDisconnectConfirmation = true
-            } label: {
-                HStack {
-                    Text("Disconnect Server")
-                    Spacer()
-                    if viewModel.isDisconnecting {
-                        ProgressView()
-                            .tint(.red)
-                    }
-                }
-            }
-            .disabled(viewModel.isSigningOut || viewModel.isDisconnecting)
+            .disabled(viewModel.isSigningOut)
         }
     }
 
@@ -238,13 +261,6 @@ struct ProfileView: View {
         Binding(
             get: { viewModel?.showSignOutConfirmation ?? false },
             set: { viewModel?.showSignOutConfirmation = $0 }
-        )
-    }
-
-    private var disconnectDialogBinding: Binding<Bool> {
-        Binding(
-            get: { viewModel?.showDisconnectConfirmation ?? false },
-            set: { viewModel?.showDisconnectConfirmation = $0 }
         )
     }
 

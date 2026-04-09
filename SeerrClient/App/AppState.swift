@@ -125,6 +125,7 @@ final class AppState {
         watchlistedTmdbIds = []
         watchlistNeedsRefresh = false
         apiClient = SeerrAPIClient(server: selectedServer, serverStore: serverStore)
+        serverStore.setDefault(id: selectedServer.id)
         AppLogger.info(
             "AppState: active server set to '\(selectedServer.displayName)' (\(selectedServer.baseURL))"
         )
@@ -195,9 +196,12 @@ final class AppState {
         AppLogger.info("AppState: signed out from '\(activeServer?.displayName ?? "unknown")'")
     }
 
-    /// Removes both the active server and the authenticated user, returning the app
-    /// to the server-setup onboarding flow.
-    func disconnectFromServer() {
+    /// Returns to the server list without clearing the saved server entry or
+    /// its remembered sign-in data.
+    ///
+    /// Use this for explicit server/account switching flows. The next server
+    /// selection can still restore a remembered session if one exists.
+    func returnToServerList() {
         activeServer = nil
         activeServerCapabilities = nil
         currentUser = nil
@@ -206,7 +210,13 @@ final class AppState {
         isAuthenticating = false
         watchlistedTmdbIds = []
         watchlistNeedsRefresh = false
-        AppLogger.info("AppState: disconnected from server")
+        AppLogger.info("AppState: returned to server list")
+    }
+
+    /// Backward-compatible alias for older call sites that still describe this
+    /// transition as a disconnect.
+    func disconnectFromServer() {
+        returnToServerList()
     }
 
     /// Records a user-facing auth error message.

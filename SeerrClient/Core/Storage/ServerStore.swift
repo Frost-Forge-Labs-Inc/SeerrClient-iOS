@@ -33,6 +33,7 @@ public final class ServerStore {
 
     private let serversKey    = "SeerrClient.servers"
     private let defaultKeyKey = "SeerrClient.defaultServerID"
+    nonisolated private static let uiTestSuiteName = "SeerrClient.UITests"
 
     // MARK: - Stored State
 
@@ -121,6 +122,37 @@ public final class ServerStore {
         saveToDefaults()
     }
 
+    /// Returns `true` when the server has locally stored user-session data that
+    /// can be used for silent session restoration or account prefill.
+    ///
+    /// This intentionally ignores API keys so "Forget Sign-In" can clear user
+    /// sessions without affecting future API-key support.
+    public func hasSavedSignIn(for server: ServerConfiguration) -> Bool {
+        let keychain = KeychainManager.shared
+        return keychain.read(.authMethod, server: server.baseURL) != nil
+            || keychain.read(.sessionToken, server: server.baseURL) != nil
+    }
+
+    /// Clears the locally remembered user sign-in state for a server while
+    /// preserving the saved server entry itself.
+    ///
+    /// This is used by the server list's "Forget Sign-In" affordance so the
+    /// same server can be selected again and routed back to the login flow for
+    /// a different account.
+    public func forgetSavedSignIn(for server: ServerConfiguration) {
+        let keychain = KeychainManager.shared
+        keychain.delete(.sessionToken, server: server.baseURL)
+        keychain.delete(.username, server: server.baseURL)
+        keychain.delete(.password, server: server.baseURL)
+        keychain.delete(.authMethod, server: server.baseURL)
+        keychain.delete(.jellyfinHostname, server: server.baseURL)
+
+        guard var updatedServer = servers.first(where: { $0.id == server.id }) else { return }
+        updatedServer.authMethod = .none
+        update(updatedServer)
+        AppLogger.info("ServerStore: forgot saved sign-in for '\(server.displayName)'")
+    }
+
     // MARK: - Last Connected
 
     /// Records the current timestamp as `lastConnected` for the given server.
@@ -156,7 +188,7 @@ public final class ServerStore {
         // Read directly from UserDefaults (thread-safe) so TrustManager can call
         // this from its non-main-actor URLSession delegate callback.
         let decoder = JSONDecoder()
-        guard let data = UserDefaults.standard.data(forKey: serversKey),
+        guard let data = Self.defaults.data(forKey: serversKey),
               let stored = try? decoder.decode([ServerConfiguration].self, from: data) else {
             return nil
         }
@@ -195,26 +227,35 @@ public final class ServerStore {
         let encoder = JSONEncoder()
         do {
             let data = try encoder.encode(servers)
-            UserDefaults.standard.set(data, forKey: serversKey)
+            Self.defaults.set(data, forKey: serversKey)
         } catch {
             AppLogger.error("ServerStore: failed to persist servers — \(error)")
         }
         if let id = defaultServerID {
-            UserDefaults.standard.set(id.uuidString, forKey: defaultKeyKey)
+            Self.defaults.set(id.uuidString, forKey: defaultKeyKey)
         } else {
-            UserDefaults.standard.removeObject(forKey: defaultKeyKey)
+            Self.defaults.removeObject(forKey: defaultKeyKey)
         }
     }
 
     private func loadFromDefaults() {
         let decoder = JSONDecoder()
-        if let data = UserDefaults.standard.data(forKey: serversKey),
+        if let data = Self.defaults.data(forKey: serversKey),
            let loaded = try? decoder.decode([ServerConfiguration].self, from: data) {
             servers = loaded
         }
-        if let uuidString = UserDefaults.standard.string(forKey: defaultKeyKey),
+        if let uuidString = Self.defaults.string(forKey: defaultKeyKey),
            let uuid = UUID(uuidString: uuidString) {
             defaultServerID = uuid
         }
+    }
+
+    nonisolated private static var defaults: UserDefaults {
+#if DEBUG
+        if UITestLaunchConfiguration.current.isEnabled {
+            return UserDefaults(suiteName: uiTestSuiteName) ?? .standard
+        }
+#endif
+        return .standard
     }
 }
