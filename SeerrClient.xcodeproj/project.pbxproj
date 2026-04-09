@@ -13,6 +13,8 @@
 		E3A000000000000000000001 /* RequestListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A000000000000000000004 /* RequestListViewModelTests.swift */; };
 		E3A000000000000000000002 /* MockRequestListFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A000000000000000000005 /* MockRequestListFetcher.swift */; };
 		E3A000000000000000000003 /* RequestListSegmentedUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A000000000000000000006 /* RequestListSegmentedUITests.swift */; };
+		F4A000000000000000000001 /* AppStateNavigationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A000000000000000000002 /* AppStateNavigationTests.swift */; };
+		F4A000000000000000000003 /* LaunchFlowUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A000000000000000000004 /* LaunchFlowUITests.swift */; };
 		B10000000000000000000000E /* UITestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000010 /* UITestSupport.swift */; };
 		B10000000000000000000000F /* UITestURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000011 /* UITestURLProtocol.swift */; };
 		00CD2AC36BEF7ECB7469CBA7 /* RequestButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006621B1BAB219A3DA268155 /* RequestButtonView.swift */; };
@@ -192,6 +194,8 @@
 		DFC5117590DD72AE3D81042E /* CastCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastCardView.swift; sourceTree = "<group>"; };
 		E418DBD74F0261757BAE65C2 /* SeerrClient.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = SeerrClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4E772FA7B51A7222166D1DA /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		F4A000000000000000000002 /* AppStateNavigationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateNavigationTests.swift; sourceTree = "<group>"; };
+		F4A000000000000000000004 /* LaunchFlowUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchFlowUITests.swift; sourceTree = "<group>"; };
 		E64979A476B83BBC55926763 /* AppearanceSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceSection.swift; sourceTree = "<group>"; };
 		E69B950886B50BE2637AA796 /* TMDBImageURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBImageURL.swift; sourceTree = "<group>"; };
 		E69D7F345716A3DE42F3294A /* MediaCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaCardView.swift; sourceTree = "<group>"; };
@@ -404,6 +408,7 @@
 			children = (
 				D2A000000000000000000004 /* AboutNavigationUITests.swift */,
 				C1A000000000000000000004 /* CollectionRequestSelectionUITests.swift */,
+				F4A000000000000000000004 /* LaunchFlowUITests.swift */,
 				E3A000000000000000000006 /* RequestListSegmentedUITests.swift */,
 				B100000000000000000000002 /* WatchlistRemovalUITests.swift */,
 			);
@@ -657,6 +662,7 @@
 		FD3A4C18DDD171219C21D6ED /* SeerrClientTests */ = {
 			isa = PBXGroup;
 			children = (
+				F4A000000000000000000002 /* AppStateNavigationTests.swift */,
 				5710BB3CEBE2DB7884A66557 /* Mocks */,
 				3382CBACDCC430B31FF6B8B5 /* Models */,
 				78FA1B1F81C77921CDA259C2 /* ViewModels */,
@@ -785,6 +791,7 @@
 			files = (
 				D2A000000000000000000003 /* AboutNavigationUITests.swift in Sources */,
 				C1A000000000000000000003 /* CollectionRequestSelectionUITests.swift in Sources */,
+				F4A000000000000000000003 /* LaunchFlowUITests.swift in Sources */,
 				E3A000000000000000000003 /* RequestListSegmentedUITests.swift in Sources */,
 				B100000000000000000000001 /* WatchlistRemovalUITests.swift in Sources */,
 			);
@@ -873,6 +880,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D2A000000000000000000001 /* AboutContentTests.swift in Sources */,
+				F4A000000000000000000001 /* AppStateNavigationTests.swift in Sources */,
 				C1A000000000000000000001 /* CollectionDetailViewModelTests.swift in Sources */,
 				2D532E27BE8FF1399DA2A3BF /* DiscoverMediaItemTests.swift in Sources */,
 				E3A000000000000000000002 /* MockRequestListFetcher.swift in Sources */,
