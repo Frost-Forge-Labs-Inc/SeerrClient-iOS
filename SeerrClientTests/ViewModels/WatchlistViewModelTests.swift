@@ -240,6 +240,20 @@ final class WatchlistViewModelTests: XCTestCase {
         XCTAssertEqual(sut.visibleItems.map(\.id), [3])
     }
 
+    func test_watchlistGridLayout_usesThreeColumnsOnStandardPhoneWidth() {
+        let layout = WatchlistGridLayout(containerWidth: 430)
+
+        XCTAssertEqual(layout.columnCount, 3)
+        XCTAssertGreaterThan(layout.cardWidth, 100)
+    }
+
+    func test_watchlistGridLayout_fallsBackToTwoColumnsOnVeryCompactWidth() {
+        let layout = WatchlistGridLayout(containerWidth: 320)
+
+        XCTAssertEqual(layout.columnCount, 2)
+        XCTAssertGreaterThanOrEqual(layout.cardWidth, 96)
+    }
+
     // MARK: - Enrichment (nil mediaDetailRepository)
 
     func test_posterPaths_notPopulated_withNilMediaDetailRepo() async throws {

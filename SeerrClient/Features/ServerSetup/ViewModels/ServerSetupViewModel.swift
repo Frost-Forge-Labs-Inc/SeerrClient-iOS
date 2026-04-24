@@ -240,6 +240,14 @@ public final class ServerSetupViewModel {
         toDelete.forEach { serverStore.remove($0) }
     }
 
+    /// Clears the locally remembered sign-in/session for a saved server while
+    /// leaving the server entry itself intact.
+    ///
+    /// Used when the user wants to switch accounts on the same server.
+    public func forgetSavedSignIn(for server: ServerConfiguration) {
+        serverStore.forgetSavedSignIn(for: server)
+    }
+
     // MARK: - Private Helpers
 
     private func applyDetectionSuccess(_ result: ServerDetectionResult) {

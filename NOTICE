@@ -1,0 +1,45 @@
+Seerr Client (iOS)
+Copyright 2026 Frost Forge Labs Inc.
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+-------------------------------------------------------------------------------
+Upstream project acknowledgements
+-------------------------------------------------------------------------------
+
+Seerr Client is an independent native client that communicates with the
+following upstream server projects via their public HTTP APIs. No source code
+from these projects is bundled into Seerr Client; this acknowledgement is
+provided as a courtesy to the communities that made the platform possible.
+
+  Overseerr
+    License: MIT
+    Copyright (c) 2020 sct
+    Source:  https://github.com/sct/overseerr
+
+  Jellyseerr
+    License: MIT
+    Copyright (c) 2020 Fallenbagel
+    Source:  https://github.com/fallenbagel/jellyseerr
+
+  Seerr
+    License: MIT
+    Copyright (c) Seerr Team
+    Source:  https://github.com/seerr-team/seerr
+
+-------------------------------------------------------------------------------
+Third-party data
+-------------------------------------------------------------------------------
+
+  TMDB (The Movie Database)
+    This product uses the TMDB API but is not endorsed or certified by TMDB.
+    https://www.themoviedb.org/
+    Attribution provided per TMDB API Terms of Use.
+
+-------------------------------------------------------------------------------
+Bundled dependencies
+-------------------------------------------------------------------------------
+
+  iOS target: no third-party runtime dependencies are bundled.
+  (Android and TV targets maintain their own NOTICE files in their respective
+  repositories.)

@@ -104,6 +104,7 @@ struct ServerListView: View {
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .accessibilityIdentifier("serverList.screen")
     }
 
     // MARK: - Populated List
@@ -112,31 +113,38 @@ struct ServerListView: View {
     private var serverListContent: some View {
         List {
             ForEach(serverStore.servers) { server in
-                ServerRowCell(
-                    server: server,
-                    isActive: appState.activeServer?.id == server.id
-                )
-                .contentShape(Rectangle())
-                .onTapGesture {
+                let isLastUsed = serverStore.defaultServerID == server.id
+                let hasSavedSignIn = serverStore.hasSavedSignIn(for: server)
+
+                Button {
                     appState.selectServer(server)
+                } label: {
+                    ServerRowCell(
+                        server: server,
+                        isLastUsed: isLastUsed,
+                        hasSavedSignIn: hasSavedSignIn
+                    )
                 }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("serverList.select.\(server.id.uuidString)")
                 .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                    if hasSavedSignIn {
+                        Button {
+                            viewModel?.forgetSavedSignIn(for: server)
+                        } label: {
+                            Label("Forget Sign-In", systemImage: "person.crop.circle.badge.xmark")
+                        }
+                        .tint(.orange)
+                    }
+
                     Button(role: .destructive) {
                         viewModel?.deleteServer(server)
                     } label: {
                         Label("Remove", systemImage: "trash")
                     }
                 }
-                .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                    Button {
-                        serverStore.setDefault(id: server.id)
-                    } label: {
-                        Label("Switch To", systemImage: "checkmark.circle.fill")
-                    }
-                    .tint(.green)
-                }
                 .listRowBackground(
-                    appState.activeServer?.id == server.id
+                    isLastUsed
                         ? Color.accentColor.opacity(0.08)
                         : Color(uiColor: .secondarySystemGroupedBackground)
                 )
@@ -146,6 +154,7 @@ struct ServerListView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .accessibilityIdentifier("serverList.screen")
     }
 }
 
@@ -158,14 +167,28 @@ struct ServerListView: View {
 private struct ServerRowCell: View {
 
     let server: ServerConfiguration
-    let isActive: Bool
+    let isLastUsed: Bool
+    let hasSavedSignIn: Bool
+
+    private var statusText: String {
+        switch (isLastUsed, hasSavedSignIn) {
+        case (true, true):
+            return "Last used · Saved sign-in"
+        case (true, false):
+            return "Last used · Requires sign-in"
+        case (false, true):
+            return "Saved sign-in"
+        case (false, false):
+            return "Requires sign-in"
+        }
+    }
 
     var body: some View {
         HStack(spacing: 12) {
             // Backend type icon.
             Image(systemName: server.backendType.symbolName)
                 .font(.title3)
-                .foregroundStyle(isActive ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
+                .foregroundStyle(isLastUsed ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
                 .frame(width: 32, height: 32)
 
             // Name + URL stack.
@@ -184,24 +207,32 @@ private struct ServerRowCell: View {
                         .font(.caption2)
                         .foregroundStyle(.tertiary)
                 }
+
+                Text(statusText)
+                    .font(.caption2.weight(.medium))
+                    .foregroundStyle(hasSavedSignIn ? .green : .secondary)
             }
 
             Spacer()
 
-            // Active indicator.
-            if isActive {
-                Circle()
-                    .fill(Color.green)
-                    .frame(width: 10, height: 10)
-            }
-
             // Backend type badge.
-            Text(server.backendType.displayName)
-                .font(.caption2.weight(.semibold))
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(Color.accentColor.opacity(0.12), in: Capsule())
-                .foregroundStyle(.tint)
+            VStack(alignment: .trailing, spacing: 6) {
+                if isLastUsed {
+                    Text("Last Used")
+                        .font(.caption2.weight(.semibold))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.green.opacity(0.14), in: Capsule())
+                        .foregroundStyle(.green)
+                }
+
+                Text(server.backendType.displayName)
+                    .font(.caption2.weight(.semibold))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.accentColor.opacity(0.12), in: Capsule())
+                    .foregroundStyle(.tint)
+            }
 
             Image(systemName: "chevron.right")
                 .font(.caption.weight(.semibold))

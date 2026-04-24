@@ -33,6 +33,7 @@ enum UITestScenario: String {
     case requestMediaFilter = "request_media_filter"
     case collectionRequestSelection = "collection_request_selection"
     case aboutNavigation = "about_navigation"
+    case launchFlowServerSelection = "launch_flow_server_selection"
 }
 
 // MARK: - UITestLaunchConfiguration
@@ -40,9 +41,11 @@ enum UITestScenario: String {
 struct UITestLaunchConfiguration {
     static let scenarioKey = "SEERR_UI_TEST_SCENARIO"
     static let disableLaunchAnimationKey = "SEERR_UI_TEST_DISABLE_LAUNCH_ANIMATION"
+    static let watchlistContainerWidthKey = "SEERR_UI_TEST_WATCHLIST_CONTAINER_WIDTH"
 
     let scenario: UITestScenario?
     let disableLaunchAnimation: Bool
+    let watchlistContainerWidth: CGFloat?
     let initialTab: AppTab
     let rootDestination: UITestRootDestination
 
@@ -50,6 +53,9 @@ struct UITestLaunchConfiguration {
         let environment = ProcessInfo.processInfo.environment
         let scenario = environment[scenarioKey].flatMap(UITestScenario.init(rawValue:))
         let disableLaunchAnimation = environment[disableLaunchAnimationKey] == "1"
+        let watchlistContainerWidth = environment[watchlistContainerWidthKey]
+            .flatMap(Double.init)
+            .map { CGFloat($0) }
         let initialTab: AppTab = {
             switch scenario {
             case .watchlistRemoval:
@@ -62,6 +68,8 @@ struct UITestLaunchConfiguration {
                 return .discover
             case .aboutNavigation:
                 return .profile
+            case .launchFlowServerSelection:
+                return .discover
             case nil:
                 return .discover
             }
@@ -70,7 +78,7 @@ struct UITestLaunchConfiguration {
             switch scenario {
             case .collectionRequestSelection:
                 return .collectionDetail(id: 1000, name: "Collection UI Test")
-            case .watchlistRemoval, .watchlistMediaFilter, .requestMediaFilter, .aboutNavigation, nil:
+            case .watchlistRemoval, .watchlistMediaFilter, .requestMediaFilter, .aboutNavigation, .launchFlowServerSelection, nil:
                 return .mainTabs
             }
         }()
@@ -78,6 +86,7 @@ struct UITestLaunchConfiguration {
         return UITestLaunchConfiguration(
             scenario: scenario,
             disableLaunchAnimation: disableLaunchAnimation,
+            watchlistContainerWidth: watchlistContainerWidth,
             initialTab: initialTab,
             rootDestination: rootDestination
         )
@@ -93,7 +102,7 @@ struct UITestLaunchConfiguration {
 @MainActor
 enum UITestAppBootstrapper {
 
-    static func configureIfNeeded(appState: AppState) {
+    static func configureIfNeeded(appState: AppState, serverStore: ServerStore) {
         let configuration = UITestLaunchConfiguration.current
         guard let scenario = configuration.scenario else { return }
 
@@ -110,6 +119,8 @@ enum UITestAppBootstrapper {
             bootstrapCollectionRequestScenario(appState: appState)
         case .aboutNavigation:
             bootstrapAboutNavigationScenario(appState: appState)
+        case .launchFlowServerSelection:
+            bootstrapLaunchFlowServerSelectionScenario(serverStore: serverStore)
         }
     }
 
@@ -118,7 +129,10 @@ enum UITestAppBootstrapper {
     }
 
     private static func bootstrapWatchlistMediaFilterScenario(appState: AppState) {
-        bootstrapAuthenticatedMainTabsScenario(appState: appState, watchlistedTmdbIds: [550, 1399])
+        bootstrapAuthenticatedMainTabsScenario(
+            appState: appState,
+            watchlistedTmdbIds: [550, 551, 552, 553, 1399]
+        )
     }
 
     private static func bootstrapRequestMediaFilterScenario(appState: AppState) {
@@ -254,12 +268,68 @@ enum UITestAppBootstrapper {
         appState.watchlistedTmdbIds = []
         appState.watchlistNeedsRefresh = false
     }
+
+    private static func bootstrapLaunchFlowServerSelectionScenario(serverStore: ServerStore) {
+        for server in serverStore.servers {
+            serverStore.remove(server)
+        }
+
+        let rememberedServerID = UUID(uuidString: "11111111-1111-1111-1111-111111111111")!
+        let alternateServerID = UUID(uuidString: "22222222-2222-2222-2222-222222222222")!
+        let rememberedBaseURL = UITestURLProtocol.baseURLString
+        let alternateBaseURL = "http://ui-test-alt.seerr:5055"
+
+        KeychainManager.shared.deleteAll(server: rememberedBaseURL)
+        KeychainManager.shared.deleteAll(server: alternateBaseURL)
+
+        let publicSettings = PublicSettingsNormalized(
+            initialized: true,
+            applicationTitle: "UI Test Jellyseerr",
+            localLoginEnabled: true,
+            mediaServerLoginEnabled: true,
+            mediaServerKind: .jellyfin
+        )
+        let capabilities = ServerCapabilities(
+            backendType: .jellyseerr,
+            publicSettings: publicSettings
+        )
+
+        serverStore.add(ServerConfiguration(
+            id: rememberedServerID,
+            displayName: "Remembered Server",
+            baseURL: rememberedBaseURL,
+            backendType: .jellyseerr,
+            authMethod: .local,
+            availableAuthMethods: capabilities.availableAuthMethods,
+            capabilities: capabilities,
+            isDefault: true,
+            lastConnected: Date()
+        ))
+        serverStore.add(ServerConfiguration(
+            id: alternateServerID,
+            displayName: "Needs Login Server",
+            baseURL: alternateBaseURL,
+            backendType: .jellyseerr,
+            authMethod: .none,
+            availableAuthMethods: capabilities.availableAuthMethods,
+            capabilities: capabilities,
+            isDefault: false,
+            lastConnected: nil
+        ))
+        serverStore.setDefault(id: rememberedServerID)
+
+        try? KeychainManager.shared.save("local", for: .authMethod, server: rememberedBaseURL)
+        try? KeychainManager.shared.save("uitest@example.com", for: .username, server: rememberedBaseURL)
+        try? KeychainManager.shared.save("secret", for: .password, server: rememberedBaseURL)
+        try? KeychainManager.shared.save("session-token", for: .sessionToken, server: rememberedBaseURL)
+    }
 }
 
 #else
 
 struct UITestLaunchConfiguration {
     let disableLaunchAnimation = false
+    let watchlistContainerWidth: CGFloat? = nil
     let initialTab: AppTab = .discover
     let rootDestination: UITestRootDestination = .mainTabs
 
@@ -272,7 +342,7 @@ struct UITestLaunchConfiguration {
 
 @MainActor
 enum UITestAppBootstrapper {
-    static func configureIfNeeded(appState: AppState) {}
+    static func configureIfNeeded(appState: AppState, serverStore: ServerStore) {}
 }
 
 #endif

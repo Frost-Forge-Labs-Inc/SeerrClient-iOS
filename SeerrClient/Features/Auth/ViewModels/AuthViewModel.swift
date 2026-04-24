@@ -235,13 +235,15 @@ public final class AuthViewModel {
             case .unauthorized, .forbidden:
                 break       // Cookie expired — try credential re-auth below.
             default:
-                // Network unavailable or server error — show login form; don't wipe credentials.
-                authState = .idle
+                // Network unavailable or server error — keep the user on the
+                // login screen with a concrete message and a path back to the
+                // server list instead of failing silently.
+                authState = .failed(localizedAuthError(error))
                 AppLogger.warning("AuthViewModel: session restore network error — \(error.userMessage)")
                 return
             }
         } catch {
-            authState = .idle
+            authState = .failed("Could not restore your session. Please try again.")
             return
         }
 

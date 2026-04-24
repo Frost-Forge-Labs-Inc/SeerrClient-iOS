@@ -98,11 +98,12 @@ struct LoginView: View {
                 }
                 .padding(.horizontal)
             }
+            .accessibilityIdentifier("login.screen")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Back to Servers") {
-                        appState.disconnectFromServer()
+                        appState.returnToServerList()
                     }
                     .font(.subheadline)
                 }

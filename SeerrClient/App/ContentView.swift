@@ -31,6 +31,10 @@ struct ContentView: View {
     @State private var isInLaunchPhase = !UITestLaunchConfiguration.current.disableLaunchAnimation
     @State private var selectedTab = UITestLaunchConfiguration.current.initialTab
 
+    private var defaultSessionTab: AppTab {
+        UITestLaunchConfiguration.current.initialTab
+    }
+
     // MARK: - Body
 
     var body: some View {
@@ -65,6 +69,10 @@ struct ContentView: View {
             // Hold the launch animation for exactly 2.5 s then fade out.
             try? await Task.sleep(for: .seconds(2.5))
             isInLaunchPhase = false
+        }
+        .onChange(of: appState.activeServer?.id) { _, newValue in
+            guard newValue != nil else { return }
+            selectedTab = defaultSessionTab
         }
     }
 

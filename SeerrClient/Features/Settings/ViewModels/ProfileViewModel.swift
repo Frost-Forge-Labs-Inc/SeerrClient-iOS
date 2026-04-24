@@ -66,10 +66,8 @@ public final class ProfileViewModel {
     public private(set) var serverStatus: ServerStatus?
 
     public private(set) var isSigningOut: Bool = false
-    public private(set) var isDisconnecting: Bool = false
 
     public var showSignOutConfirmation: Bool = false
-    public var showDisconnectConfirmation: Bool = false
 
     public var selectedTheme: AppTheme {
         didSet {
@@ -200,20 +198,15 @@ public final class ProfileViewModel {
             // Always clear Keychain so session restore cannot re-authenticate after sign-out.
             authRepository.clearStoredCredentials()
 
-            // Disconnect fully — resets activeServer so ContentView shows ServerListView,
-            // not LoginView (which would immediately re-run session restore from Keychain).
-            appState.disconnectFromServer()
+            // Return to the server list after clearing remembered credentials so
+            // the next selection starts from a clean login state.
+            appState.returnToServerList()
         }
     }
 
-    public func disconnectServer() {
-        guard !isDisconnecting else { return }
-
-        showDisconnectConfirmation = false
-        isDisconnecting = true
+    public func returnToServerList() {
         cancelAll()
-        appState.disconnectFromServer()
-        isDisconnecting = false
+        appState.returnToServerList()
     }
 
     // MARK: - Private
