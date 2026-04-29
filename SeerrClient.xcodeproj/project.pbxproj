@@ -7,16 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B100000000000000000000001 /* WatchlistRemovalUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000002 /* WatchlistRemovalUITests.swift */; };
-		C1A000000000000000000003 /* CollectionRequestSelectionUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A000000000000000000004 /* CollectionRequestSelectionUITests.swift */; };
-		D2A000000000000000000003 /* AboutNavigationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A000000000000000000004 /* AboutNavigationUITests.swift */; };
-		E3A000000000000000000001 /* RequestListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A000000000000000000004 /* RequestListViewModelTests.swift */; };
-		E3A000000000000000000002 /* MockRequestListFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A000000000000000000005 /* MockRequestListFetcher.swift */; };
-		E3A000000000000000000003 /* RequestListSegmentedUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A000000000000000000006 /* RequestListSegmentedUITests.swift */; };
-		F4A000000000000000000001 /* AppStateNavigationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A000000000000000000002 /* AppStateNavigationTests.swift */; };
-		F4A000000000000000000003 /* LaunchFlowUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A000000000000000000004 /* LaunchFlowUITests.swift */; };
-		B10000000000000000000000E /* UITestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000010 /* UITestSupport.swift */; };
-		B10000000000000000000000F /* UITestURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000011 /* UITestURLProtocol.swift */; };
 		00CD2AC36BEF7ECB7469CBA7 /* RequestButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006621B1BAB219A3DA268155 /* RequestButtonView.swift */; };
 		04D761CC68BB6CC8A8394348 /* RequestRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611335D5B4B13E4CCE58A230 /* RequestRepository.swift */; };
 		0D2AAA4FFBC176FD640845F2 /* WatchlistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0008919C3BEB59A2D341CC18 /* WatchlistView.swift */; };
@@ -27,6 +17,7 @@
 		1AA4AFDBF19E0B179817133F /* ServerSetupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4FE6055B66B1402A9BA91C3 /* ServerSetupViewModel.swift */; };
 		1D774975C65325A9AA287BFE /* DiscoverViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B51E03581D50B930FC87D744 /* DiscoverViewModel.swift */; };
 		1F1ED67C740C5C90822E0EFC /* URLNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27074C23E43436441EF6F02F /* URLNormalizer.swift */; };
+		275EE5D12E2C4FACBEA06CE3 /* CollectionDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D756A645A74A0BAA910B2F /* CollectionDetailViewModel.swift */; };
 		2D532E27BE8FF1399DA2A3BF /* DiscoverMediaItemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0E8AF893654BCD6C39AC12 /* DiscoverMediaItemTests.swift */; };
 		33A190A8A3D8C96D0AD93BAE /* RequestCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9CACE529E1925DFDD5CF20 /* RequestCardView.swift */; };
 		37D1C04FE387044755C68A47 /* SeerrModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9E349149C88570515FD1F3 /* SeerrModels.swift */; };
@@ -34,12 +25,8 @@
 		40E85BB522FA06E3466A27BC /* MediaNavDestinations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87C5B119185D13BDC0B2ACC /* MediaNavDestinations.swift */; };
 		438E49E22858126B23CF4BFF /* TMDBImageURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69B950886B50BE2637AA796 /* TMDBImageURL.swift */; };
 		461FA6B96694952B917DE8E2 /* MovieDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 108613EEFAC5605F2FFE339D /* MovieDetailViewModel.swift */; };
-		818482B08AC04D3CAECA4BFA /* CollectionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD6AD08FC1494D6184ACE7B2 /* CollectionDetailView.swift */; };
-		275EE5D12E2C4FACBEA06CE3 /* CollectionDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D756A645A74A0BAA910B2F /* CollectionDetailViewModel.swift */; };
-		D2A000000000000000000001 /* AboutContentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A000000000000000000002 /* AboutContentTests.swift */; };
 		4A53C4364D7148F2F1325FC0 /* ProfileHeaderSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BB8BDD36E7E8BA1633E119B /* ProfileHeaderSection.swift */; };
 		4C7C52B874F8ADB62D37FB1F /* WatchlistViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487D98B554FDDAA3F90661D4 /* WatchlistViewModelTests.swift */; };
-		C1A000000000000000000001 /* CollectionDetailViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A000000000000000000002 /* CollectionDetailViewModelTests.swift */; };
 		50A385491AC7DE95CA94A5B8 /* CastCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D80AE934D8EE61E68CC5F /* CastCarouselView.swift */; };
 		5836E1B8DF927AD0FF62F670 /* DiscoverSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2F9EE06CCC51F03BC5B4F6 /* DiscoverSliderView.swift */; };
 		5B542C3F047A5AF18CCCDC1D /* ServerInfoSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B636B641B400144C5B4A9D6E /* ServerInfoSection.swift */; };
@@ -57,6 +44,7 @@
 		7B40C0D92BEDFF87D286A3B9 /* MediaDetailHeroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 429FE31E1061D26176F2FF86 /* MediaDetailHeroView.swift */; };
 		7CC72637AAF0D58C9996BDA2 /* MovieDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6312DDACD311AA170C2B35B3 /* MovieDetailView.swift */; };
 		7FB94BD3AC29CC5BFC7B12F6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEE87EED834463BD311560B9 /* Assets.xcassets */; };
+		818482B08AC04D3CAECA4BFA /* CollectionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD6AD08FC1494D6184ACE7B2 /* CollectionDetailView.swift */; };
 		824B6E4FC831874D7784FB8D /* MediaCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69D7F345716A3DE42F3294A /* MediaCardView.swift */; };
 		835E30BA4370E001018A15FB /* SeerrAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F23B78D85AD082DF788C99 /* SeerrAPIClient.swift */; };
 		83957F5CCC7E0D4152487E92 /* ServerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBEB581AA47ACD7AC2BF46A2 /* ServerConfiguration.swift */; };
@@ -72,20 +60,30 @@
 		A9A94BAEC92FCCFE259FEA6C /* MockWatchlistFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D61F6815EFC57AC8DF4F8424 /* MockWatchlistFetcher.swift */; };
 		ADC3CAE700D8F42DF35CED6D /* ProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78ABD9B388909ABD99B582D2 /* ProfileRepository.swift */; };
 		B069B98E3F89B59A8A90E7E6 /* AuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74273EE34B44ADDCFCA9326 /* AuthRepository.swift */; };
+		B100000000000000000000001 /* WatchlistRemovalUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000002 /* WatchlistRemovalUITests.swift */; };
+		B10000000000000000000000E /* UITestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000010 /* UITestSupport.swift */; };
+		B10000000000000000000000F /* UITestURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000011 /* UITestURLProtocol.swift */; };
 		B3C998630B5747E9F90FA870 /* ShimmerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B06681BFD58F3624A783EF4 /* ShimmerView.swift */; };
 		B4AFE01403540AC0F4BC0B29 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08F8FBBCF15E572E36DDEE7D /* ProfileViewModel.swift */; };
 		B4D887908584618E9FC565BE /* CastCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC5117590DD72AE3D81042E /* CastCardView.swift */; };
+		C1A000000000000000000001 /* CollectionDetailViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A000000000000000000002 /* CollectionDetailViewModelTests.swift */; };
+		C1A000000000000000000003 /* CollectionRequestSelectionUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A000000000000000000004 /* CollectionRequestSelectionUITests.swift */; };
 		C81ACF65AEC85C2BE17AD7C8 /* MediaHorizontalRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CACE715F2E81DB7F34E04B /* MediaHorizontalRowView.swift */; };
 		CA8605D14239CC1AEA63810E /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC276DA8E190B9425423E1A /* APIError.swift */; };
 		CCD17EDC58FE4B43227F94D9 /* RequestDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A22094D4EC82D7864FB6326 /* RequestDetailViewModel.swift */; };
 		CCEF1D14174C59AA639BA4CC /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA416916A3938B893C902DD4 /* SearchView.swift */; };
 		CD001BD7344277CB74D31AE6 /* MediaMetadataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08B59BC79632764E4364FC5D /* MediaMetadataView.swift */; };
 		D19B94F99FAA27AB7178C413 /* RequestListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D1E4FA44C1BCA098500049 /* RequestListViewModel.swift */; };
+		D2A000000000000000000001 /* AboutContentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A000000000000000000002 /* AboutContentTests.swift */; };
+		D2A000000000000000000003 /* AboutNavigationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A000000000000000000004 /* AboutNavigationUITests.swift */; };
 		D58807F56B65059BE9B9E4D3 /* LaunchAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB4DD510E4FB75A20BEB26F /* LaunchAnimationView.swift */; };
 		D78639ED60ED84756C488395 /* PlexOAuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51003BCD28BD393CA457D535 /* PlexOAuthView.swift */; };
 		DE2A923196AD601DAC8DA4E3 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199CDE54AD436C7475063960 /* Logger.swift */; };
 		DE5050F748DD9EEACEBE82DB /* SeerrClientApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFB67CD0DFFCE6295E9E87C8 /* SeerrClientApp.swift */; };
 		DF45A146DF57543F5ED69041 /* SeerrModelsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A65F11D0875344C5E92CB0 /* SeerrModelsTests.swift */; };
+		E3A000000000000000000001 /* RequestListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A000000000000000000004 /* RequestListViewModelTests.swift */; };
+		E3A000000000000000000002 /* MockRequestListFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A000000000000000000005 /* MockRequestListFetcher.swift */; };
+		E3A000000000000000000003 /* RequestListSegmentedUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A000000000000000000006 /* RequestListSegmentedUITests.swift */; };
 		E84A482CE2ADC7B1068FCF3D /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E772FA7B51A7222166D1DA /* LoginView.swift */; };
 		E84C0783AF168F636CEB3657 /* ServerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CCAD2AEBC9B5070D704CC42 /* ServerListView.swift */; };
 		E8C3A103AD6602824EC110A2 /* AddServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D03BFDAA57BCFD1563B4547 /* AddServerView.swift */; };
@@ -93,6 +91,8 @@
 		EB6E943C4684F95360979B52 /* RequestSummarySection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B65E40D6328D4F11B39C90 /* RequestSummarySection.swift */; };
 		EC8FF0FE880AC023DF8143C9 /* TrustManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A21FB0924B241FDC4D8DC9 /* TrustManager.swift */; };
 		F0EA0C332F429674B0BD38F3 /* TvShowDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F1D3BB4C54F0F6C79EC2F /* TvShowDetailViewModel.swift */; };
+		F4A000000000000000000001 /* AppStateNavigationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A000000000000000000002 /* AppStateNavigationTests.swift */; };
+		F4A000000000000000000003 /* LaunchFlowUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A000000000000000000004 /* LaunchFlowUITests.swift */; };
 		F5E75B8DCEA4839422965BF1 /* APIEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA9BC8FEC91C03F2E9EF262 /* APIEndpoints.swift */; };
 		FA4712AA673C6908505E1549 /* PersonSearchCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD05BFBDB2A8FDE3892F0A7 /* PersonSearchCardView.swift */; };
 /* End PBXBuildFile section */
@@ -115,15 +115,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		B100000000000000000000002 /* WatchlistRemovalUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistRemovalUITests.swift; sourceTree = "<group>"; };
-		B100000000000000000000003 /* SeerrClientUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = SeerrClientUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		C1A000000000000000000004 /* CollectionRequestSelectionUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionRequestSelectionUITests.swift; sourceTree = "<group>"; };
-		D2A000000000000000000004 /* AboutNavigationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutNavigationUITests.swift; sourceTree = "<group>"; };
-		E3A000000000000000000004 /* RequestListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestListViewModelTests.swift; sourceTree = "<group>"; };
-		E3A000000000000000000005 /* MockRequestListFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRequestListFetcher.swift; sourceTree = "<group>"; };
-		E3A000000000000000000006 /* RequestListSegmentedUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestListSegmentedUITests.swift; sourceTree = "<group>"; };
-		B100000000000000000000010 /* UITestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestSupport.swift; sourceTree = "<group>"; };
-		B100000000000000000000011 /* UITestURLProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestURLProtocol.swift; sourceTree = "<group>"; };
 		0008919C3BEB59A2D341CC18 /* WatchlistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistView.swift; sourceTree = "<group>"; };
 		006621B1BAB219A3DA268155 /* RequestButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestButtonView.swift; sourceTree = "<group>"; };
 		01BAF214E68CE207CB709358 /* StatusBadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBadgeView.swift; sourceTree = "<group>"; };
@@ -140,12 +131,10 @@
 		2EBB05AAEDED3FBD74CE5011 /* EpisodeCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeCardView.swift; sourceTree = "<group>"; };
 		31A65F11D0875344C5E92CB0 /* SeerrModelsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeerrModelsTests.swift; sourceTree = "<group>"; };
 		35F23B78D85AD082DF788C99 /* SeerrAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeerrAPIClient.swift; sourceTree = "<group>"; };
-		D2A000000000000000000002 /* AboutContentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutContentTests.swift; sourceTree = "<group>"; };
 		3DA21C4FF404997FFF405DA9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		429FE31E1061D26176F2FF86 /* MediaDetailHeroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaDetailHeroView.swift; sourceTree = "<group>"; };
 		487D98B554FDDAA3F90661D4 /* WatchlistViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistViewModelTests.swift; sourceTree = "<group>"; };
-		C1A000000000000000000002 /* CollectionDetailViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionDetailViewModelTests.swift; sourceTree = "<group>"; };
-		4D82C291E836C1E1D59DFF4B /* SeerrClientTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = SeerrClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4D82C291E836C1E1D59DFF4B /* SeerrClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SeerrClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F9CACE529E1925DFDD5CF20 /* RequestCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestCardView.swift; sourceTree = "<group>"; };
 		51003BCD28BD393CA457D535 /* PlexOAuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlexOAuthView.swift; sourceTree = "<group>"; };
 		52CACE715F2E81DB7F34E04B /* MediaHorizontalRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaHorizontalRowView.swift; sourceTree = "<group>"; };
@@ -168,17 +157,25 @@
 		86D75F539EE4FB9EDCCD4FD8 /* SearchRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchRepository.swift; sourceTree = "<group>"; };
 		8B06681BFD58F3624A783EF4 /* ShimmerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShimmerView.swift; sourceTree = "<group>"; };
 		8B2E98367B74869339FA13D2 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
+		98D756A645A74A0BAA910B2F /* CollectionDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionDetailViewModel.swift; sourceTree = "<group>"; };
 		9A002FFC73E8F244FA27489C /* DateFormatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatting.swift; sourceTree = "<group>"; };
 		9BB8BDD36E7E8BA1633E119B /* ProfileHeaderSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderSection.swift; sourceTree = "<group>"; };
 		A1C72A5BFF47CB301F381200 /* CreateRequestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateRequestView.swift; sourceTree = "<group>"; };
 		A87C5B119185D13BDC0B2ACC /* MediaNavDestinations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaNavDestinations.swift; sourceTree = "<group>"; };
 		A8D1E4FA44C1BCA098500049 /* RequestListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestListViewModel.swift; sourceTree = "<group>"; };
 		B0A21FB0924B241FDC4D8DC9 /* TrustManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrustManager.swift; sourceTree = "<group>"; };
+		B100000000000000000000002 /* WatchlistRemovalUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistRemovalUITests.swift; sourceTree = "<group>"; };
+		B100000000000000000000003 /* SeerrClientUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SeerrClientUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B100000000000000000000010 /* UITestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestSupport.swift; sourceTree = "<group>"; };
+		B100000000000000000000011 /* UITestURLProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestURLProtocol.swift; sourceTree = "<group>"; };
 		B51E03581D50B930FC87D744 /* DiscoverViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverViewModel.swift; sourceTree = "<group>"; };
 		B636B641B400144C5B4A9D6E /* ServerInfoSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerInfoSection.swift; sourceTree = "<group>"; };
 		B71C254BEA64FC0AA7FDFAFB /* RequestDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestDetailView.swift; sourceTree = "<group>"; };
 		B73FDBE818C29FCA8DBA88E3 /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
+		BD6AD08FC1494D6184ACE7B2 /* CollectionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionDetailView.swift; sourceTree = "<group>"; };
 		BF2F9EE06CCC51F03BC5B4F6 /* DiscoverSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverSliderView.swift; sourceTree = "<group>"; };
+		C1A000000000000000000002 /* CollectionDetailViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionDetailViewModelTests.swift; sourceTree = "<group>"; };
+		C1A000000000000000000004 /* CollectionRequestSelectionUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionRequestSelectionUITests.swift; sourceTree = "<group>"; };
 		C4FE6055B66B1402A9BA91C3 /* ServerSetupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSetupViewModel.swift; sourceTree = "<group>"; };
 		C9DF43906E0E406A94453EF1 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		CA416916A3938B893C902DD4 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
@@ -187,26 +184,29 @@
 		CC0E8AF893654BCD6C39AC12 /* DiscoverMediaItemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverMediaItemTests.swift; sourceTree = "<group>"; };
 		CEE87EED834463BD311560B9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CFB1D51FC4F2154A8F0E010E /* DiscoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverView.swift; sourceTree = "<group>"; };
+		D2A000000000000000000002 /* AboutContentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutContentTests.swift; sourceTree = "<group>"; };
+		D2A000000000000000000004 /* AboutNavigationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutNavigationUITests.swift; sourceTree = "<group>"; };
 		D61F6815EFC57AC8DF4F8424 /* MockWatchlistFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockWatchlistFetcher.swift; sourceTree = "<group>"; };
 		D74273EE34B44ADDCFCA9326 /* AuthRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRepository.swift; sourceTree = "<group>"; };
 		D817ADAEC73E667AF2AACDDB /* EpisodeListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeListView.swift; sourceTree = "<group>"; };
 		DBEB581AA47ACD7AC2BF46A2 /* ServerConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerConfiguration.swift; sourceTree = "<group>"; };
 		DFC5117590DD72AE3D81042E /* CastCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastCardView.swift; sourceTree = "<group>"; };
-		E418DBD74F0261757BAE65C2 /* SeerrClient.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = SeerrClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3A000000000000000000004 /* RequestListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestListViewModelTests.swift; sourceTree = "<group>"; };
+		E3A000000000000000000005 /* MockRequestListFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRequestListFetcher.swift; sourceTree = "<group>"; };
+		E3A000000000000000000006 /* RequestListSegmentedUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestListSegmentedUITests.swift; sourceTree = "<group>"; };
+		E418DBD74F0261757BAE65C2 /* SeerrClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SeerrClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4E772FA7B51A7222166D1DA /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
-		F4A000000000000000000002 /* AppStateNavigationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateNavigationTests.swift; sourceTree = "<group>"; };
-		F4A000000000000000000004 /* LaunchFlowUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchFlowUITests.swift; sourceTree = "<group>"; };
 		E64979A476B83BBC55926763 /* AppearanceSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceSection.swift; sourceTree = "<group>"; };
 		E69B950886B50BE2637AA796 /* TMDBImageURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDBImageURL.swift; sourceTree = "<group>"; };
 		E69D7F345716A3DE42F3294A /* MediaCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaCardView.swift; sourceTree = "<group>"; };
 		ECDB627E4650345B0B45592B /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		F4A000000000000000000002 /* AppStateNavigationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateNavigationTests.swift; sourceTree = "<group>"; };
+		F4A000000000000000000004 /* LaunchFlowUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchFlowUITests.swift; sourceTree = "<group>"; };
 		FC2FF07F37E85C5506E7A09E /* ServerStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerStore.swift; sourceTree = "<group>"; };
 		FE74B4F94F2F612047C9284C /* WatchlistViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistViewModel.swift; sourceTree = "<group>"; };
 		FF31ECDFD93EF7800E74AFA1 /* TvShowDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TvShowDetailView.swift; sourceTree = "<group>"; };
 		FFB67CD0DFFCE6295E9E87C8 /* SeerrClientApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeerrClientApp.swift; sourceTree = "<group>"; };
 		FFC276DA8E190B9425423E1A /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
-		BD6AD08FC1494D6184ACE7B2 /* CollectionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionDetailView.swift; sourceTree = "<group>"; };
-		98D756A645A74A0BAA910B2F /* CollectionDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionDetailViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -403,18 +403,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		B100000000000000000000004 /* SeerrClientUITests */ = {
-			isa = PBXGroup;
-			children = (
-				D2A000000000000000000004 /* AboutNavigationUITests.swift */,
-				C1A000000000000000000004 /* CollectionRequestSelectionUITests.swift */,
-				F4A000000000000000000004 /* LaunchFlowUITests.swift */,
-				E3A000000000000000000006 /* RequestListSegmentedUITests.swift */,
-				B100000000000000000000002 /* WatchlistRemovalUITests.swift */,
-			);
-			path = SeerrClientUITests;
-			sourceTree = "<group>";
-		};
 		7280BFAF535389DAA22B815A /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
@@ -491,6 +479,18 @@
 				611335D5B4B13E4CCE58A230 /* RequestRepository.swift */,
 			);
 			path = Repositories;
+			sourceTree = "<group>";
+		};
+		B100000000000000000000004 /* SeerrClientUITests */ = {
+			isa = PBXGroup;
+			children = (
+				D2A000000000000000000004 /* AboutNavigationUITests.swift */,
+				C1A000000000000000000004 /* CollectionRequestSelectionUITests.swift */,
+				F4A000000000000000000004 /* LaunchFlowUITests.swift */,
+				E3A000000000000000000006 /* RequestListSegmentedUITests.swift */,
+				B100000000000000000000002 /* WatchlistRemovalUITests.swift */,
+			);
+			path = SeerrClientUITests;
 			sourceTree = "<group>";
 		};
 		B29B254700932AB71E9ECB63 /* Views */ = {
@@ -673,26 +673,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		B100000000000000000000006 /* SeerrClientUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B10000000000000000000000A /* Build configuration list for PBXNativeTarget "SeerrClientUITests" */;
-			buildPhases = (
-				B100000000000000000000008 /* Sources */,
-				B10000000000000000000000D /* Frameworks */,
-				B100000000000000000000007 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B100000000000000000000009 /* PBXTargetDependency */,
-			);
-			name = SeerrClientUITests;
-			packageProductDependencies = (
-			);
-			productName = SeerrClientUITests;
-			productReference = B100000000000000000000003 /* SeerrClientUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 		5C6985FED49AADD9C9BE0632 /* SeerrClientTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = EE52F2BE271CDAB0EA7F9298 /* Build configuration list for PBXNativeTarget "SeerrClientTests" */;
@@ -728,6 +708,26 @@
 			productName = SeerrClient;
 			productReference = E418DBD74F0261757BAE65C2 /* SeerrClient.app */;
 			productType = "com.apple.product-type.application";
+		};
+		B100000000000000000000006 /* SeerrClientUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B10000000000000000000000A /* Build configuration list for PBXNativeTarget "SeerrClientUITests" */;
+			buildPhases = (
+				B100000000000000000000008 /* Sources */,
+				B10000000000000000000000D /* Frameworks */,
+				B100000000000000000000007 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B100000000000000000000009 /* PBXTargetDependency */,
+			);
+			name = SeerrClientUITests;
+			packageProductDependencies = (
+			);
+			productName = SeerrClientUITests;
+			productReference = B100000000000000000000003 /* SeerrClientUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -766,19 +766,19 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		B100000000000000000000007 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		0717205E76D788C2F605C15E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				7FB94BD3AC29CC5BFC7B12F6 /* Assets.xcassets in Resources */,
 				73A00903F8C5DEC97082EBBA /* LaunchScreen.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B100000000000000000000007 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -908,41 +908,24 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		B10000000000000000000000B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GENERATE_INFOPLIST_FILE = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.rodrigoindustries.SeerrClientUITests;
-				SDKROOT = iphoneos;
-				SWIFT_STRICT_CONCURRENCY = targeted;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = SeerrClient;
-			};
-			name = Debug;
-		};
-		B10000000000000000000000C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GENERATE_INFOPLIST_FILE = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.rodrigoindustries.SeerrClientUITests;
-				SDKROOT = iphoneos;
-				SWIFT_STRICT_CONCURRENCY = targeted;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = SeerrClient;
-			};
-			name = Release;
-		};
 		30C3123984006355238E16C4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = WSM586GQ29;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Seerr;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Use Face ID or Touch ID to unlock the app and protect your server credentials.";
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.rodrigoindustries.SeerrClientTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.frostforgelabs.SeerrClientTests;
 				SDKROOT = iphoneos;
 				SWIFT_STRICT_CONCURRENCY = targeted;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -955,6 +938,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = WSM586GQ29;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = SeerrClient/App/Info.plist;
@@ -962,7 +946,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.rodrigoindustries.SeerrClient;
+				PRODUCT_BUNDLE_IDENTIFIER = com.frostforgelabs.SeerrClient;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1035,6 +1019,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = WSM586GQ29;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = SeerrClient/App/Info.plist;
@@ -1042,7 +1027,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.rodrigoindustries.SeerrClient;
+				PRODUCT_BUNDLE_IDENTIFIER = com.frostforgelabs.SeerrClient;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1053,19 +1038,52 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = WSM586GQ29;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Seerr;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Use Face ID or Touch ID to unlock the app and protect your server credentials.";
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.rodrigoindustries.SeerrClientTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.frostforgelabs.SeerrClientTests;
 				SDKROOT = iphoneos;
 				SWIFT_STRICT_CONCURRENCY = targeted;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SeerrClient.app/SeerrClient";
 			};
 			name = Debug;
+		};
+		B10000000000000000000000B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = WSM586GQ29;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.frostforgelabs.SeerrClientUITests;
+				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = targeted;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = SeerrClient;
+			};
+			name = Debug;
+		};
+		B10000000000000000000000C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = WSM586GQ29;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.frostforgelabs.SeerrClientUITests;
+				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = targeted;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = SeerrClient;
+			};
+			name = Release;
 		};
 		EDA8CBE7EA0851B3D568D27D /* Debug */ = {
 			isa = XCBuildConfiguration;
