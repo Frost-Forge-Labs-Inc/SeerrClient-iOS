@@ -254,20 +254,12 @@ enum AboutContent {
 
     static let supportLinks: [SupportLink] = [
         SupportLink(
-            id: "githubSponsors",
-            label: "Sponsor on GitHub",
-            caption: "Monthly support for ongoing development",
-            icon: "heart.fill",
+            id: "moreWaysToSupport",
+            label: "More ways to support",
+            caption: "Tip, sponsor, or learn how to contribute on seerrclient.dev",
+            icon: "heart",
             iconTint: .pink,
-            url: URL(string: "https://github.com/sponsors/Frost-Forge-Labs-Inc")!
-        ),
-        SupportLink(
-            id: "kofi",
-            label: "Buy a Coffee",
-            caption: "One-time tip via Ko-fi",
-            icon: "cup.and.saucer.fill",
-            iconTint: Color(red: 1.0, green: 0.55, blue: 0.0),
-            url: URL(string: "https://ko-fi.com/frostforgelabs")!
+            url: URL(string: "https://seerrclient.dev/support-development/")!
         ),
     ]
 

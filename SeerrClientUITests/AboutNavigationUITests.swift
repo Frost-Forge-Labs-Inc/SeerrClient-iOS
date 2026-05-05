@@ -17,13 +17,14 @@ final class AboutNavigationUITests: XCTestCase {
 
         XCTAssertTrue(app.descendants(matching: .any)["profile.screen"].waitForExistence(timeout: timeout))
 
-        let githubSponsors = scrollToElement(in: app, identifier: "about.support.githubSponsors")
-        XCTAssertTrue(githubSponsors.waitForExistence(timeout: timeout))
-        XCTAssertTrue(githubSponsors.isHittable)
+        let moreWaysToSupport = scrollToElement(in: app, identifier: "about.support.moreWaysToSupport")
+        XCTAssertTrue(moreWaysToSupport.waitForExistence(timeout: timeout))
+        XCTAssertTrue(moreWaysToSupport.isHittable)
 
-        let kofi = scrollToElement(in: app, identifier: "about.support.kofi")
-        XCTAssertTrue(kofi.waitForExistence(timeout: timeout))
-        XCTAssertTrue(kofi.isHittable)
+        // Path C: direct external payment CTAs must not appear in-app
+        XCTAssertFalse(app.descendants(matching: .any)["about.support.buyMeACoffee"].exists)
+        XCTAssertFalse(app.descendants(matching: .any)["about.support.kofi"].exists)
+        XCTAssertFalse(app.descendants(matching: .any)["about.support.githubSponsors"].exists)
 
         XCTAssertFalse(app.descendants(matching: .any)["about.funding.entry"].exists)
         XCTAssertFalse(app.navigationBars["Funding Strategy"].exists)
