@@ -9,8 +9,6 @@ import SwiftUI
 
 struct AboutSection: View {
 
-    @State private var showPendingSponsorAlert: Bool = false
-
     var body: some View {
         Group {
             appInfoSection
@@ -18,11 +16,6 @@ struct AboutSection: View {
             documentationSection
             supportSection
             acknowledgementsSection
-        }
-        .alert("Coming Soon", isPresented: $showPendingSponsorAlert) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text("GitHub Sponsors will activate once the Frost Forge Labs Inc. profile review is complete. In the meantime, Buy Me a Coffee and Ko-fi are available now.")
         }
     }
 
@@ -138,31 +131,15 @@ struct AboutSection: View {
 
     @ViewBuilder
     private func supportLinkRow(_ link: SupportLink, identifier: String) -> some View {
-        if link.isPendingActivation {
-            Button {
-                showPendingSponsorAlert = true
-            } label: {
-                externalLinkRow(
-                    title: link.label,
-                    caption: link.caption,
-                    icon: link.icon,
-                    iconTint: link.iconTint
-                )
-                .accessibilityElement(children: .combine)
-                .accessibilityIdentifier(identifier)
-            }
-            .buttonStyle(.plain)
-        } else {
-            Link(destination: link.url) {
-                externalLinkRow(
-                    title: link.label,
-                    caption: link.caption,
-                    icon: link.icon,
-                    iconTint: link.iconTint
-                )
-                .accessibilityElement(children: .combine)
-                .accessibilityIdentifier(identifier)
-            }
+        Link(destination: link.url) {
+            externalLinkRow(
+                title: link.label,
+                caption: link.caption,
+                icon: link.icon,
+                iconTint: link.iconTint
+            )
+            .accessibilityElement(children: .combine)
+            .accessibilityIdentifier(identifier)
         }
     }
 
@@ -277,29 +254,12 @@ enum AboutContent {
 
     static let supportLinks: [SupportLink] = [
         SupportLink(
-            id: "buyMeACoffee",
-            label: "Buy Me a Coffee",
-            caption: "One-time tip or recurring membership",
-            icon: "cup.and.saucer.fill",
-            iconTint: Color(red: 1.0, green: 0.86, blue: 0.0),
-            url: URL(string: "https://buymeacoffee.com/frostforgelabs")!
-        ),
-        SupportLink(
-            id: "kofi",
-            label: "Ko-fi",
-            caption: "One-time tip or membership via Ko-fi",
-            icon: "heart.circle.fill",
-            iconTint: Color(red: 1.0, green: 0.36, blue: 0.36),
-            url: URL(string: "https://ko-fi.com/frostforgelabs")!
-        ),
-        SupportLink(
-            id: "githubSponsors",
-            label: "Sponsor on GitHub",
-            caption: "Coming soon — pending GitHub approval",
-            icon: "heart.fill",
+            id: "moreWaysToSupport",
+            label: "More ways to support",
+            caption: "Tip, sponsor, or learn how to contribute on seerrclient.dev",
+            icon: "heart",
             iconTint: .pink,
-            url: URL(string: "https://github.com/sponsors/Frost-Forge-Labs-Inc")!,
-            isPendingActivation: true
+            url: URL(string: "https://seerrclient.dev/support-development/")!
         ),
     ]
 
@@ -354,25 +314,6 @@ struct SupportLink: Identifiable {
     let icon: String
     let iconTint: Color
     let url: URL
-    let isPendingActivation: Bool
-
-    init(
-        id: String,
-        label: String,
-        caption: String,
-        icon: String,
-        iconTint: Color,
-        url: URL,
-        isPendingActivation: Bool = false
-    ) {
-        self.id = id
-        self.label = label
-        self.caption = caption
-        self.icon = icon
-        self.iconTint = iconTint
-        self.url = url
-        self.isPendingActivation = isPendingActivation
-    }
 }
 
 struct Acknowledgement: Identifiable, Equatable {

@@ -52,33 +52,37 @@ final class AboutContentTests: XCTestCase {
         XCTAssertTrue(AboutFeature.allCases.contains(.multiServer))
     }
 
-    func test_supportLinksExposeDirectFundingHooksOnly() {
+    func test_supportLinksRouteThroughWebsite() {
+        // Apple §3.1.1 path C: the iOS app exposes a single informational
+        // "More ways to support" entry that opens the seerrclient.dev support
+        // page. Direct external payment CTAs (BMaC, Ko-fi, GitHub Sponsors)
+        // must NOT appear in-app — only on the website.
         let supportLinksByID = Dictionary(
             uniqueKeysWithValues: AboutContent.supportLinks.map { ($0.id, $0) }
         )
 
-        XCTAssertEqual(supportLinksByID["buyMeACoffee"]?.label, "Buy Me a Coffee")
+        XCTAssertEqual(supportLinksByID.count, 1)
+        XCTAssertEqual(supportLinksByID["moreWaysToSupport"]?.label, "More ways to support")
         XCTAssertEqual(
-            supportLinksByID["buyMeACoffee"]?.url.absoluteString,
-            "https://buymeacoffee.com/frostforgelabs"
+            supportLinksByID["moreWaysToSupport"]?.url.absoluteString,
+            "https://seerrclient.dev/support-development/"
         )
-        XCTAssertEqual(supportLinksByID["buyMeACoffee"]?.isPendingActivation, false)
 
-        XCTAssertEqual(supportLinksByID["kofi"]?.label, "Ko-fi")
-        XCTAssertEqual(
-            supportLinksByID["kofi"]?.url.absoluteString,
-            "https://ko-fi.com/frostforgelabs"
-        )
-        XCTAssertEqual(supportLinksByID["kofi"]?.isPendingActivation, false)
-
-        XCTAssertEqual(supportLinksByID["githubSponsors"]?.label, "Sponsor on GitHub")
-        XCTAssertEqual(
-            supportLinksByID["githubSponsors"]?.url.absoluteString,
-            "https://github.com/sponsors/Frost-Forge-Labs-Inc"
-        )
-        XCTAssertEqual(supportLinksByID["githubSponsors"]?.isPendingActivation, true)
-
-        XCTAssertEqual(supportLinksByID.count, 3)
         XCTAssertFalse(AboutContent.supportLinks.contains { $0.label == "Funding Strategy" })
+        XCTAssertFalse(
+            AboutContent.supportLinks.contains { $0.url.host?.contains("buymeacoffee.com") == true },
+            "Direct BMaC CTA must not appear in-app under §3.1.1 path C"
+        )
+        XCTAssertFalse(
+            AboutContent.supportLinks.contains { $0.url.host?.contains("ko-fi.com") == true },
+            "Direct Ko-fi CTA must not appear in-app under §3.1.1 path C"
+        )
+        XCTAssertFalse(
+            AboutContent.supportLinks.contains {
+                $0.url.host?.contains("github.com") == true
+                    && $0.url.path.hasPrefix("/sponsors")
+            },
+            "Direct GitHub Sponsors CTA must not appear in-app under §3.1.1 path C"
+        )
     }
 }
