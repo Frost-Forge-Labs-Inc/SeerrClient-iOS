@@ -17,13 +17,17 @@ final class AboutNavigationUITests: XCTestCase {
 
         XCTAssertTrue(app.descendants(matching: .any)["profile.screen"].waitForExistence(timeout: timeout))
 
-        let githubSponsors = scrollToElement(in: app, identifier: "about.support.githubSponsors")
-        XCTAssertTrue(githubSponsors.waitForExistence(timeout: timeout))
-        XCTAssertTrue(githubSponsors.isHittable)
+        let buyMeACoffee = scrollToElement(in: app, identifier: "about.support.buyMeACoffee")
+        XCTAssertTrue(buyMeACoffee.waitForExistence(timeout: timeout))
+        XCTAssertTrue(buyMeACoffee.isHittable)
 
         let kofi = scrollToElement(in: app, identifier: "about.support.kofi")
         XCTAssertTrue(kofi.waitForExistence(timeout: timeout))
         XCTAssertTrue(kofi.isHittable)
+
+        let githubSponsors = scrollToElement(in: app, identifier: "about.support.githubSponsors")
+        XCTAssertTrue(githubSponsors.waitForExistence(timeout: timeout))
+        XCTAssertTrue(githubSponsors.isHittable)
 
         XCTAssertFalse(app.descendants(matching: .any)["about.funding.entry"].exists)
         XCTAssertFalse(app.navigationBars["Funding Strategy"].exists)

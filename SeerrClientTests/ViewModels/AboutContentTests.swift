@@ -57,14 +57,28 @@ final class AboutContentTests: XCTestCase {
             uniqueKeysWithValues: AboutContent.supportLinks.map { ($0.id, $0) }
         )
 
+        XCTAssertEqual(supportLinksByID["buyMeACoffee"]?.label, "Buy Me a Coffee")
+        XCTAssertEqual(
+            supportLinksByID["buyMeACoffee"]?.url.absoluteString,
+            "https://buymeacoffee.com/frostforgelabs"
+        )
+        XCTAssertEqual(supportLinksByID["buyMeACoffee"]?.isPendingActivation, false)
+
+        XCTAssertEqual(supportLinksByID["kofi"]?.label, "Ko-fi")
+        XCTAssertEqual(
+            supportLinksByID["kofi"]?.url.absoluteString,
+            "https://ko-fi.com/frostforgelabs"
+        )
+        XCTAssertEqual(supportLinksByID["kofi"]?.isPendingActivation, false)
+
         XCTAssertEqual(supportLinksByID["githubSponsors"]?.label, "Sponsor on GitHub")
         XCTAssertEqual(
-            supportLinksByID["githubSponsors"]?.caption,
-            "Monthly support for ongoing development"
+            supportLinksByID["githubSponsors"]?.url.absoluteString,
+            "https://github.com/sponsors/Frost-Forge-Labs-Inc"
         )
-        XCTAssertEqual(supportLinksByID["kofi"]?.label, "Buy a Coffee")
-        XCTAssertEqual(supportLinksByID["kofi"]?.caption, "One-time tip via Ko-fi")
-        XCTAssertEqual(supportLinksByID.count, 2)
+        XCTAssertEqual(supportLinksByID["githubSponsors"]?.isPendingActivation, true)
+
+        XCTAssertEqual(supportLinksByID.count, 3)
         XCTAssertFalse(AboutContent.supportLinks.contains { $0.label == "Funding Strategy" })
     }
 }
