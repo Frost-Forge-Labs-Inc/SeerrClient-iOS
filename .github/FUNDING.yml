@@ -2,8 +2,11 @@
 # https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/displaying-a-sponsor-button-in-your-repository
 
 github: [Frost-Forge-Labs-Inc]
+buy_me_a_coffee: frostforgelabs
 
-# Platforms under evaluation — activate once org accounts are set up:
+# Queued — uncomment once activated under FFL organization ownership:
 # ko_fi: frostforgelabs
 # patreon: frostforgelabs
-# buy_me_a_coffee: frostforgelabs
+
+# Queued — uncomment once seerrclient.dev DNS is wired to Cloudflare Pages:
+# custom: ['https://seerrclient.dev/support-development/']
