@@ -219,7 +219,7 @@ enum AppMetadata {
 
 enum AboutContent {
     static let sourceCodeURL = URL(string: "https://github.com/Frost-Forge-Labs-Inc/SeerrClient-iOS")
-    static let privacyPolicyURL = URL(string: "https://github.com/Frost-Forge-Labs-Inc/SeerrClient-iOS/blob/main/PRIVACY.md")
+    static let privacyPolicyURL = URL(string: "https://seerrclient.dev/legal/privacy/")
 
     static let documentationLinks: [AboutLink] = [
         AboutLink(

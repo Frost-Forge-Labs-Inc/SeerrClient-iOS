@@ -43,6 +43,21 @@ final class AboutContentTests: XCTestCase {
         XCTAssertNotNil(AboutContent.privacyPolicyURL)
     }
 
+    func test_privacyPolicyURLPointsToWebsite() {
+        // Privacy Policy lives at seerrclient.dev/legal/privacy/ — the website is the
+        // canonical legal/policy host (App Store Connect submission also points here).
+        // Reverting to the GitHub blob URL would break App Review submission consistency
+        // and deviate from the path-C posture for legal/funding surfaces.
+        XCTAssertEqual(
+            AboutContent.privacyPolicyURL?.absoluteString,
+            "https://seerrclient.dev/legal/privacy/"
+        )
+        XCTAssertFalse(
+            AboutContent.privacyPolicyURL?.host?.contains("github.com") ?? false,
+            "Privacy Policy must not point to the GitHub blob URL — use the website."
+        )
+    }
+
     func test_highlightsCoverExpectedFeatureSet() {
         XCTAssertEqual(AboutFeature.allCases.count, 5)
         XCTAssertTrue(AboutFeature.allCases.contains(.discover))
