@@ -153,6 +153,7 @@ struct RequestDetailView: View {
             }
             .padding()
         }
+        .accessibilityIdentifier("requests.detail.content")
     }
 
     // MARK: - Media Header

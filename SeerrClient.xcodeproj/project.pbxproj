@@ -62,6 +62,9 @@
 		ADC3CAE700D8F42DF35CED6D /* ProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78ABD9B388909ABD99B582D2 /* ProfileRepository.swift */; };
 		B069B98E3F89B59A8A90E7E6 /* AuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74273EE34B44ADDCFCA9326 /* AuthRepository.swift */; };
 		B100000000000000000000001 /* WatchlistRemovalUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000002 /* WatchlistRemovalUITests.swift */; };
+		B200000000000000000000001 /* TabNavigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B200000000000000000000002 /* TabNavigator.swift */; };
+		B200000000000000000000003 /* TabNavigationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B200000000000000000000004 /* TabNavigationUITests.swift */; };
+		B200000000000000000000005 /* IPadSidebarSplitUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B200000000000000000000006 /* IPadSidebarSplitUITests.swift */; };
 		B10000000000000000000000E /* UITestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000010 /* UITestSupport.swift */; };
 		B10000000000000000000000F /* UITestURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000011 /* UITestURLProtocol.swift */; };
 		B3C998630B5747E9F90FA870 /* ShimmerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B06681BFD58F3624A783EF4 /* ShimmerView.swift */; };
@@ -170,6 +173,9 @@
 		B100000000000000000000003 /* SeerrClientUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SeerrClientUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B100000000000000000000010 /* UITestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestSupport.swift; sourceTree = "<group>"; };
 		B100000000000000000000011 /* UITestURLProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestURLProtocol.swift; sourceTree = "<group>"; };
+		B200000000000000000000002 /* TabNavigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabNavigator.swift; sourceTree = "<group>"; };
+		B200000000000000000000004 /* TabNavigationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabNavigationUITests.swift; sourceTree = "<group>"; };
+		B200000000000000000000006 /* IPadSidebarSplitUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPadSidebarSplitUITests.swift; sourceTree = "<group>"; };
 		B51E03581D50B930FC87D744 /* DiscoverViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverViewModel.swift; sourceTree = "<group>"; };
 		B636B641B400144C5B4A9D6E /* ServerInfoSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerInfoSection.swift; sourceTree = "<group>"; };
 		B71C254BEA64FC0AA7FDFAFB /* RequestDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestDetailView.swift; sourceTree = "<group>"; };
@@ -490,9 +496,20 @@
 				C1A000000000000000000004 /* CollectionRequestSelectionUITests.swift */,
 				F4A000000000000000000004 /* LaunchFlowUITests.swift */,
 				E3A000000000000000000006 /* RequestListSegmentedUITests.swift */,
+				B200000000000000000000006 /* IPadSidebarSplitUITests.swift */,
+				B200000000000000000000004 /* TabNavigationUITests.swift */,
 				B100000000000000000000002 /* WatchlistRemovalUITests.swift */,
+				B200000000000000000000009 /* Support */,
 			);
 			path = SeerrClientUITests;
+			sourceTree = "<group>";
+		};
+		B200000000000000000000009 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				B200000000000000000000002 /* TabNavigator.swift */,
+			);
+			path = Support;
 			sourceTree = "<group>";
 		};
 		B29B254700932AB71E9ECB63 /* Views */ = {
@@ -795,7 +812,10 @@
 				D2A000000000000000000003 /* AboutNavigationUITests.swift in Sources */,
 				C1A000000000000000000003 /* CollectionRequestSelectionUITests.swift in Sources */,
 				F4A000000000000000000003 /* LaunchFlowUITests.swift in Sources */,
+				B200000000000000000000005 /* IPadSidebarSplitUITests.swift in Sources */,
 				E3A000000000000000000003 /* RequestListSegmentedUITests.swift in Sources */,
+				B200000000000000000000001 /* TabNavigator.swift in Sources */,
+				B200000000000000000000003 /* TabNavigationUITests.swift in Sources */,
 				B100000000000000000000001 /* WatchlistRemovalUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

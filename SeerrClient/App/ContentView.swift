@@ -128,6 +128,7 @@ struct ContentView: View {
                     }
             }
             .tabItem { Label("Discover", systemImage: "film.stack") }
+            .accessibilityIdentifier("tab.discover")
             .tag(AppTab.discover)
 
             NavigationStack {
@@ -146,10 +147,12 @@ struct ContentView: View {
                     }
             }
             .tabItem { Label("Search", systemImage: "magnifyingglass") }
+            .accessibilityIdentifier("tab.search")
             .tag(AppTab.search)
 
             RequestsTabView()
                 .tabItem { Label("Requests", systemImage: "tray.full") }
+                .accessibilityIdentifier("tab.requests")
                 .tag(AppTab.requests)
 
             if supportsWatchlistRead {
@@ -166,6 +169,7 @@ struct ContentView: View {
                         }
                 }
                 .tabItem { Label("Watchlist", systemImage: "bookmark") }
+                .accessibilityIdentifier("tab.watchlist")
                 .tag(AppTab.watchlist)
             }
 
@@ -173,6 +177,7 @@ struct ContentView: View {
                 ProfileView()
             }
             .tabItem { Label("Profile", systemImage: "person.circle") }
+            .accessibilityIdentifier("tab.profile")
             .tag(AppTab.profile)
         }
         .modifier(SidebarAdaptableTabViewStyle())
