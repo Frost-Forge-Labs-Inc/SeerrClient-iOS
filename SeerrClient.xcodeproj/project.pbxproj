@@ -942,6 +942,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = SeerrClient/App/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Octopus Explorer";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1024,6 +1025,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = SeerrClient/App/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Octopus Explorer";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
