@@ -74,6 +74,12 @@ struct ContentView: View {
             guard newValue != nil else { return }
             selectedTab = defaultSessionTab
         }
+        .onChange(of: appState.activeServerCapabilities?.supportsWatchlistRead) { _, supported in
+            // Prevent sidebar/tab selection from pointing at a Watchlist tab that is no longer rendered.
+            if supported != true && selectedTab == .watchlist {
+                selectedTab = defaultSessionTab
+            }
+        }
     }
 
     // MARK: - Main Interface
@@ -180,12 +186,32 @@ struct ContentView: View {
             .tabItem { Label("Profile", systemImage: "person.circle") }
             .tag(AppTab.profile)
         }
+        .modifier(SidebarAdaptableTabViewStyle())
     }
 
     /// Animated splash shown while session restoration is in progress.
     @ViewBuilder
     private var loadingView: some View {
         LaunchAnimationView()
+    }
+}
+
+// MARK: - Sidebar Adaptation
+
+/// Applies the iOS 18 adaptive sidebar tab style when available.
+///
+/// On iOS 18 and later, this promotes the `TabView` into an adaptive sidebar on
+/// iPad/regular-width layouts while preserving the tab bar on iPhone/compact-width
+/// layouts. On iOS 17, this is a no-op and leaves the standard tab bar in place.
+/// Both branches are required because an `if` without `else` in a `@ViewBuilder`
+/// would erase the iOS 17 path to `EmptyView`.
+private struct SidebarAdaptableTabViewStyle: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 18.0, *) {
+            content.tabViewStyle(.sidebarAdaptable)
+        } else {
+            content
+        }
     }
 }
 
