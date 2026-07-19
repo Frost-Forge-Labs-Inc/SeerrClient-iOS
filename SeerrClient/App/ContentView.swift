@@ -148,20 +148,9 @@ struct ContentView: View {
             .tabItem { Label("Search", systemImage: "magnifyingglass") }
             .tag(AppTab.search)
 
-            NavigationStack {
-                RequestListView()
-                    .navigationDestination(for: MovieNavDestination.self) { dest in
-                        MovieDetailView(movieId: dest.id, movieTitle: dest.title)
-                    }
-                    .navigationDestination(for: TvNavDestination.self) { dest in
-                        TvShowDetailView(tvId: dest.id, showTitle: dest.title)
-                    }
-                    .navigationDestination(for: CollectionNavDestination.self) { dest in
-                        CollectionDetailView(collectionId: dest.id, collectionName: dest.name)
-                    }
-            }
-            .tabItem { Label("Requests", systemImage: "tray.full") }
-            .tag(AppTab.requests)
+            RequestsTabView()
+                .tabItem { Label("Requests", systemImage: "tray.full") }
+                .tag(AppTab.requests)
 
             if supportsWatchlistRead {
                 NavigationStack {
