@@ -51,6 +51,8 @@
 		83957F5CCC7E0D4152487E92 /* ServerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBEB581AA47ACD7AC2BF46A2 /* ServerConfiguration.swift */; };
 		89032B00879D0EFBDF13B130 /* AppearanceSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E64979A476B83BBC55926763 /* AppearanceSection.swift */; };
 		8F59C875CEBBBEBED7087067 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64C47E6800275508DB03C916 /* ContentView.swift */; };
+		C500000000000000000000001 /* TabSelectionPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = C500000000000000000000002 /* TabSelectionPolicy.swift */; };
+		C500000000000000000000003 /* TabSelectionPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C500000000000000000000004 /* TabSelectionPolicyTests.swift */; };
 		904A35C863CBE48F8DC6ADC7 /* ServerDetectionResultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66E1E51275191AF431112E6C /* ServerDetectionResultTests.swift */; };
 		90A14736E1D13B3C56831BB9 /* EpisodeListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D817ADAEC73E667AF2AACDDB /* EpisodeListView.swift */; };
 		96C066C75C2CBF615B50285E /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81677D5A77C4A46EED374C39 /* KeychainManager.swift */; };
@@ -151,6 +153,8 @@
 		611335D5B4B13E4CCE58A230 /* RequestRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestRepository.swift; sourceTree = "<group>"; };
 		6312DDACD311AA170C2B35B3 /* MovieDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailView.swift; sourceTree = "<group>"; };
 		64C47E6800275508DB03C916 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		C500000000000000000000002 /* TabSelectionPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabSelectionPolicy.swift; sourceTree = "<group>"; };
+		C500000000000000000000004 /* TabSelectionPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabSelectionPolicyTests.swift; sourceTree = "<group>"; };
 		66E1E51275191AF431112E6C /* ServerDetectionResultTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetectionResultTests.swift; sourceTree = "<group>"; };
 		6B80980E75F51890E352DE28 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		6EFE9A3868A19863AAB5B71E /* AboutSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutSection.swift; sourceTree = "<group>"; };
@@ -319,6 +323,7 @@
 				5DB4DD510E4FB75A20BEB26F /* LaunchAnimationView.swift */,
 				ECDB627E4650345B0B45592B /* LaunchScreen.storyboard */,
 				FFB67CD0DFFCE6295E9E87C8 /* SeerrClientApp.swift */,
+				C500000000000000000000002 /* TabSelectionPolicy.swift */,
 				B100000000000000000000010 /* UITestSupport.swift */,
 			);
 			path = App;
@@ -683,6 +688,7 @@
 			isa = PBXGroup;
 			children = (
 				F4A000000000000000000002 /* AppStateNavigationTests.swift */,
+				C500000000000000000000004 /* TabSelectionPolicyTests.swift */,
 				5710BB3CEBE2DB7884A66557 /* Mocks */,
 				3382CBACDCC430B31FF6B8B5 /* Models */,
 				78FA1B1F81C77921CDA259C2 /* ViewModels */,
@@ -835,6 +841,7 @@
 				B4D887908584618E9FC565BE /* CastCardView.swift in Sources */,
 				50A385491AC7DE95CA94A5B8 /* CastCarouselView.swift in Sources */,
 				8F59C875CEBBBEBED7087067 /* ContentView.swift in Sources */,
+				C500000000000000000000001 /* TabSelectionPolicy.swift in Sources */,
 				6A6FE03ED2C28204EEC4C76D /* CreateRequestView.swift in Sources */,
 				9D25E67C34BAC8908C5675B8 /* DateFormatting.swift in Sources */,
 				A2EC57FB5898FBD0797C9167 /* DiscoverRepository.swift in Sources */,
@@ -905,6 +912,7 @@
 			files = (
 				D2A000000000000000000001 /* AboutContentTests.swift in Sources */,
 				F4A000000000000000000001 /* AppStateNavigationTests.swift in Sources */,
+				C500000000000000000000003 /* TabSelectionPolicyTests.swift in Sources */,
 				C1A000000000000000000001 /* CollectionDetailViewModelTests.swift in Sources */,
 				2D532E27BE8FF1399DA2A3BF /* DiscoverMediaItemTests.swift in Sources */,
 				E3A000000000000000000002 /* MockRequestListFetcher.swift in Sources */,

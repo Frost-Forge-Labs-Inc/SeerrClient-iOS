@@ -76,9 +76,11 @@ struct ContentView: View {
         }
         .onChange(of: appState.activeServerCapabilities?.supportsWatchlistRead) { _, supported in
             // Prevent sidebar/tab selection from pointing at a Watchlist tab that is no longer rendered.
-            if supported != true && selectedTab == .watchlist {
-                selectedTab = defaultSessionTab
-            }
+            selectedTab = TabSelectionPolicy.resolvedTab(
+                current: selectedTab,
+                supportsWatchlistRead: supported,
+                defaultSessionTab: defaultSessionTab
+            )
         }
     }
 
