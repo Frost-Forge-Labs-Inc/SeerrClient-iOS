@@ -198,20 +198,11 @@ struct ContentView: View {
 
 // MARK: - Sidebar Adaptation
 
-/// Applies the iOS 18 adaptive sidebar tab style when available.
-///
-/// On iOS 18 and later, this promotes the `TabView` into an adaptive sidebar on
-/// iPad/regular-width layouts while preserving the tab bar on iPhone/compact-width
-/// layouts. On iOS 17, this is a no-op and leaves the standard tab bar in place.
-/// Both branches are required because an `if` without `else` in a `@ViewBuilder`
-/// would erase the iOS 17 path to `EmptyView`.
+/// Promotes the `TabView` into an adaptive sidebar on iPad/regular-width layouts
+/// while preserving the tab bar on iPhone/compact-width layouts.
 private struct SidebarAdaptableTabViewStyle: ViewModifier {
     func body(content: Content) -> some View {
-        if #available(iOS 18.0, *) {
-            content.tabViewStyle(.sidebarAdaptable)
-        } else {
-            content
-        }
+        content.tabViewStyle(.sidebarAdaptable)
     }
 }
 
