@@ -914,7 +914,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = WSM586GQ29;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Seerr;
+				INFOPLIST_KEY_CFBundleDisplayName = "Octopus Explorer";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Use Face ID or Touch ID to unlock the app and protect your server credentials.";
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
@@ -925,7 +925,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.frostforgelabs.SeerrClientTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.frostforgelabs.OctopusExplorerTests;
 				SDKROOT = iphoneos;
 				SWIFT_STRICT_CONCURRENCY = targeted;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -942,11 +942,13 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = SeerrClient/App/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Octopus Explorer";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.frostforgelabs.SeerrClient;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.frostforgelabs.OctopusExplorer;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1023,11 +1025,13 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = SeerrClient/App/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Octopus Explorer";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.frostforgelabs.SeerrClient;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.frostforgelabs.OctopusExplorer;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1040,7 +1044,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = WSM586GQ29;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Seerr;
+				INFOPLIST_KEY_CFBundleDisplayName = "Octopus Explorer";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Use Face ID or Touch ID to unlock the app and protect your server credentials.";
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
@@ -1051,7 +1055,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.frostforgelabs.SeerrClientTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.frostforgelabs.OctopusExplorerTests;
 				SDKROOT = iphoneos;
 				SWIFT_STRICT_CONCURRENCY = targeted;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1064,7 +1068,7 @@
 			buildSettings = {
 				DEVELOPMENT_TEAM = WSM586GQ29;
 				GENERATE_INFOPLIST_FILE = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.frostforgelabs.SeerrClientUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.frostforgelabs.OctopusExplorerUITests;
 				SDKROOT = iphoneos;
 				SWIFT_STRICT_CONCURRENCY = targeted;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1077,7 +1081,7 @@
 			buildSettings = {
 				DEVELOPMENT_TEAM = WSM586GQ29;
 				GENERATE_INFOPLIST_FILE = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.frostforgelabs.SeerrClientUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.frostforgelabs.OctopusExplorerUITests;
 				SDKROOT = iphoneos;
 				SWIFT_STRICT_CONCURRENCY = targeted;
 				TARGETED_DEVICE_FAMILY = "1,2";

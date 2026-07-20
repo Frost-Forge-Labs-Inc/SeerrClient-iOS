@@ -2,19 +2,19 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <!--
   Info.plist
-  SeerrClient
+  OctopusExplorer
 
-  Required keys for the SeerrClient iOS app.
+  Required keys for the Octopus Explorer iOS app.
 
   KEY NOTES:
   ─────────────────────────────────────────────────────────────────────────────
   NSAppTransportSecurity › NSAllowsArbitraryLoads = YES
     Allows HTTP connections and self-signed HTTPS certificates.
-    Required because home Seerr servers typically run on HTTP with bare IPs
-    or self-signed certificates. TrustManager implements TOFU validation on
-    top of this for security.
+    Required because home Jellyseerr/Overseerr/Seerr servers typically run on
+    HTTP with bare IPs or self-signed certificates. TrustManager implements
+    TOFU validation on top of this for security.
 
-  CFBundleDisplayName = "Seerr"
+  CFBundleDisplayName = "Octopus Explorer"
     Short name shown under the app icon on the Home Screen.
 
   NSFaceIDUsageDescription
@@ -34,10 +34,10 @@
 
     <!-- App Identity -->
     <key>CFBundleDisplayName</key>
-    <string>Seerr</string>
+    <string>Octopus Explorer</string>
 
     <key>CFBundleName</key>
-    <string>SeerrClient</string>
+    <string>Octopus Explorer</string>
 
     <key>CFBundleIdentifier</key>
     <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>

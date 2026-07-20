@@ -93,7 +93,7 @@ struct AboutSection: View {
         } header: {
             Text("Support Development")
         } footer: {
-            Text("Support helps fund ongoing SeerrClient development.")
+            Text("Support helps fund ongoing Octopus Explorer development.")
         }
     }
 
@@ -239,7 +239,7 @@ enum AboutContent {
         AboutLink(
             id: "releaseNotes",
             label: "Release Notes",
-            caption: "Track SeerrClient app releases",
+            caption: "Track Octopus Explorer app releases",
             icon: "sparkles.rectangle.stack",
             url: URL(string: "https://github.com/Frost-Forge-Labs-Inc/SeerrClient-iOS/releases")!
         ),
@@ -291,7 +291,7 @@ enum AboutContent {
         Acknowledgement(
             id: "frostForgeLabs",
             name: "Frost Forge Labs Inc.",
-            role: "Design, implementation, and ongoing maintenance of SeerrClient.",
+            role: "Design, implementation, and ongoing maintenance of Octopus Explorer.",
             url: URL(string: "https://github.com/Frost-Forge-Labs-Inc")
         ),
     ]

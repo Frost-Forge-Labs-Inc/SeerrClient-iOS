@@ -151,7 +151,7 @@ struct LaunchAnimationView: View {
     @ViewBuilder
     private var labelSection: some View {
         VStack(spacing: 5) {
-            Text("SeerrClient")
+            Text("Octopus Explorer")
                 .font(.title3.weight(.semibold))
                 .foregroundStyle(.white.opacity(0.92))
                 .tracking(0.5)
