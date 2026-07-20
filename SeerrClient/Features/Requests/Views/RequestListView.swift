@@ -18,6 +18,7 @@ struct RequestListView: View {
     // MARK: - Dependencies
 
     @Environment(AppState.self) private var appState
+    var selection: Binding<RequestNavDestination?>? = nil
 
     // MARK: - State
 
@@ -37,6 +38,9 @@ struct RequestListView: View {
             }
         }
         .navigationTitle("Requests")
+        // Compact-path only: drives the push in the single-column NavigationStack.
+        // When `selection` is non-nil (regular-width split layout) rows are Buttons
+        // that set the selection binding instead of pushing, so this is inert there.
         .navigationDestination(for: RequestNavDestination.self) { destination in
             RequestDetailView(requestID: destination.requestID)
         }
@@ -95,7 +99,8 @@ struct RequestListView: View {
                     LazyVStack(spacing: 12) {
                         ForEach(vm.visibleRequests, id: \.id) { request in
                             let metadata = vm.metadataByRequestID[request.id]
-                            NavigationLink(value: RequestNavDestination(requestID: request.id)) {
+                            let destination = RequestNavDestination(requestID: request.id)
+                            requestNavigationWrapper(destination: destination) {
                                 RequestCardView(
                                     request: request,
                                     title: metadata?.title,
@@ -152,6 +157,30 @@ struct RequestListView: View {
         .accessibilityIdentifier("requests.screen")
         .refreshable {
             await vm.refresh()
+        }
+    }
+
+    @ViewBuilder
+    private func requestNavigationWrapper<Label: View>(
+        destination: RequestNavDestination,
+        @ViewBuilder label: () -> Label
+    ) -> some View {
+        if let selection {
+            Button {
+                selection.wrappedValue = destination
+            } label: {
+                label()
+            }
+            .overlay {
+                if selection.wrappedValue?.requestID == destination.requestID {
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.accentColor, lineWidth: 2)
+                }
+            }
+        } else {
+            NavigationLink(value: destination) {
+                label()
+            }
         }
     }
 

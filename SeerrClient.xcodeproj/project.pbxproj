@@ -32,6 +32,7 @@
 		5B542C3F047A5AF18CCCDC1D /* ServerInfoSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B636B641B400144C5B4A9D6E /* ServerInfoSection.swift */; };
 		603E724DBE734E63A8450DD1 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73FDBE818C29FCA8DBA88E3 /* SearchViewModel.swift */; };
 		604998903B3DE062D0A80B4A /* RequestListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AC32AD4CD10A6DEE1EBCC86 /* RequestListView.swift */; };
+		60503E3F397F7F3187A6F4DB /* RequestsTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60503E3E397F7F3187A6F4DB /* RequestsTabView.swift */; };
 		612001AFAADC8BD0E319C6BE /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DF43906E0E406A94453EF1 /* AppState.swift */; };
 		6A6FE03ED2C28204EEC4C76D /* CreateRequestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C72A5BFF47CB301F381200 /* CreateRequestView.swift */; };
 		6B8D732746A2384EF02E059B /* RequestDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71C254BEA64FC0AA7FDFAFB /* RequestDetailView.swift */; };
@@ -50,6 +51,8 @@
 		83957F5CCC7E0D4152487E92 /* ServerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBEB581AA47ACD7AC2BF46A2 /* ServerConfiguration.swift */; };
 		89032B00879D0EFBDF13B130 /* AppearanceSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E64979A476B83BBC55926763 /* AppearanceSection.swift */; };
 		8F59C875CEBBBEBED7087067 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64C47E6800275508DB03C916 /* ContentView.swift */; };
+		C500000000000000000000001 /* TabSelectionPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = C500000000000000000000002 /* TabSelectionPolicy.swift */; };
+		C500000000000000000000003 /* TabSelectionPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C500000000000000000000004 /* TabSelectionPolicyTests.swift */; };
 		904A35C863CBE48F8DC6ADC7 /* ServerDetectionResultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66E1E51275191AF431112E6C /* ServerDetectionResultTests.swift */; };
 		90A14736E1D13B3C56831BB9 /* EpisodeListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D817ADAEC73E667AF2AACDDB /* EpisodeListView.swift */; };
 		96C066C75C2CBF615B50285E /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81677D5A77C4A46EED374C39 /* KeychainManager.swift */; };
@@ -61,6 +64,9 @@
 		ADC3CAE700D8F42DF35CED6D /* ProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78ABD9B388909ABD99B582D2 /* ProfileRepository.swift */; };
 		B069B98E3F89B59A8A90E7E6 /* AuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74273EE34B44ADDCFCA9326 /* AuthRepository.swift */; };
 		B100000000000000000000001 /* WatchlistRemovalUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000002 /* WatchlistRemovalUITests.swift */; };
+		B200000000000000000000001 /* TabNavigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B200000000000000000000002 /* TabNavigator.swift */; };
+		B200000000000000000000003 /* TabNavigationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B200000000000000000000004 /* TabNavigationUITests.swift */; };
+		B200000000000000000000005 /* IPadSidebarSplitUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B200000000000000000000006 /* IPadSidebarSplitUITests.swift */; };
 		B10000000000000000000000E /* UITestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000010 /* UITestSupport.swift */; };
 		B10000000000000000000000F /* UITestURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000011 /* UITestURLProtocol.swift */; };
 		B3C998630B5747E9F90FA870 /* ShimmerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B06681BFD58F3624A783EF4 /* ShimmerView.swift */; };
@@ -142,10 +148,13 @@
 		5971F7AFF27722D93F4B2C4A /* MediaDetailRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaDetailRepository.swift; sourceTree = "<group>"; };
 		5A22094D4EC82D7864FB6326 /* RequestDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestDetailViewModel.swift; sourceTree = "<group>"; };
 		5AC32AD4CD10A6DEE1EBCC86 /* RequestListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestListView.swift; sourceTree = "<group>"; };
+		60503E3E397F7F3187A6F4DB /* RequestsTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestsTabView.swift; sourceTree = "<group>"; };
 		5DB4DD510E4FB75A20BEB26F /* LaunchAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAnimationView.swift; sourceTree = "<group>"; };
 		611335D5B4B13E4CCE58A230 /* RequestRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestRepository.swift; sourceTree = "<group>"; };
 		6312DDACD311AA170C2B35B3 /* MovieDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailView.swift; sourceTree = "<group>"; };
 		64C47E6800275508DB03C916 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		C500000000000000000000002 /* TabSelectionPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabSelectionPolicy.swift; sourceTree = "<group>"; };
+		C500000000000000000000004 /* TabSelectionPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabSelectionPolicyTests.swift; sourceTree = "<group>"; };
 		66E1E51275191AF431112E6C /* ServerDetectionResultTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetectionResultTests.swift; sourceTree = "<group>"; };
 		6B80980E75F51890E352DE28 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		6EFE9A3868A19863AAB5B71E /* AboutSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutSection.swift; sourceTree = "<group>"; };
@@ -168,6 +177,9 @@
 		B100000000000000000000003 /* SeerrClientUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SeerrClientUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B100000000000000000000010 /* UITestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestSupport.swift; sourceTree = "<group>"; };
 		B100000000000000000000011 /* UITestURLProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestURLProtocol.swift; sourceTree = "<group>"; };
+		B200000000000000000000002 /* TabNavigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabNavigator.swift; sourceTree = "<group>"; };
+		B200000000000000000000004 /* TabNavigationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabNavigationUITests.swift; sourceTree = "<group>"; };
+		B200000000000000000000006 /* IPadSidebarSplitUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPadSidebarSplitUITests.swift; sourceTree = "<group>"; };
 		B51E03581D50B930FC87D744 /* DiscoverViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverViewModel.swift; sourceTree = "<group>"; };
 		B636B641B400144C5B4A9D6E /* ServerInfoSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerInfoSection.swift; sourceTree = "<group>"; };
 		B71C254BEA64FC0AA7FDFAFB /* RequestDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestDetailView.swift; sourceTree = "<group>"; };
@@ -311,6 +323,7 @@
 				5DB4DD510E4FB75A20BEB26F /* LaunchAnimationView.swift */,
 				ECDB627E4650345B0B45592B /* LaunchScreen.storyboard */,
 				FFB67CD0DFFCE6295E9E87C8 /* SeerrClientApp.swift */,
+				C500000000000000000000002 /* TabSelectionPolicy.swift */,
 				B100000000000000000000010 /* UITestSupport.swift */,
 			);
 			path = App;
@@ -488,9 +501,20 @@
 				C1A000000000000000000004 /* CollectionRequestSelectionUITests.swift */,
 				F4A000000000000000000004 /* LaunchFlowUITests.swift */,
 				E3A000000000000000000006 /* RequestListSegmentedUITests.swift */,
+				B200000000000000000000006 /* IPadSidebarSplitUITests.swift */,
+				B200000000000000000000004 /* TabNavigationUITests.swift */,
 				B100000000000000000000002 /* WatchlistRemovalUITests.swift */,
+				B200000000000000000000009 /* Support */,
 			);
 			path = SeerrClientUITests;
+			sourceTree = "<group>";
+		};
+		B200000000000000000000009 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				B200000000000000000000002 /* TabNavigator.swift */,
+			);
+			path = Support;
 			sourceTree = "<group>";
 		};
 		B29B254700932AB71E9ECB63 /* Views */ = {
@@ -638,6 +662,7 @@
 				4F9CACE529E1925DFDD5CF20 /* RequestCardView.swift */,
 				B71C254BEA64FC0AA7FDFAFB /* RequestDetailView.swift */,
 				5AC32AD4CD10A6DEE1EBCC86 /* RequestListView.swift */,
+				60503E3E397F7F3187A6F4DB /* RequestsTabView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -663,6 +688,7 @@
 			isa = PBXGroup;
 			children = (
 				F4A000000000000000000002 /* AppStateNavigationTests.swift */,
+				C500000000000000000000004 /* TabSelectionPolicyTests.swift */,
 				5710BB3CEBE2DB7884A66557 /* Mocks */,
 				3382CBACDCC430B31FF6B8B5 /* Models */,
 				78FA1B1F81C77921CDA259C2 /* ViewModels */,
@@ -792,7 +818,10 @@
 				D2A000000000000000000003 /* AboutNavigationUITests.swift in Sources */,
 				C1A000000000000000000003 /* CollectionRequestSelectionUITests.swift in Sources */,
 				F4A000000000000000000003 /* LaunchFlowUITests.swift in Sources */,
+				B200000000000000000000005 /* IPadSidebarSplitUITests.swift in Sources */,
 				E3A000000000000000000003 /* RequestListSegmentedUITests.swift in Sources */,
+				B200000000000000000000001 /* TabNavigator.swift in Sources */,
+				B200000000000000000000003 /* TabNavigationUITests.swift in Sources */,
 				B100000000000000000000001 /* WatchlistRemovalUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -812,6 +841,7 @@
 				B4D887908584618E9FC565BE /* CastCardView.swift in Sources */,
 				50A385491AC7DE95CA94A5B8 /* CastCarouselView.swift in Sources */,
 				8F59C875CEBBBEBED7087067 /* ContentView.swift in Sources */,
+				C500000000000000000000001 /* TabSelectionPolicy.swift in Sources */,
 				6A6FE03ED2C28204EEC4C76D /* CreateRequestView.swift in Sources */,
 				9D25E67C34BAC8908C5675B8 /* DateFormatting.swift in Sources */,
 				A2EC57FB5898FBD0797C9167 /* DiscoverRepository.swift in Sources */,
@@ -846,6 +876,7 @@
 				CCD17EDC58FE4B43227F94D9 /* RequestDetailViewModel.swift in Sources */,
 				604998903B3DE062D0A80B4A /* RequestListView.swift in Sources */,
 				D19B94F99FAA27AB7178C413 /* RequestListViewModel.swift in Sources */,
+				60503E3F397F7F3187A6F4DB /* RequestsTabView.swift in Sources */,
 				04D761CC68BB6CC8A8394348 /* RequestRepository.swift in Sources */,
 				EB6E943C4684F95360979B52 /* RequestSummarySection.swift in Sources */,
 				E993B77992A98112EF184EF9 /* SearchFiltersView.swift in Sources */,
@@ -881,6 +912,7 @@
 			files = (
 				D2A000000000000000000001 /* AboutContentTests.swift in Sources */,
 				F4A000000000000000000001 /* AppStateNavigationTests.swift in Sources */,
+				C500000000000000000000003 /* TabSelectionPolicyTests.swift in Sources */,
 				C1A000000000000000000001 /* CollectionDetailViewModelTests.swift in Sources */,
 				2D532E27BE8FF1399DA2A3BF /* DiscoverMediaItemTests.swift in Sources */,
 				E3A000000000000000000002 /* MockRequestListFetcher.swift in Sources */,
@@ -1003,7 +1035,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = SeerrClient/App/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -1143,7 +1175,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = SeerrClient/App/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;

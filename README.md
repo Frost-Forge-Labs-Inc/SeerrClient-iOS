@@ -31,7 +31,7 @@ If you love self-hosted media, this was made for you.
 - **Self-signed certificates** — TOFU trust model for home network HTTPS
 
 **Supported backends:** Jellyseerr · Overseerr · Seerr
-**Requirements:** iOS 17+ · iPhone or iPad
+**Requirements:** iOS 18+ · iPhone or iPad
 
 ---
 

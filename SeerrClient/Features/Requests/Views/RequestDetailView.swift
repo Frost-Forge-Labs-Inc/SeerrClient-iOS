@@ -17,6 +17,7 @@ struct RequestDetailView: View {
     // MARK: - Input
 
     let requestID: Int
+    var onDeleted: (() -> Void)? = nil
 
     // MARK: - State
 
@@ -55,7 +56,11 @@ struct RequestDetailView: View {
         }
         .onChange(of: viewModel?.didDelete ?? false) { _, didDelete in
             if didDelete {
-                dismiss()
+                if let onDeleted {
+                    onDeleted()
+                } else {
+                    dismiss()
+                }
             }
         }
         .task {
@@ -148,6 +153,7 @@ struct RequestDetailView: View {
             }
             .padding()
         }
+        .accessibilityIdentifier("requests.detail.content")
     }
 
     // MARK: - Media Header

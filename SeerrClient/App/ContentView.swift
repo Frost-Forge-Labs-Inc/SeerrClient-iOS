@@ -74,6 +74,14 @@ struct ContentView: View {
             guard newValue != nil else { return }
             selectedTab = defaultSessionTab
         }
+        .onChange(of: appState.activeServerCapabilities?.supportsWatchlistRead) { _, supported in
+            // Prevent sidebar/tab selection from pointing at a Watchlist tab that is no longer rendered.
+            selectedTab = TabSelectionPolicy.resolvedTab(
+                current: selectedTab,
+                supportsWatchlistRead: supported,
+                defaultSessionTab: defaultSessionTab
+            )
+        }
     }
 
     // MARK: - Main Interface
@@ -122,6 +130,7 @@ struct ContentView: View {
                     }
             }
             .tabItem { Label("Discover", systemImage: "film.stack") }
+            .accessibilityIdentifier("tab.discover")
             .tag(AppTab.discover)
 
             NavigationStack {
@@ -140,22 +149,13 @@ struct ContentView: View {
                     }
             }
             .tabItem { Label("Search", systemImage: "magnifyingglass") }
+            .accessibilityIdentifier("tab.search")
             .tag(AppTab.search)
 
-            NavigationStack {
-                RequestListView()
-                    .navigationDestination(for: MovieNavDestination.self) { dest in
-                        MovieDetailView(movieId: dest.id, movieTitle: dest.title)
-                    }
-                    .navigationDestination(for: TvNavDestination.self) { dest in
-                        TvShowDetailView(tvId: dest.id, showTitle: dest.title)
-                    }
-                    .navigationDestination(for: CollectionNavDestination.self) { dest in
-                        CollectionDetailView(collectionId: dest.id, collectionName: dest.name)
-                    }
-            }
-            .tabItem { Label("Requests", systemImage: "tray.full") }
-            .tag(AppTab.requests)
+            RequestsTabView()
+                .tabItem { Label("Requests", systemImage: "tray.full") }
+                .accessibilityIdentifier("tab.requests")
+                .tag(AppTab.requests)
 
             if supportsWatchlistRead {
                 NavigationStack {
@@ -171,6 +171,7 @@ struct ContentView: View {
                         }
                 }
                 .tabItem { Label("Watchlist", systemImage: "bookmark") }
+                .accessibilityIdentifier("tab.watchlist")
                 .tag(AppTab.watchlist)
             }
 
@@ -178,14 +179,26 @@ struct ContentView: View {
                 ProfileView()
             }
             .tabItem { Label("Profile", systemImage: "person.circle") }
+            .accessibilityIdentifier("tab.profile")
             .tag(AppTab.profile)
         }
+        .modifier(SidebarAdaptableTabViewStyle())
     }
 
     /// Animated splash shown while session restoration is in progress.
     @ViewBuilder
     private var loadingView: some View {
         LaunchAnimationView()
+    }
+}
+
+// MARK: - Sidebar Adaptation
+
+/// Promotes the `TabView` into an adaptive sidebar on iPad/regular-width layouts
+/// while preserving the tab bar on iPhone/compact-width layouts.
+private struct SidebarAdaptableTabViewStyle: ViewModifier {
+    func body(content: Content) -> some View {
+        content.tabViewStyle(.sidebarAdaptable)
     }
 }
 

@@ -123,6 +123,12 @@ final class UITestURLProtocol: URLProtocol {
                 object: state.requestListPayload(for: url)
             )
 
+        case ("GET", "/api/v1/request/1001"):
+            return try jsonResponse(statusCode: 200, object: state.requestDetailPayload(id: 1001))
+
+        case ("GET", "/api/v1/request/1002"):
+            return try jsonResponse(statusCode: 200, object: state.requestDetailPayload(id: 1002))
+
         case ("GET", "/api/v1/settings/discover"):
             return try jsonResponse(statusCode: 200, object: [])
 
@@ -469,6 +475,29 @@ private final class UITestScenarioState: @unchecked Sendable {
                 ],
                 "results": results
             ]
+        }
+    }
+
+    func requestDetailPayload(id: Int) -> [String: Any] {
+        lock.withLock {
+            switch id {
+            case 1002:
+                requestPayload(
+                    id: 1002,
+                    status: 2,
+                    tmdbId: 1002,
+                    tvdbId: 2002,
+                    requesterName: "TvRequester"
+                )
+            default:
+                requestPayload(
+                    id: 1001,
+                    status: 1,
+                    tmdbId: 1001,
+                    tvdbId: nil,
+                    requesterName: "MovieRequester"
+                )
+            }
         }
     }
 
