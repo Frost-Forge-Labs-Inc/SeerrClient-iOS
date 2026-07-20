@@ -1,40 +1,37 @@
 // SeerrClientTVApp.swift
 // SeerrClientTV (Octopus Explorer — tvOS)
 //
-// Milestone 1 scaffold ONLY. This is a deliberately trivial @main entry that
-// shows a placeholder view to prove the tvOS target compiles, links, and
-// launches on the tvOS simulator. It does NOT wire up the shared AppState,
-// ServerStore, or ContentView — that is Milestone 2 (nav shell).
+// Milestone 2: nav shell. @main entry that bootstraps the SHARED AppState and
+// ServerStore (identical wiring to the iOS SeerrClientApp) and presents the
+// tvOS root view TVRootView. Real feature screens remain Milestone 3.
 
 import SwiftUI
 
 @main
 struct SeerrClientTVApp: App {
+
+    /// Persistent store for server configurations (shared type, dual target membership).
+    @State private var serverStore: ServerStore
+
+    /// Global observable app state (shared type, dual target membership).
+    @State private var appState: AppState
+
+    init() {
+        let store = ServerStore()
+        _serverStore = State(initialValue: store)
+        let state = AppState(serverStore: store)
+        let uiTestConfiguration = UITestLaunchConfiguration.current
+        if uiTestConfiguration.isEnabled {
+            UITestAppBootstrapper.configureIfNeeded(appState: state, serverStore: store)
+        }
+        _appState = State(initialValue: state)
+    }
+
     var body: some Scene {
         WindowGroup {
-            TVScaffoldPlaceholderView()
+            TVRootView()
+                .environment(appState)
+                .environment(serverStore)
         }
     }
-}
-
-/// Placeholder root view for the empty tvOS scaffold (Milestone 1).
-private struct TVScaffoldPlaceholderView: View {
-    var body: some View {
-        ZStack {
-            Color(red: 0.05, green: 0.067, blue: 0.11)
-                .ignoresSafeArea()
-            VStack(spacing: 24) {
-                Text("Octopus Explorer — tvOS")
-                    .font(.system(size: 76, weight: .bold))
-                    .foregroundStyle(.white)
-                Text("Milestone 1 scaffold")
-                    .font(.system(size: 29, weight: .regular))
-                    .foregroundStyle(.white.opacity(0.6))
-            }
-        }
-    }
-}
-
-#Preview {
-    TVScaffoldPlaceholderView()
 }
