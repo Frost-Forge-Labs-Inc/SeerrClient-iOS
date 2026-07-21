@@ -1,10 +1,14 @@
 # tvOS "Octopus Explorer" — Target Creation Plan (Phase 2 pre-work)
 
-Status: **Architecture/research pre-work only. The tvOS Xcode target has NOT been
-created.** This document is the decision record + implementation spec produced by
-the tech-architect pass on 2026-07-19 (branch `feature/tvos-octopus-explorer-prework`).
-It gathers the four specialist consults (mobile-developer, researcher, smart-tv-developer,
-apple-hig-expert) into a single actionable plan. Nothing here is a build change yet.
+Status: **Target created; M1 empty scaffold and M2 nav shell are done; M3 is underway.**
+This document started as the decision record + implementation spec produced by the
+tech-architect pass on 2026-07-19 (branch `feature/tvos-octopus-explorer-prework`).
+It now tracks implementation against that plan on `feature/tvos-target-scaffold`.
+As of 2026-07-21, M3 slice 1 has real tvOS main-tab content surfaces for Discover,
+Requests, Watchlist, and Profile, and M3 slice 2 has real movie/TV Media Detail
+plus create-request flow. M3 slice 3 replaced the first-run placeholders with a
+real server setup screen plus Local/Jellyfin login. Search, interactive Plex login,
+and tvOS UI tests remain open.
 
 ---
 
@@ -242,20 +246,19 @@ that gate is satisfied before starting.**
 
 ---
 
-## Exactly what is still OPEN before the tvOS target can be created
+## Current open items before tvOS can be called feature-complete
 
 1. **User decision — Universal Purchase / same-record model.** Confirm same bundle ID
    `com.frostforgelabs.OctopusExplorer` under one ASC record (irreversible once two
-   platforms approve). This gates the bundle ID and cannot be decided by an agent.
+   platforms approve). The target currently follows the same-bundle-ID plan, but final
+   App Store Connect submission still needs owner confirmation.
 2. **User/ASC manual action** — Add Platform → tvOS on the existing record (at/before
    submission). No App ID change needed.
-3. **Confirm the Phase-1 (iPad+macOS) gate** is treated as satisfied for starting tvOS
-   implementation, per §5.
-4. **Design sign-off** on the two reconciled calls (4 tabs + settings icon; Requests
+3. **Design sign-off** on the two reconciled calls (4 tabs + settings icon; Requests
    single-column push) if the user wants to weigh in — documented with reasoning above,
    not silently chosen.
-5. Then, and only then: create the `SeerrClientTV` target by direct `.pbxproj` edit
-   through the normal Implementer + Cross-Reviewer + Claude-gate pipeline, wire dual
-   target-membership for the ~30 shared files, add the new tvOS-only files (Info.plist,
-   launch-image set, layered icon, `Views-tvOS/`), apply the `#if os(...)` branches, and
-   verify a clean tvOS-simulator build before calling it done.
+4. **Finish M3 app work** — real Search and interactive Plex tvOS login/OAuth.
+5. **Add tvOS UI-test target** with `XCUIRemote` focus traversal and deterministic
+   mock-auth scenarios.
+6. **Final verification** — tvOS build/test + iOS regression build/test, simulator
+   launch/screenshot/focus evidence, then push/PR only after the staged M3 scope is done.
