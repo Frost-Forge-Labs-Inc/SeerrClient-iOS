@@ -13,8 +13,9 @@
 //    own tvOS TV/Photos apps place Search/settings as icon tab items).
 //  - Watchlist is capability-gated exactly like iOS via the shared
 //    TabSelectionPolicy (server capability, not a platform trait).
-//  - Tab CONTENT and the pre-auth (server-setup / login) screens are PLACEHOLDERS.
-//    Real tvOS feature screens + tvOS-native auth are Milestone 3.
+//  - Milestone 3 replaces placeholders with real tvOS-native screens that reuse
+//    shared repositories/view models. Search and interactive Plex auth are still
+//    open M3 follow-ups.
 
 import SwiftUI
 
@@ -34,15 +35,9 @@ struct TVRootView: View {
     var body: some View {
         Group {
             if appState.showServerSetup {
-                TVPlaceholderScreen(
-                    title: "Server Setup",
-                    subtitle: "tvOS server setup — Milestone 3"
-                )
+                TVServerSetupView()
             } else if appState.showLogin {
-                TVPlaceholderScreen(
-                    title: "Sign In",
-                    subtitle: "tvOS login — Milestone 3"
-                )
+                TVLoginView()
             } else if appState.showMainInterface {
                 mainInterface
             } else {
@@ -73,7 +68,18 @@ struct TVRootView: View {
         let supportsWatchlistRead = appState.activeServerCapabilities?.supportsWatchlistRead ?? false
 
         TabView(selection: $selectedTab) {
-            TVTabPlaceholder(feature: "Discover")
+            NavigationStack {
+                TVDiscoverView()
+                    .navigationDestination(for: MovieNavDestination.self) { dest in
+                        TVMovieDetailView(movieId: dest.id, movieTitle: dest.title)
+                    }
+                    .navigationDestination(for: TvNavDestination.self) { dest in
+                        TVShowDetailView(tvId: dest.id, showTitle: dest.title)
+                    }
+                    .navigationDestination(for: RequestNavDestination.self) { dest in
+                        TVRequestDetailView(requestID: dest.requestID)
+                    }
+            }
                 .tabItem { Label("Discover", systemImage: "film.stack") }
                 .accessibilityIdentifier("tab.discover")
                 .tag(AppTab.discover)
@@ -83,13 +89,26 @@ struct TVRootView: View {
                 .accessibilityIdentifier("tab.search")
                 .tag(AppTab.search)
 
-            TVTabPlaceholder(feature: "Requests")
+            NavigationStack {
+                TVRequestsView()
+                    .navigationDestination(for: RequestNavDestination.self) { dest in
+                        TVRequestDetailView(requestID: dest.requestID)
+                    }
+            }
                 .tabItem { Label("Requests", systemImage: "tray.full") }
                 .accessibilityIdentifier("tab.requests")
                 .tag(AppTab.requests)
 
             if supportsWatchlistRead {
-                TVTabPlaceholder(feature: "Watchlist")
+                NavigationStack {
+                    TVWatchlistView()
+                        .navigationDestination(for: MovieNavDestination.self) { dest in
+                            TVMovieDetailView(movieId: dest.id, movieTitle: dest.title)
+                        }
+                        .navigationDestination(for: TvNavDestination.self) { dest in
+                            TVShowDetailView(tvId: dest.id, showTitle: dest.title)
+                        }
+                }
                     .tabItem { Label("Watchlist", systemImage: "bookmark") }
                     .accessibilityIdentifier("tab.watchlist")
                     .tag(AppTab.watchlist)
@@ -99,7 +118,7 @@ struct TVRootView: View {
             // tvOS-native "top-bar icon" affordance; inherits standard remote/Menu focus.
             // accessibilityLabel restores the "Profile" VoiceOver reading that an
             // icon-only tab would otherwise lose vs a text Label.
-            TVProfilePlaceholder()
+            TVProfileView()
                 .tabItem {
                     Image(systemName: "person.circle")
                         .accessibilityLabel("Profile")
@@ -111,26 +130,6 @@ struct TVRootView: View {
 }
 
 // MARK: - Placeholder Views (Milestone 2 — chrome only, content is Milestone 3)
-
-/// Full-screen placeholder for the pre-auth (server-setup / login) branches.
-private struct TVPlaceholderScreen: View {
-    let title: String
-    let subtitle: String
-
-    var body: some View {
-        ZStack {
-            Color(red: 0.05, green: 0.067, blue: 0.11).ignoresSafeArea()
-            VStack(spacing: 24) {
-                Text(title)
-                    .font(.system(size: 76, weight: .bold))
-                    .foregroundStyle(.white)
-                Text(subtitle)
-                    .font(.system(size: 29, weight: .regular))
-                    .foregroundStyle(.white.opacity(0.6))
-            }
-        }
-    }
-}
 
 /// Placeholder body for each of the 4 content tabs. Reads the SHARED AppState so
 /// the demo proves real state wiring (not just static chrome).
@@ -153,44 +152,6 @@ private struct TVTabPlaceholder: View {
                         .font(.system(size: 25, weight: .regular))
                         .foregroundStyle(.white.opacity(0.4))
                 }
-            }
-        }
-    }
-}
-
-/// Placeholder Profile surface reached from the trailing icon tab. Read-only
-/// account/server summary plus a working Sign Out that mutates the SHARED
-/// AppState (proves two-way state wiring). tvOS sign-out confirmation is Milestone 3.
-private struct TVProfilePlaceholder: View {
-    @Environment(AppState.self) private var appState
-
-    var body: some View {
-        ZStack {
-            Color(red: 0.05, green: 0.067, blue: 0.11).ignoresSafeArea()
-            VStack(spacing: 28) {
-                Image(systemName: "person.circle.fill")
-                    .font(.system(size: 100))
-                    .foregroundStyle(.white.opacity(0.85))
-                Text(appState.currentUser?.displayName ?? appState.currentUser?.username ?? "Profile")
-                    .font(.system(size: 48, weight: .bold))
-                    .foregroundStyle(.white)
-                if let server = appState.activeServer {
-                    Text(server.displayName)
-                        .font(.system(size: 27, weight: .regular))
-                        .foregroundStyle(.white.opacity(0.55))
-                }
-                Text("Profile & Settings — Milestone 3")
-                    .font(.system(size: 25, weight: .regular))
-                    .foregroundStyle(.white.opacity(0.4))
-                // TODO(M3): the real tvOS sign-out must mirror ProfileViewModel's
-                // full path — authRepository.logout() + clearStoredCredentials()
-                // (wipe Keychain so session-restore can't silently reauth) and
-                // appState.returnToServerList(). This placeholder only flips auth
-                // state; do NOT copy it verbatim into the real Profile screen.
-                Button("Sign Out") {
-                    appState.signOut()
-                }
-                .padding(.top, 12)
             }
         }
     }
