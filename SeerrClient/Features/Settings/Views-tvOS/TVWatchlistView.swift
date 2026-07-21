@@ -138,6 +138,8 @@ struct TVWatchlistView: View {
 
     private func refresh(_ viewModel: WatchlistViewModel) async {
         appState.watchlistNeedsRefresh = false
+        viewModel.reconcileWithWatchlistIds(appState.watchlistedTmdbIds)
+        await appState.loadWatchlistCache()
         await viewModel.refresh()
     }
 }

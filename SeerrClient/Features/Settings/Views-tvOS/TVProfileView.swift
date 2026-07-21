@@ -23,7 +23,7 @@ struct TVProfileView: View {
             self.viewModel = viewModel
             viewModel.loadProfile()
         }
-        .onDisappear { viewModel?.cancelAll() }
+        .onDisappear { if viewModel?.isSigningOut == false { viewModel?.cancelAll() } }
     }
 
     @ViewBuilder

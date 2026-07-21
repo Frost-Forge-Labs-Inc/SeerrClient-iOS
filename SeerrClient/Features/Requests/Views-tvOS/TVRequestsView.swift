@@ -35,9 +35,6 @@ struct TVRequestsView: View {
             self.viewModel = viewModel
             viewModel.loadRequestsIfNeeded()
         }
-        .onDisappear {
-            viewModel?.cancelAll()
-        }
     }
 
     @ViewBuilder
