@@ -154,10 +154,14 @@ struct TVMediaPosterCard: View {
                 }
             }
 
+            // Reserve two lines so 1-line and 2-line titles keep a consistent card
+            // height and the year below never gets pushed out / clipped when the
+            // card scales up on focus.
             Text(title)
                 .font(.system(size: 25, weight: .semibold))
                 .foregroundStyle(.white)
-                .lineLimit(2)
+                .lineLimit(2, reservesSpace: true)
+                .multilineTextAlignment(.leading)
                 .frame(width: width, alignment: .leading)
 
             if let subtitle {
@@ -165,6 +169,7 @@ struct TVMediaPosterCard: View {
                     .font(.system(size: 21, weight: .regular))
                     .foregroundStyle(.white.opacity(0.58))
                     .lineLimit(1)
+                    .frame(width: width, alignment: .leading)
             }
         }
         .frame(width: width, alignment: .topLeading)

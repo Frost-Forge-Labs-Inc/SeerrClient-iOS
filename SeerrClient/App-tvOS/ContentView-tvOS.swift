@@ -45,8 +45,11 @@ struct TVRootView: View {
                     .scaleEffect(2.0)
             }
         }
-        .animation(.easeInOut(duration: 0.25), value: appState.showServerSetup)
-        .animation(.easeInOut(duration: 0.25), value: appState.showMainInterface)
+        // NOTE: No implicit `.animation(_:value:)` on this Group. On tvOS, animating
+        // the wholesale replacement of a focusable subtree (server-setup <-> login <->
+        // main) can leave the focus engine unseeded after the transition, making the
+        // Siri Remote appear dead. Animate at the state-mutation site with
+        // `withAnimation` if a transition is ever needed here.
         .onChange(of: appState.activeServer?.id) { _, newValue in
             guard newValue != nil else { return }
             selectedTab = defaultSessionTab

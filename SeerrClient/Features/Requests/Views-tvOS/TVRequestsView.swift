@@ -144,10 +144,24 @@ private struct TVRequestRow: View {
                 .fill(Color.white.opacity(0.12))
                 .frame(width: 96, height: 144)
                 .overlay {
-                    Image(systemName: metadata?.mediaType == .tv ? "tv" : "film")
-                        .font(.system(size: 38, weight: .semibold))
-                        .foregroundStyle(.white.opacity(0.5))
+                    // Load the real poster (RequestMediaMetadata carries posterPath);
+                    // fall back to a media-type icon while loading or when absent.
+                    if let url = TMDBImageURL.poster(path: metadata?.posterPath, size: .w342) {
+                        AsyncImage(url: url) { phase in
+                            switch phase {
+                            case .success(let image):
+                                image.resizable().scaledToFill()
+                            default:
+                                // Fallback for empty/failure/unknown — avoids an
+                                // icon -> spinner -> poster flash as metadata resolves.
+                                posterFallback
+                            }
+                        }
+                    } else {
+                        posterFallback
+                    }
                 }
+                .clipShape(RoundedRectangle(cornerRadius: TVMetrics.cornerRadius))
 
             VStack(alignment: .leading, spacing: 12) {
                 Text(metadata?.title ?? fallbackTitle)
@@ -169,6 +183,14 @@ private struct TVRequestRow: View {
                 .foregroundStyle(.white.opacity(0.55))
         }
         .padding(22)
+    }
+
+    private var posterFallback: some View {
+        // Use the request's own inferred type so the fallback icon is correct even
+        // before the async metadata (title/poster) has resolved.
+        Image(systemName: request.inferredMediaType == .tv ? "tv" : "film")
+            .font(.system(size: 38, weight: .semibold))
+            .foregroundStyle(.white.opacity(0.5))
     }
 
     private var fallbackTitle: String {

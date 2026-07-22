@@ -9,6 +9,9 @@ struct TVServerSetupView: View {
 
     @State private var viewModel: ServerSetupViewModel?
     @State private var isAddingServer = false
+    /// Seeds initial remote focus onto the Server URL field when the add-server
+    /// panel appears, so the Siri Remote lands on a reachable control.
+    @FocusState private var urlFieldFocused: Bool
 
     var body: some View {
         Group {
@@ -67,14 +70,21 @@ struct TVServerSetupView: View {
                     .font(.system(size: 34, weight: .bold))
                     .foregroundStyle(.white)
                 Spacer()
-                Button {
-                    isAddingServer = true
-                    viewModel.resetDetection()
-                } label: {
-                    Image(systemName: "plus")
+                // Only show "+" when the add panel is NOT already showing. The panel is
+                // shown when `isAddingServer || servers.isEmpty` (see content()), so the
+                // "+" must be hidden in BOTH cases — otherwise (e.g. after deleting the
+                // last server) the panel is force-shown while "+" remains an invisible
+                // no-op, re-creating the focus trap this fix closes.
+                if !isAddingServer && !serverStore.servers.isEmpty {
+                    Button {
+                        isAddingServer = true
+                        viewModel.resetDetection()
+                    } label: {
+                        Image(systemName: "plus")
+                    }
+                    .buttonStyle(.bordered)
+                    .accessibilityLabel("Add Server")
                 }
-                .buttonStyle(.bordered)
-                .accessibilityLabel("Add Server")
             }
 
             if serverStore.servers.isEmpty {
@@ -157,6 +167,9 @@ struct TVServerSetupView: View {
                 Text("Server URL")
                     .font(.system(size: 23, weight: .semibold))
                     .foregroundStyle(.white.opacity(0.56))
+                // No `.textFieldStyle(.plain)`: on tvOS the default (automatic) style
+                // provides the focus chrome/reachability that lets the remote land on
+                // the field. `.plain` stripped it, which was the core focus deadlock.
                 TextField(
                     "192.168.1.50:5055 or https://seerr.example.com",
                     text: Binding(
@@ -165,7 +178,7 @@ struct TVServerSetupView: View {
                     )
                 )
                 .font(.system(size: 29, weight: .medium))
-                .textFieldStyle(.plain)
+                .focused($urlFieldFocused)
                 .padding(22)
                 .background(Color.white.opacity(0.12), in: RoundedRectangle(cornerRadius: TVMetrics.cornerRadius))
             }
@@ -196,6 +209,10 @@ struct TVServerSetupView: View {
         }
         .padding(34)
         .background(Color.white.opacity(0.09), in: RoundedRectangle(cornerRadius: TVMetrics.cornerRadius))
+        // `.defaultFocus` is the idiomatic tvOS API for "land focus here when this
+        // focus scope appears" — more reliable than a one-shot `.task` write, which
+        // can run before the focus engine will accept the field.
+        .defaultFocus($urlFieldFocused, true)
     }
 
     private var detecting: some View {
@@ -244,6 +261,8 @@ struct TVServerSetupView: View {
                 Text("Display Name")
                     .font(.system(size: 23, weight: .semibold))
                     .foregroundStyle(.white.opacity(0.56))
+                // Default tvOS text-field style (no `.plain`) keeps the field
+                // remote-focusable — see the Server URL field above.
                 TextField(
                     "Home Server",
                     text: Binding(
@@ -252,7 +271,6 @@ struct TVServerSetupView: View {
                     )
                 )
                 .font(.system(size: 29, weight: .medium))
-                .textFieldStyle(.plain)
                 .padding(22)
                 .background(Color.white.opacity(0.12), in: RoundedRectangle(cornerRadius: TVMetrics.cornerRadius))
             }

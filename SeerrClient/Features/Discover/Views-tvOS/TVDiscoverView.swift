@@ -84,8 +84,12 @@ private struct TVDiscoverRail: View {
                         TVDiscoverNavigationCard(item: item)
                     }
                 }
-                .padding(.vertical, 12)
+                // Extra vertical room + disabled scroll clipping so the focus lift/
+                // scale of `.card` buttons (and the title/year beneath) is never
+                // clipped by the ScrollView's bounds.
+                .padding(.vertical, 24)
             }
+            .scrollClipDisabled()
         }
     }
 }
