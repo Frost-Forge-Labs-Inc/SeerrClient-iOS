@@ -58,9 +58,9 @@ struct TVWatchlistView: View {
                             }
                         }
                         // Local breathing room so the `.card` focus scale + the
-                        // reserved 2-line title/year aren't clipped by the scaffold
-                        // ScrollView. Kept local (not `.scrollClipDisabled()` on the
-                        // shared scaffold) to avoid content bleeding under the tab bar.
+                        // title/year block aren't clipped by the scaffold ScrollView.
+                        // Kept local (not `.scrollClipDisabled()` on the shared
+                        // scaffold) to avoid content bleeding under the tab bar.
                         .padding(.vertical, 24)
                     }
                     Button("Refresh") {

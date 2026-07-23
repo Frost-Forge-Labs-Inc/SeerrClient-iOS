@@ -179,6 +179,14 @@ struct TVServerSetupView: View {
                 )
                 .font(.system(size: 29, weight: .medium))
                 .focused($urlFieldFocused)
+                // Mirrors iOS AddServerView: the keyboard action submits directly.
+                // (The tvOS keyboard renders function keys lowercase — "go"/"done" —
+                // by system design; that casing is not app-controllable.)
+                .submitLabel(.go)
+                .onSubmit {
+                    guard viewModel.canConnect else { return }
+                    Task { await viewModel.connectToServer() }
+                }
                 .padding(22)
                 .background(Color.white.opacity(0.12), in: RoundedRectangle(cornerRadius: TVMetrics.cornerRadius))
             }
