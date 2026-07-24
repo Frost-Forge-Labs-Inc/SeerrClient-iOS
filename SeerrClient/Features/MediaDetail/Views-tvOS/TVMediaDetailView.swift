@@ -19,7 +19,9 @@ struct TVMovieDetailView: View {
                 TVLoadingStateView(title: movieTitle)
             }
         }
-        .navigationTitle(movieTitle)
+        // No `.navigationTitle` on tvOS: the NavigationStack renders it as a large
+        // translucent watermark centered over the backdrop/content. The hero already
+        // displays the title prominently, so the nav title is a redundant duplicate.
         .task {
             if viewModel == nil {
                 guard let client = appState.apiClient else { return }
@@ -119,7 +121,8 @@ struct TVShowDetailView: View {
                 TVLoadingStateView(title: showTitle)
             }
         }
-        .navigationTitle(showTitle)
+        // No `.navigationTitle` on tvOS (see TVMovieDetailView): it renders as a
+        // translucent watermark over the content; the hero shows the title already.
         .task {
             if viewModel == nil {
                 guard let client = appState.apiClient else { return }
@@ -590,8 +593,11 @@ private struct TVMediaRail: View {
                         }
                     }
                 }
-                .padding(.vertical, 12)
+                // Room + no clipping for the focus scale of `.card` posters and the
+                // title/year beneath them.
+                .padding(.vertical, 24)
             }
+            .scrollClipDisabled()
         }
     }
 
@@ -647,27 +653,7 @@ private struct TVCreateRequestView: View {
     var body: some View {
         TVScreenScaffold(title: "Create Request", subtitle: mediaType == .tv ? "TV show" : "Movie") {
             VStack(alignment: .leading, spacing: 28) {
-                HStack(spacing: 18) {
-                    Button {
-                        is4K.toggle()
-                    } label: {
-                        Label(is4K ? "4K Enabled" : "Standard Quality", systemImage: is4K ? "4k.tv.fill" : "tv")
-                    }
-                    .buttonStyle(.bordered)
-                    .tint(is4K ? .accentColor : .white.opacity(0.25))
-
-                    if !qualityProfiles.isEmpty {
-                        Menu(selectedProfileName) {
-                            Button("Server Default") { selectedProfileId = nil }
-                            ForEach(qualityProfiles, id: \.id) { profile in
-                                Button(profile.name ?? "Profile \(profile.id ?? 0)") {
-                                    selectedProfileId = profile.id
-                                }
-                            }
-                        }
-                        .buttonStyle(.bordered)
-                    }
-                }
+                requestOptions
 
                 if mediaType == .tv {
                     tvSeasonOptions
@@ -722,6 +708,95 @@ private struct TVCreateRequestView: View {
         }
     }
 
+    // Request options presented as clearly-labeled, obviously-interactive controls
+    // (a Quality toggle and a Quality Profile dropdown) that always display their
+    // current value, so on tvOS the user can see what is selectable without first
+    // clicking each control.
+    private var requestOptions: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Request Options")
+                .font(.system(size: 34, weight: .bold))
+                .foregroundStyle(.white)
+
+            HStack(alignment: .top, spacing: 28) {
+                // Quality — binary toggle between Standard and 4K.
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Quality")
+                        .font(.system(size: 21, weight: .semibold))
+                        .foregroundStyle(.white.opacity(0.56))
+                    Button {
+                        is4K.toggle()
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: is4K ? "4k.tv.fill" : "tv")
+                            Text(is4K ? "4K" : "Standard")
+                            Spacer(minLength: 12)
+                            Image(systemName: "arrow.left.arrow.right")
+                                .font(.system(size: 18, weight: .bold))
+                                .opacity(0.55)
+                        }
+                        .font(.system(size: 26, weight: .semibold))
+                        .frame(width: 300)
+                    }
+                    .buttonStyle(.bordered)
+                    .tint(is4K ? .accentColor : .white.opacity(0.25))
+                }
+
+                // Quality Profile — dropdown; label shows the resolved value
+                // (profile name, e.g. "1080p") or "Server Default".
+                if !qualityProfiles.isEmpty {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Quality Profile")
+                            .font(.system(size: 21, weight: .semibold))
+                            .foregroundStyle(.white.opacity(0.56))
+                        Menu {
+                            Button {
+                                selectedProfileId = nil
+                            } label: {
+                                if selectedProfileId == nil {
+                                    Label("Server Default", systemImage: "checkmark")
+                                } else {
+                                    Text("Server Default")
+                                }
+                            }
+                            ForEach(qualityProfiles, id: \.id) { profile in
+                                let name = profile.name ?? "Profile \(profile.id ?? 0)"
+                                Button {
+                                    selectedProfileId = profile.id
+                                } label: {
+                                    if selectedProfileId == profile.id {
+                                        Label(name, systemImage: "checkmark")
+                                    } else {
+                                        Text(name)
+                                    }
+                                }
+                            }
+                        } label: {
+                            HStack(spacing: 12) {
+                                Text(selectedProfileName)
+                                    .lineLimit(1)
+                                Spacer(minLength: 12)
+                                Image(systemName: "chevron.up.chevron.down")
+                                    .font(.system(size: 18, weight: .bold))
+                                    .opacity(0.55)
+                            }
+                            .font(.system(size: 26, weight: .semibold))
+                            .frame(width: 360)
+                        }
+                        .buttonStyle(.bordered)
+                    }
+                }
+            }
+
+            Text(qualityProfiles.isEmpty
+                 ? "This request will use your server's default quality profile."
+                 : "Pick a quality profile, or keep \"Server Default\" to use the profile your server admin configured.")
+                .font(.system(size: 20, weight: .regular))
+                .foregroundStyle(.white.opacity(0.5))
+                .frame(maxWidth: 980, alignment: .leading)
+        }
+    }
+
     private var tvSeasonOptions: some View {
         VStack(alignment: .leading, spacing: 18) {
             Text("Seasons")
@@ -733,19 +808,67 @@ private struct TVCreateRequestView: View {
                     .font(.system(size: 25))
                     .foregroundStyle(.white.opacity(0.62))
             } else {
+                // Mode selector — only when a whole-series "All Seasons" request is
+                // possible (nothing already requested/available). Two clear segments
+                // instead of one label-swapping toggle, so the active mode is obvious.
                 if !hasAnyRequestedOrAvailableSeasons {
-                    Button {
-                        allSeasons.toggle()
-                    } label: {
-                        Label(allSeasons ? "All Seasons" : "Selected Seasons", systemImage: allSeasons ? "checkmark.circle.fill" : "circle")
+                    HStack(spacing: 16) {
+                        seasonModeButton(title: "All Seasons", isActive: allSeasons) {
+                            allSeasons = true
+                            selectedSeasonNumbers.removeAll()
+                        }
+                        seasonModeButton(title: "Choose Seasons", isActive: !allSeasons) {
+                            allSeasons = false
+                        }
                     }
-                    .buttonStyle(.bordered)
-                    .tint(allSeasons ? .accentColor : .white.opacity(0.25))
+
+                    Text(allSeasons
+                         ? "Every season will be requested."
+                         : "Pick the seasons you want below.")
+                        .font(.system(size: 21))
+                        .foregroundStyle(.white.opacity(0.5))
+                } else {
+                    // Partial-request state: no whole-series option is possible, so
+                    // the mode selector is hidden. Explain why the grid has dimmed
+                    // (already requested/available) rows.
+                    Text("Some seasons are already requested or available — choose from the rest below.")
+                        .font(.system(size: 21))
+                        .foregroundStyle(.white.opacity(0.5))
                 }
 
                 if hasAnyRequestedOrAvailableSeasons || !allSeasons {
+                    // Bulk actions + running count so the user always knows their state.
+                    HStack(spacing: 16) {
+                        Button {
+                            selectedSeasonNumbers = Set(requestableSeasonNumbers)
+                        } label: {
+                            Label("Select All", systemImage: "checkmark.circle")
+                                .font(.system(size: 23, weight: .semibold))
+                        }
+                        .buttonStyle(.bordered)
+                        .disabled(requestableSeasonNumbers.isEmpty
+                                  || selectedSeasonNumbers.count == requestableSeasonNumbers.count)
+
+                        Button {
+                            selectedSeasonNumbers.removeAll()
+                        } label: {
+                            Label("Clear", systemImage: "xmark.circle")
+                                .font(.system(size: 23, weight: .semibold))
+                        }
+                        .buttonStyle(.bordered)
+                        .disabled(selectedSeasonNumbers.isEmpty)
+
+                        Spacer(minLength: 0)
+
+                        if !requestableSeasonNumbers.isEmpty {
+                            Text("\(selectedSeasonNumbers.count) of \(requestableSeasonNumbers.count) selected")
+                                .font(.system(size: 21, weight: .medium))
+                                .foregroundStyle(.white.opacity(0.55))
+                        }
+                    }
+
                     LazyVGrid(
-                        columns: Array(repeating: GridItem(.fixed(210), spacing: 16), count: 4),
+                        columns: Array(repeating: GridItem(.fixed(240), spacing: 16), count: 4),
                         alignment: .leading,
                         spacing: 16
                     ) {
@@ -758,24 +881,54 @@ private struct TVCreateRequestView: View {
         }
     }
 
-    private func seasonButton(_ number: Int) -> some View {
-        let availability = seasonStatus(for: number)
-        return Button {
-            guard availability == .requestable else { return }
-            toggleSeason(number)
-        } label: {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Season \(number)")
-                    .font(.system(size: 24, weight: .bold))
-                Text(label(for: availability, seasonNumber: number))
-                    .font(.system(size: 19, weight: .medium))
-                    .foregroundStyle(.white.opacity(0.62))
-            }
-            .frame(width: 170, alignment: .leading)
+    private func seasonModeButton(title: String, isActive: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Label(title, systemImage: isActive ? "checkmark.circle.fill" : "circle")
+                .font(.system(size: 26, weight: .semibold))
+                .frame(minWidth: 260)
         }
         .buttonStyle(.bordered)
-        .tint(selectedSeasonNumbers.contains(number) ? .accentColor : .white.opacity(0.25))
-        .disabled(availability != .requestable)
+        .tint(isActive ? .accentColor : .white.opacity(0.25))
+    }
+
+    private func seasonButton(_ number: Int) -> some View {
+        let availability = seasonStatus(for: number)
+        let isSelected = selectedSeasonNumbers.contains(number)
+        let isRequestable = availability == .requestable
+        return Button {
+            guard isRequestable else { return }
+            toggleSeason(number)
+        } label: {
+            HStack(spacing: 14) {
+                // Leading status glyph makes selectable vs already-handled seasons
+                // legible at a glance (filled check = selected, hollow = pick me,
+                // seal/clock = available/requested/pending and non-interactive).
+                Image(systemName: seasonIconName(availability: availability, isSelected: isSelected))
+                    .font(.system(size: 26, weight: .semibold))
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Season \(number)")
+                        .font(.system(size: 24, weight: .bold))
+                    Text(label(for: availability, seasonNumber: number))
+                        .font(.system(size: 19, weight: .medium))
+                        .foregroundStyle(.white.opacity(0.62))
+                }
+                Spacer(minLength: 0)
+            }
+            .frame(width: 210, alignment: .leading)
+        }
+        .buttonStyle(.bordered)
+        .tint(isSelected ? .accentColor : .white.opacity(isRequestable ? 0.28 : 0.12))
+        .disabled(!isRequestable)
+    }
+
+    private func seasonIconName(availability: SeasonAvailability, isSelected: Bool) -> String {
+        switch availability {
+        case .available: return "checkmark.seal.fill"
+        case .partiallyAvailable: return "circle.lefthalf.filled"
+        case .requested: return "clock.badge.checkmark"
+        case .pending: return "clock"
+        case .requestable: return isSelected ? "checkmark.circle.fill" : "circle"
+        }
     }
 
     private var selectedProfileName: String {

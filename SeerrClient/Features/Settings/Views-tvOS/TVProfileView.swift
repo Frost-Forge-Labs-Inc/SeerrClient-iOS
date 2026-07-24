@@ -45,9 +45,12 @@ struct TVProfileView: View {
             VStack(alignment: .leading, spacing: 34) {
                 HStack(spacing: 18) {
                     if let counts = viewModel.requestCounts {
-                        TVInfoPill(title: "Total Requests", value: "\(counts.total)")
-                        TVInfoPill(title: "Pending", value: "\(counts.pending)")
-                        TVInfoPill(title: "Approved", value: "\(counts.approved)")
+                        // RequestCounts fields are all Int? — unwrap before display
+                        // so the pill never renders "Optional(2442)". Mirrors the
+                        // shipped iOS RequestSummarySection (`?? 0`).
+                        TVInfoPill(title: "Total Requests", value: "\(counts.total ?? 0)")
+                        TVInfoPill(title: "Pending", value: "\(counts.pending ?? 0)")
+                        TVInfoPill(title: "Approved", value: "\(counts.approved ?? 0)")
                     } else {
                         TVInfoPill(title: "Requests", value: "\(viewModel.user?.requestCount ?? 0)")
                     }

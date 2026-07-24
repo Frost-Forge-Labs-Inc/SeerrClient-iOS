@@ -144,10 +144,24 @@ private struct TVRequestRow: View {
                 .fill(Color.white.opacity(0.12))
                 .frame(width: 96, height: 144)
                 .overlay {
-                    Image(systemName: metadata?.mediaType == .tv ? "tv" : "film")
-                        .font(.system(size: 38, weight: .semibold))
-                        .foregroundStyle(.white.opacity(0.5))
+                    // Load the real poster (RequestMediaMetadata carries posterPath);
+                    // fall back to a media-type icon while loading or when absent.
+                    if let url = TMDBImageURL.poster(path: metadata?.posterPath, size: .w342) {
+                        AsyncImage(url: url) { phase in
+                            switch phase {
+                            case .success(let image):
+                                image.resizable().scaledToFill()
+                            default:
+                                // Fallback for empty/failure/unknown — avoids an
+                                // icon -> spinner -> poster flash as metadata resolves.
+                                posterFallback
+                            }
+                        }
+                    } else {
+                        posterFallback
+                    }
                 }
+                .clipShape(RoundedRectangle(cornerRadius: TVMetrics.cornerRadius))
 
             VStack(alignment: .leading, spacing: 12) {
                 Text(metadata?.title ?? fallbackTitle)
@@ -171,6 +185,14 @@ private struct TVRequestRow: View {
         .padding(22)
     }
 
+    private var posterFallback: some View {
+        // Use the request's own inferred type so the fallback icon is correct even
+        // before the async metadata (title/poster) has resolved.
+        Image(systemName: request.inferredMediaType == .tv ? "tv" : "film")
+            .font(.system(size: 38, weight: .semibold))
+            .foregroundStyle(.white.opacity(0.5))
+    }
+
     private var fallbackTitle: String {
         if let tmdbID = request.media?.tmdbId {
             return "\(mediaTypeLabel) #\(tmdbID)"
@@ -183,11 +205,22 @@ private struct TVRequestRow: View {
     }
 
     private var statusLabel: String {
+        // Show the request moderation status for known values (like the shipped iOS
+        // request list) so filtering by Pending/Approved/Declined stays truthful.
+        // Only for an unexpected/unknown request.status do we fall back to the media
+        // availability (Available/Processing/Partial/Pending via the shared
+        // MediaStatusCode) so the row never shows a bare "Unknown".
         switch request.status {
         case 1: return "Pending"
         case 2: return "Approved"
         case 3: return "Declined"
-        default: return "Unknown"
+        default:
+            if let mediaStatus = request.media?.status,
+               let code = MediaStatusCode(rawValue: mediaStatus),
+               code.showsBadge {
+                return code.label
+            }
+            return "Requested"
         }
     }
 }
@@ -254,7 +287,7 @@ struct TVRequestDetailView: View {
         case 1: return "Pending"
         case 2: return "Approved"
         case 3: return "Declined"
-        default: return "Unknown"
+        default: return "Requested"
         }
     }
 }

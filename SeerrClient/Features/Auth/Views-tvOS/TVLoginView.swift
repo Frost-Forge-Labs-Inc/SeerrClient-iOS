@@ -173,7 +173,8 @@ struct TVLoginView: View {
                 text: Binding(
                     get: { viewModel.email },
                     set: { viewModel.email = $0 }
-                )
+                ),
+                focusOnAppear: true
             )
 
             TVLabeledSecureField(
@@ -226,7 +227,8 @@ struct TVLoginView: View {
                 text: Binding(
                     get: { viewModel.jellyfinUsername },
                     set: { viewModel.jellyfinUsername = $0 }
-                )
+                ),
+                focusOnAppear: true
             )
 
             TVLabeledSecureField(
@@ -349,17 +351,34 @@ private struct TVLabeledTextField: View {
     let title: String
     let placeholder: String
     @Binding var text: String
+    /// When true, this field requests focus once as it appears so the Siri Remote
+    /// lands on a real, reachable control instead of stranding focus.
+    var focusOnAppear: Bool = false
+    @FocusState private var isFocused: Bool
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        let field = VStack(alignment: .leading, spacing: 10) {
             Text(title)
                 .font(.system(size: 23, weight: .semibold))
                 .foregroundStyle(.white.opacity(0.56))
+            // No `.textFieldStyle(.plain)`: on tvOS the default (automatic) style is
+            // what makes the field focus-reachable via the remote. `.plain` strips
+            // that, which caused the focus deadlock on the sign-in screen.
             TextField(placeholder, text: $text)
                 .font(.system(size: 29, weight: .medium))
-                .textFieldStyle(.plain)
+                .focused($isFocused)
                 .padding(22)
                 .background(Color.white.opacity(0.12), in: RoundedRectangle(cornerRadius: TVMetrics.cornerRadius))
+        }
+
+        // Only the designated primary field seeds default focus for the form.
+        // `.defaultFocus` (tvOS 16+) is more reliable than a one-shot `.task` write,
+        // which can fire before the field is focus-eligible. Applying it with a
+        // `false` value elsewhere would conflict, so it is applied conditionally.
+        if focusOnAppear {
+            field.defaultFocus($isFocused, true)
+        } else {
+            field
         }
     }
 }
@@ -373,9 +392,9 @@ private struct TVLabeledSecureField: View {
             Text(title)
                 .font(.system(size: 23, weight: .semibold))
                 .foregroundStyle(.white.opacity(0.56))
+            // See TVLabeledTextField: default style keeps the field remote-focusable.
             SecureField("Password", text: $text)
                 .font(.system(size: 29, weight: .medium))
-                .textFieldStyle(.plain)
                 .padding(22)
                 .background(Color.white.opacity(0.12), in: RoundedRectangle(cornerRadius: TVMetrics.cornerRadius))
         }
