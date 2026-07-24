@@ -115,7 +115,7 @@ struct TVMediaPosterCard: View {
     var width: CGFloat = TVMetrics.posterWidth
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 10) {
             ZStack(alignment: .topTrailing) {
                 RoundedRectangle(cornerRadius: TVMetrics.cornerRadius)
                     .fill(Color.white.opacity(0.12))
@@ -154,18 +154,30 @@ struct TVMediaPosterCard: View {
                 }
             }
 
-            Text(title)
-                .font(.system(size: 25, weight: .semibold))
-                .foregroundStyle(.white)
-                .lineLimit(2)
-                .frame(width: width, alignment: .leading)
+            // Mirrors iOS MediaCardView.titleSection: a tight title/year pairing
+            // (spacing 4, plain lineLimit(2) — NOT reservesSpace) so the year hugs a
+            // 1-line title instead of leaving a blank line. A fixed text-block height
+            // keeps every card in a rail the same height regardless of title lines
+            // (1-line titles leave the slack at the bottom, not between title & year).
+            // `.padding(.horizontal, 12)` insets the text from the `.card` platter's
+            // rounded left edge so the first glyph is never clipped (iOS needs no
+            // inset — its card style draws no background platter).
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.system(size: 25, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
 
-            if let subtitle {
-                Text(subtitle)
-                    .font(.system(size: 21, weight: .regular))
-                    .foregroundStyle(.white.opacity(0.58))
-                    .lineLimit(1)
+                if let subtitle {
+                    Text(subtitle)
+                        .font(.system(size: 21, weight: .regular))
+                        .foregroundStyle(.white.opacity(0.58))
+                        .lineLimit(1)
+                }
             }
+            .padding(.horizontal, 12)
+            .frame(width: width, height: 90, alignment: .topLeading)
         }
         .frame(width: width, alignment: .topLeading)
     }

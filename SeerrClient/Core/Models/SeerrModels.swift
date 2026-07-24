@@ -982,8 +982,11 @@ public struct DiscoverMediaItem: Codable, Sendable, Hashable, Identifiable {
 
     /// The TMDB ID to use for detail API calls and navigation.
     /// Jellyfin watchlist items carry an internal `id` and a separate `tmdbId`;
-    /// falls back to `id` for Plex items where they are the same value.
-    public var effectiveTmdbId: Int { tmdbId ?? id }
+    /// when the top-level `tmdbId` is absent, prefer the nested `mediaInfo.tmdbId`
+    /// (also a real TMDB id) before falling back to `id` — otherwise detail/poster
+    /// enrichment fetches with the internal DB id and silently returns nothing
+    /// (missing poster/year on some watchlist items). Plex items have all three equal.
+    public var effectiveTmdbId: Int { tmdbId ?? mediaInfo?.tmdbId ?? id }
 
     /// Display title: movie `title` or TV `name`.
     public var displayTitle: String {
