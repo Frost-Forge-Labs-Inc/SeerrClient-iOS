@@ -75,6 +75,7 @@
 		70510000000000000000C106 /* TVMediaDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70510000000000000000C006 /* TVMediaDetailView.swift */; };
 		70510000000000000000C107 /* TVServerSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70510000000000000000C007 /* TVServerSetupView.swift */; };
 		70510000000000000000C108 /* TVLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70510000000000000000C008 /* TVLoginView.swift */; };
+		70510000000000000000C10A /* TVPlexOAuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70510000000000000000C00A /* TVPlexOAuthView.swift */; };
 		50A385491AC7DE95CA94A5B8 /* CastCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D80AE934D8EE61E68CC5F /* CastCarouselView.swift */; };
 		5836E1B8DF927AD0FF62F670 /* DiscoverSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2F9EE06CCC51F03BC5B4F6 /* DiscoverSliderView.swift */; };
 		5B542C3F047A5AF18CCCDC1D /* ServerInfoSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B636B641B400144C5B4A9D6E /* ServerInfoSection.swift */; };
@@ -217,6 +218,7 @@
 		70510000000000000000C006 /* TVMediaDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVMediaDetailView.swift; sourceTree = "<group>"; };
 		70510000000000000000C007 /* TVServerSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVServerSetupView.swift; sourceTree = "<group>"; };
 		70510000000000000000C008 /* TVLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVLoginView.swift; sourceTree = "<group>"; };
+		70510000000000000000C00A /* TVPlexOAuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVPlexOAuthView.swift; sourceTree = "<group>"; };
 		70510000000000000000C009 /* TVSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVSearchView.swift; sourceTree = "<group>"; };
 		70510000000000000000A011 /* Info-tvOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-tvOS.plist"; sourceTree = "<group>"; };
 		70510000000000000000A012 /* Assets-tvOS.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets-tvOS.xcassets"; sourceTree = "<group>"; };
@@ -549,6 +551,7 @@
 			isa = PBXGroup;
 			children = (
 				70510000000000000000C008 /* TVLoginView.swift */,
+				70510000000000000000C00A /* TVPlexOAuthView.swift */,
 			);
 			path = "Views-tvOS";
 			sourceTree = "<group>";
@@ -1032,6 +1035,7 @@
 				70510000000000000000C106 /* TVMediaDetailView.swift in Sources */,
 				70510000000000000000C107 /* TVServerSetupView.swift in Sources */,
 				70510000000000000000C108 /* TVLoginView.swift in Sources */,
+				70510000000000000000C10A /* TVPlexOAuthView.swift in Sources */,
 				70510000000000000000C109 /* TVSearchView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

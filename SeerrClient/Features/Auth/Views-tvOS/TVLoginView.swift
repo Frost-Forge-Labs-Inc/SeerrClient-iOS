@@ -9,6 +9,8 @@ struct TVLoginView: View {
 
     @State private var viewModel: AuthViewModel?
     @State private var didStartRestore = false
+    /// Presents the tvOS Plex link-code OAuth flow.
+    @State private var showPlexOAuth = false
 
     var body: some View {
         Group {
@@ -33,6 +35,15 @@ struct TVLoginView: View {
             viewModel = vm
             didStartRestore = true
             await vm.restoreSessionIfPossible()
+        }
+        .fullScreenCover(isPresented: $showPlexOAuth) {
+            // The token is handed to the SHARED AuthViewModel.loginPlex — no
+            // Seerr-side auth logic is duplicated for tvOS. On success the view
+            // model flips AppState to the main interface, tearing down this
+            // login screen (and the cover) automatically.
+            TVPlexOAuthView { authToken in
+                Task { await viewModel?.loginPlex(authToken: authToken) }
+            }
         }
     }
 
@@ -254,12 +265,31 @@ struct TVLoginView: View {
             Text("Plex Sign-In")
                 .font(.system(size: 42, weight: .bold))
                 .foregroundStyle(.white)
-            Text("Interactive Plex sign-in on Apple TV needs a tvOS-specific OAuth flow. Use a saved session, local account, Jellyfin account, iPhone, iPad, or the web UI for this server until that flow is added.")
+            Text("Sign in with your Plex account using a linking code. Select Continue with Plex, then enter the code shown here at plex.tv/link on your phone or computer.")
                 .font(.system(size: 27))
                 .foregroundStyle(.white.opacity(0.68))
                 .lineSpacing(5)
                 .frame(maxWidth: 780, alignment: .leading)
             rememberButton(viewModel)
+            Button {
+                viewModel.clearError()
+                showPlexOAuth = true
+            } label: {
+                if viewModel.isAuthenticating {
+                    HStack {
+                        ProgressView()
+                        Text("Signing In")
+                    }
+                    .font(.system(size: 29, weight: .bold))
+                } else {
+                    Label("Continue with Plex", systemImage: "play.rectangle.fill")
+                        .font(.system(size: 29, weight: .bold))
+                }
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(Color(red: 0.9, green: 0.56, blue: 0.0))
+            .disabled(viewModel.isAuthenticating)
+
             Button {
                 appState.returnToServerList()
             } label: {
