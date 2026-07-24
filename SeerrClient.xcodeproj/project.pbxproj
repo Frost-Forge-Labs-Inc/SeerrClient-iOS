@@ -70,6 +70,7 @@
 		70510000000000000000C102 /* TVDiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70510000000000000000C002 /* TVDiscoverView.swift */; };
 		70510000000000000000C103 /* TVWatchlistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70510000000000000000C003 /* TVWatchlistView.swift */; };
 		70510000000000000000C104 /* TVRequestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70510000000000000000C004 /* TVRequestsView.swift */; };
+		70510000000000000000C109 /* TVSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70510000000000000000C009 /* TVSearchView.swift */; };
 		70510000000000000000C105 /* TVProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70510000000000000000C005 /* TVProfileView.swift */; };
 		70510000000000000000C106 /* TVMediaDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70510000000000000000C006 /* TVMediaDetailView.swift */; };
 		70510000000000000000C107 /* TVServerSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70510000000000000000C007 /* TVServerSetupView.swift */; };
@@ -216,6 +217,7 @@
 		70510000000000000000C006 /* TVMediaDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVMediaDetailView.swift; sourceTree = "<group>"; };
 		70510000000000000000C007 /* TVServerSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVServerSetupView.swift; sourceTree = "<group>"; };
 		70510000000000000000C008 /* TVLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVLoginView.swift; sourceTree = "<group>"; };
+		70510000000000000000C009 /* TVSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVSearchView.swift; sourceTree = "<group>"; };
 		70510000000000000000A011 /* Info-tvOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-tvOS.plist"; sourceTree = "<group>"; };
 		70510000000000000000A012 /* Assets-tvOS.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets-tvOS.xcassets"; sourceTree = "<group>"; };
 		78ABD9B388909ABD99B582D2 /* ProfileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileRepository.swift; sourceTree = "<group>"; };
@@ -406,6 +408,7 @@
 				8EDCB193CE5698AB1E51393D /* Repositories */,
 				E80BF905F333428DE38E8251 /* ViewModels */,
 				EE2232F456CD0D4ADA43921C /* Views */,
+				70510000000000000000C016 /* Views-tvOS */,
 			);
 			path = Search;
 			sourceTree = "<group>";
@@ -491,6 +494,14 @@
 				70510000000000000000A012 /* Assets-tvOS.xcassets */,
 			);
 			path = "App-tvOS";
+			sourceTree = "<group>";
+		};
+		70510000000000000000C016 /* Views-tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				70510000000000000000C009 /* TVSearchView.swift */,
+			);
+			path = "Views-tvOS";
 			sourceTree = "<group>";
 		};
 		70510000000000000000C010 /* Views-tvOS */ = {
@@ -1021,6 +1032,7 @@
 				70510000000000000000C106 /* TVMediaDetailView.swift in Sources */,
 				70510000000000000000C107 /* TVServerSetupView.swift in Sources */,
 				70510000000000000000C108 /* TVLoginView.swift in Sources */,
+				70510000000000000000C109 /* TVSearchView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

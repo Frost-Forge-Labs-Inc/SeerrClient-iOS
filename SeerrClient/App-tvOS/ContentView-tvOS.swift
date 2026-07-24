@@ -14,8 +14,9 @@
 //  - Watchlist is capability-gated exactly like iOS via the shared
 //    TabSelectionPolicy (server capability, not a platform trait).
 //  - Milestone 3 replaces placeholders with real tvOS-native screens that reuse
-//    shared repositories/view models. Search and interactive Plex auth are still
-//    open M3 follow-ups.
+//    shared repositories/view models. All 5 tabs (Discover, Search, Requests,
+//    Watchlist, Profile) are now real; interactive Plex OAuth is the remaining
+//    open M3 follow-up.
 
 import SwiftUI
 
@@ -87,7 +88,15 @@ struct TVRootView: View {
                 .accessibilityIdentifier("tab.discover")
                 .tag(AppTab.discover)
 
-            TVTabPlaceholder(feature: "Search")
+            NavigationStack {
+                TVSearchView()
+                    .navigationDestination(for: MovieNavDestination.self) { dest in
+                        TVMovieDetailView(movieId: dest.id, movieTitle: dest.title)
+                    }
+                    .navigationDestination(for: TvNavDestination.self) { dest in
+                        TVShowDetailView(tvId: dest.id, showTitle: dest.title)
+                    }
+            }
                 .tabItem { Label("Search", systemImage: "magnifyingglass") }
                 .accessibilityIdentifier("tab.search")
                 .tag(AppTab.search)
@@ -128,34 +137,6 @@ struct TVRootView: View {
                 }
                 .accessibilityIdentifier("tab.profile")
                 .tag(AppTab.profile)
-        }
-    }
-}
-
-// MARK: - Placeholder Views (Milestone 2 — chrome only, content is Milestone 3)
-
-/// Placeholder body for each of the 4 content tabs. Reads the SHARED AppState so
-/// the demo proves real state wiring (not just static chrome).
-private struct TVTabPlaceholder: View {
-    @Environment(AppState.self) private var appState
-    let feature: String
-
-    var body: some View {
-        ZStack {
-            Color(red: 0.05, green: 0.067, blue: 0.11).ignoresSafeArea()
-            VStack(spacing: 20) {
-                Text(feature)
-                    .font(.system(size: 64, weight: .bold))
-                    .foregroundStyle(.white)
-                Text("Milestone 3")
-                    .font(.system(size: 29, weight: .regular))
-                    .foregroundStyle(.white.opacity(0.55))
-                if let user = appState.currentUser {
-                    Text("Signed in as \(user.displayName ?? user.username ?? "user")")
-                        .font(.system(size: 25, weight: .regular))
-                        .foregroundStyle(.white.opacity(0.4))
-                }
-            }
         }
     }
 }
