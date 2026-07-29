@@ -106,6 +106,91 @@ final class SeerrModelsTests: XCTestCase {
         XCTAssertTrue(decoded.results.isEmpty)
     }
 
+    // MARK: - MediaRequestBody (wire encoding)
+
+    /// Decodes the encoded body into a loosely-typed JSON object so we can assert
+    /// the exact wire shape the Jellyseerr `POST /request` endpoint receives.
+    private func encodedObject(_ body: MediaRequestBody) throws -> [String: Any] {
+        let data = try encoder.encode(body)
+        let object = try JSONSerialization.jsonObject(with: data)
+        return try XCTUnwrap(object as? [String: Any])
+    }
+
+    /// All-seasons TV request must send `seasons: "all"` (string) and never a
+    /// `seasonsAll` key — the API has no such field. This is the exact regression
+    /// that produced the server 500 ("reading 'filter'" on undefined seasons).
+    func test_mediaRequestBody_allSeasons_encodesSeasonsAllString() throws {
+        let body = MediaRequestBody(
+            mediaType: .tv, mediaId: 91239, tvdbId: 91_239,
+            seasons: nil, seasonsAll: true, is4k: false,
+            serverId: nil, profileId: 3, rootFolder: nil,
+            languageProfileId: nil, userId: nil
+        )
+        let json = try encodedObject(body)
+        XCTAssertEqual(json["seasons"] as? String, "all")
+        XCTAssertNil(json["seasonsAll"], "seasonsAll must never be sent on the wire")
+        XCTAssertEqual(json["profileId"] as? Int, 3)
+        XCTAssertEqual(json["mediaType"] as? String, "tv")
+    }
+
+    /// Individual-season TV request must send `seasons` as a numeric array.
+    func test_mediaRequestBody_specificSeasons_encodesArray() throws {
+        let body = MediaRequestBody(
+            mediaType: .tv, mediaId: 91239, tvdbId: 91_239,
+            seasons: [1, 2], seasonsAll: false, is4k: false,
+            serverId: nil, profileId: nil, rootFolder: nil,
+            languageProfileId: nil, userId: nil
+        )
+        let json = try encodedObject(body)
+        XCTAssertEqual(json["seasons"] as? [Int], [1, 2])
+        XCTAssertNil(json["seasonsAll"])
+    }
+
+    /// `seasonsAll` takes precedence over a stray non-nil `seasons` array.
+    func test_mediaRequestBody_allSeasonsWins_overArray() throws {
+        let body = MediaRequestBody(
+            mediaType: .tv, mediaId: 1, tvdbId: nil,
+            seasons: [1, 2], seasonsAll: true, is4k: nil,
+            serverId: nil, profileId: nil, rootFolder: nil,
+            languageProfileId: nil, userId: nil
+        )
+        let json = try encodedObject(body)
+        XCTAssertEqual(json["seasons"] as? String, "all")
+    }
+
+    /// Movie request omits the `seasons` key entirely (and never sends seasonsAll).
+    func test_mediaRequestBody_movie_omitsSeasons() throws {
+        let body = MediaRequestBody(
+            mediaType: .movie, mediaId: 550, tvdbId: nil,
+            seasons: nil, seasonsAll: nil, is4k: true,
+            serverId: nil, profileId: nil, rootFolder: nil,
+            languageProfileId: nil, userId: nil
+        )
+        let json = try encodedObject(body)
+        XCTAssertNil(json["seasons"])
+        XCTAssertNil(json["seasonsAll"])
+        XCTAssertEqual(json["is4k"] as? Bool, true)
+        XCTAssertEqual(json["mediaType"] as? String, "movie")
+    }
+
+    /// Nil optionals must stay omitted so the wire body matches prior behavior.
+    func test_mediaRequestBody_omitsNilOptionals() throws {
+        let body = MediaRequestBody(
+            mediaType: .tv, mediaId: 1, tvdbId: nil,
+            seasons: [1], seasonsAll: false, is4k: nil,
+            serverId: nil, profileId: nil, rootFolder: nil,
+            languageProfileId: nil, userId: nil
+        )
+        let json = try encodedObject(body)
+        XCTAssertNil(json["tvdbId"])
+        XCTAssertNil(json["is4k"])
+        XCTAssertNil(json["serverId"])
+        XCTAssertNil(json["profileId"])
+        XCTAssertNil(json["rootFolder"])
+        XCTAssertNil(json["languageProfileId"])
+        XCTAssertNil(json["userId"])
+    }
+
     // MARK: - BackendType
 
     func test_backendType_rawValues() {
