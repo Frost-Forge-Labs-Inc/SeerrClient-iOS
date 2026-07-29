@@ -886,9 +886,11 @@ public struct MediaRequestBody: Codable, Sendable, Hashable {
     public let mediaId: Int
     /// TVDB identifier (required for TV requests).
     public let tvdbId: Int?
-    /// For TV requests: specific season numbers, or `"all"` (represented as `nil` here; use `seasonsAll` flag).
+    /// For TV requests: specific season numbers to request. When `seasonsAll` is
+    /// true this is ignored and the wire value becomes the string `"all"`.
     public let seasons: [Int]?
-    /// If true, requests all seasons (sends `"all"` to the API).
+    /// If true, requests all seasons. Encoded as `seasons: "all"` on the wire — the
+    /// API has no `seasonsAll` field, so this flag is never sent as its own key.
     public let seasonsAll: Bool?
     /// Whether to request 4K quality.
     public let is4k: Bool?
@@ -902,6 +904,37 @@ public struct MediaRequestBody: Codable, Sendable, Hashable {
     public let languageProfileId: Int?
     /// Override to create the request on behalf of another user (admin only).
     public let userId: Int?
+
+    private enum CodingKeys: String, CodingKey {
+        case mediaType, mediaId, tvdbId, seasons, seasonsAll, is4k
+        case serverId, profileId, rootFolder, languageProfileId, userId
+    }
+
+    /// Custom encoding to match the Jellyseerr/Overseerr `POST /request` contract,
+    /// where `seasons` is `oneOf: [array<number>, "all"]` and there is **no**
+    /// `seasonsAll` field. Emits a single `seasons` key:
+    /// - `seasonsAll == true`  → `seasons: "all"` (checked first, defensively)
+    /// - otherwise `seasons` non-nil → the numeric array
+    /// - otherwise (e.g. movies) → key omitted
+    /// `seasonsAll` is intentionally never written to the wire. All other optionals
+    /// use `encodeIfPresent` to preserve the prior omit-nil behavior.
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(mediaType, forKey: .mediaType)
+        try container.encode(mediaId, forKey: .mediaId)
+        try container.encodeIfPresent(tvdbId, forKey: .tvdbId)
+        if seasonsAll == true {
+            try container.encode("all", forKey: .seasons)
+        } else if let seasons {
+            try container.encode(seasons, forKey: .seasons)
+        }
+        try container.encodeIfPresent(is4k, forKey: .is4k)
+        try container.encodeIfPresent(serverId, forKey: .serverId)
+        try container.encodeIfPresent(profileId, forKey: .profileId)
+        try container.encodeIfPresent(rootFolder, forKey: .rootFolder)
+        try container.encodeIfPresent(languageProfileId, forKey: .languageProfileId)
+        try container.encodeIfPresent(userId, forKey: .userId)
+    }
 }
 
 /// Media type discriminator used in requests and search results.
