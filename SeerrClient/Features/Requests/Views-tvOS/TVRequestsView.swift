@@ -227,6 +227,7 @@ private struct TVRequestRow: View {
 
 struct TVRequestDetailView: View {
     @Environment(AppState.self) private var appState
+    @Environment(\.dismiss) private var dismiss
     let requestID: Int
     @State private var viewModel: RequestDetailViewModel?
 
@@ -251,6 +252,11 @@ struct TVRequestDetailView: View {
             self.viewModel = viewModel
             viewModel.loadDetail()
         }
+        .onChange(of: viewModel?.didDelete ?? false) { _, didDelete in
+            if didDelete {
+                dismiss()
+            }
+        }
         .onDisappear { viewModel?.cancelAll() }
     }
 
@@ -260,6 +266,12 @@ struct TVRequestDetailView: View {
         case .idle, .loading:
             TVLoadingStateView(title: "Request")
         case .loaded(let request):
+            let isAdmin = ((appState.currentUser?.permissions ?? 0) & 2) != 0
+            let isOwnerOfPendingRequest = request.status == 1
+                && request.requestedBy?.id != nil
+                && request.requestedBy?.id == viewModel.currentUserID
+            let canDelete = isAdmin || isOwnerOfPendingRequest
+            let isActionInFlight = viewModel.isApproving || viewModel.isDeclining || viewModel.isDeleting
             TVScreenScaffold(title: viewModel.mediaMetadata?.title ?? "Request", subtitle: statusLabel(request.status)) {
                 VStack(alignment: .leading, spacing: 26) {
                     HStack(spacing: 18) {
@@ -269,11 +281,80 @@ struct TVRequestDetailView: View {
                             TVInfoPill(title: "Created", value: SeerrDateFormatter.displayDate(created))
                         }
                     }
-                    Text("Approval and deletion controls are intentionally left off tvOS for v1. Manage requests from iPhone, iPad, or the web UI.")
-                        .font(.system(size: 25))
-                        .foregroundStyle(.white.opacity(0.62))
-                        .frame(maxWidth: 1000, alignment: .leading)
+
+                    // `canDelete` already includes admin (canDelete = isAdmin || ownerOfPending),
+                    // so it subsumes the approve/decline visibility; no extra status clause needed.
+                    if canDelete {
+                        VStack(alignment: .leading, spacing: 18) {
+                            // A non-admin owner sees only the Delete button, so don't label it "Admin".
+                            Text(isAdmin ? "Admin Actions" : "Manage Request")
+                                .font(.system(size: 27, weight: .semibold))
+                                .foregroundStyle(.white)
+
+                            HStack(spacing: 22) {
+                                if isAdmin && request.status == 1 {
+                                    Button {
+                                        viewModel.approveRequest()
+                                    } label: {
+                                        if viewModel.isApproving {
+                                            ProgressView()
+                                                .accessibilityLabel("Approving")
+                                        } else {
+                                            Text("Approve")
+                                        }
+                                    }
+                                    .buttonStyle(.bordered)
+                                    .tint(.green)
+                                    .disabled(isActionInFlight)
+                                    .accessibilityIdentifier("tvos.request.approve")
+                                }
+
+                                if isAdmin && (request.status == 1 || request.status == 2) {
+                                    Button {
+                                        viewModel.declineRequest()
+                                    } label: {
+                                        if viewModel.isDeclining {
+                                            ProgressView()
+                                                .accessibilityLabel("Declining")
+                                        } else {
+                                            Text("Decline")
+                                        }
+                                    }
+                                    .buttonStyle(.bordered)
+                                    .tint(.red)
+                                    .disabled(isActionInFlight)
+                                    .accessibilityIdentifier("tvos.request.decline")
+                                }
+
+                                if canDelete {
+                                    Button(role: .destructive) {
+                                        viewModel.deleteRequest()
+                                    } label: {
+                                        if viewModel.isDeleting {
+                                            ProgressView()
+                                                .accessibilityLabel("Deleting")
+                                        } else {
+                                            Text("Delete")
+                                        }
+                                    }
+                                    .buttonStyle(.bordered)
+                                    .tint(.red)
+                                    .disabled(isActionInFlight)
+                                    .accessibilityIdentifier("tvos.request.delete")
+                                }
+                            }
+                            .font(.system(size: 25, weight: .semibold))
+                        }
+                    }
+
+                    if let actionError = viewModel.actionError {
+                        Text(actionError)
+                            .font(.system(size: 23, weight: .medium))
+                            .foregroundStyle(.red)
+                            .frame(maxWidth: 1000, alignment: .leading)
+                    }
                 }
+                .accessibilityIdentifier("tvos.request.detail.content")
             }
         case .error(let message):
             TVMessageStateView(title: "Request", message: message, systemImage: "exclamationmark.triangle", actionTitle: "Try Again") {
