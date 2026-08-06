@@ -1,9 +1,8 @@
 // CollectionDetailViewModelTests.swift
 // SeerrClientTests
 //
-// Covers the selectable collection-request flow with pure view-model tests plus
-// one integration-style test that loads the collection via the real repository
-// and API client using a stubbed URLProtocol.
+// Covers the one-tap batch collection-request flow with pure view-model tests
+// plus an integration-style load via the real repository and a stubbed URLProtocol.
 
 @testable import SeerrClient
 import XCTest
@@ -16,6 +15,7 @@ final class CollectionDetailViewModelTests: XCTestCase {
 
     override func setUp() async throws {
         serverStore = ServerStore()
+        CollectionDetailTestURLProtocol.reset()
         CollectionDetailTestURLProtocol.collectionResponse = nil
         sut = makeSUT(collectionId: 42)
     }
@@ -23,34 +23,86 @@ final class CollectionDetailViewModelTests: XCTestCase {
     override func tearDown() async throws {
         sut = nil
         serverStore = nil
-        CollectionDetailTestURLProtocol.collectionResponse = nil
+        CollectionDetailTestURLProtocol.reset()
     }
 
-    func test_requestAll_selectsAllRequestableMoviesAndStartsQueue() {
+    func test_requestAll_createsRequestForEveryRequestableMovieAndMarksPending() async {
         sut.replaceLoadedCollection(makeCollection())
 
-        sut.requestAll()
+        await sut.requestAll()
 
-        XCTAssertEqual(sut.selectedMovieIDs, Set([101, 104]))
-        XCTAssertEqual(sut.selectedRequestMovieIDs, [101, 104])
-        XCTAssertEqual(sut.queuedRequestMovieIDs, [101, 104])
-        XCTAssertEqual(sut.requestingMovieId, 101)
-        XCTAssertTrue(sut.showRequestSheet)
-        XCTAssertTrue(sut.allRequestableMoviesSelected)
+        XCTAssertEqual(CollectionDetailTestURLProtocol.createRequestBodies.map(\.mediaId), [101, 104])
+        XCTAssertTrue(CollectionDetailTestURLProtocol.createRequestBodies.allSatisfy { body in
+            body.mediaType == .movie
+                && body.tvdbId == nil
+                && body.seasons == nil
+                && body.seasonsAll == nil
+                && body.is4k == false
+        })
+        XCTAssertEqual(movie(withId: 101)?.mediaInfo?.status, 2)
+        XCTAssertEqual(movie(withId: 104)?.mediaInfo?.status, 2)
+        XCTAssertTrue(sut.selectedMovieIDs.isEmpty)
+        XCTAssertEqual(sut.requestableMovies.map(\.id), [])
+        XCTAssertNil(sut.batchErrorMessage)
+        XCTAssertFalse(sut.isRequesting)
     }
 
-    func test_requestSelected_usesSelectedRequestableMoviesInCollectionOrder() {
+    func test_requestSelected_createsRequestOnlyForSelectedMoviesInCollectionOrder() async {
         sut.replaceLoadedCollection(makeCollection())
 
         sut.toggleSelection(movieId: 104)
         sut.toggleSelection(movieId: 101)
 
-        sut.requestSelected()
+        await sut.requestSelected()
 
-        XCTAssertEqual(sut.selectedRequestMovieIDs, [101, 104])
-        XCTAssertEqual(sut.queuedRequestMovieIDs, [101, 104])
-        XCTAssertEqual(sut.activeRequestMovie?.id, 101)
-        XCTAssertTrue(sut.showRequestSheet)
+        XCTAssertEqual(CollectionDetailTestURLProtocol.createRequestBodies.map(\.mediaId), [101, 104])
+        XCTAssertEqual(movie(withId: 101)?.mediaInfo?.status, 2)
+        XCTAssertEqual(movie(withId: 104)?.mediaInfo?.status, 2)
+        XCTAssertTrue(sut.selectedMovieIDs.isEmpty)
+        XCTAssertNil(sut.batchErrorMessage)
+    }
+
+    func test_requestSelected_singleSelection_requestsOnlyThatMovie() async {
+        sut.replaceLoadedCollection(makeCollection())
+        sut.toggleSelection(movieId: 104)
+
+        await sut.requestSelected()
+
+        XCTAssertEqual(CollectionDetailTestURLProtocol.createRequestBodies.map(\.mediaId), [104])
+        XCTAssertEqual(movie(withId: 104)?.mediaInfo?.status, 2)
+        XCTAssertEqual(movie(withId: 101)?.mediaInfo?.status, nil)
+        XCTAssertTrue(sut.selectedMovieIDs.isEmpty)
+        XCTAssertEqual(sut.requestableMovies.map(\.id), [101])
+    }
+
+    func test_requestSelected_partialFailure_marksSuccessesPendingKeepsFailuresSelected() async {
+        sut.replaceLoadedCollection(makeCollection())
+        CollectionDetailTestURLProtocol.failingMediaIDs = [104]
+        sut.toggleSelection(movieId: 101)
+        sut.toggleSelection(movieId: 104)
+
+        await sut.requestSelected()
+
+        XCTAssertEqual(CollectionDetailTestURLProtocol.createRequestBodies.map(\.mediaId), [101, 104])
+        XCTAssertEqual(movie(withId: 101)?.mediaInfo?.status, 2)
+        XCTAssertEqual(movie(withId: 104)?.mediaInfo?.status, 4)
+        XCTAssertEqual(sut.selectedMovieIDs, Set([104]))
+        XCTAssertEqual(sut.batchErrorMessage, "Couldn't request 1 of 2 movies")
+        XCTAssertEqual(sut.requestableMovies.map(\.id), [104])
+        XCTAssertFalse(sut.isRequesting)
+    }
+
+    func test_requestAll_partialFailure_surfacesErrorAndLeavesFailedSelected() async {
+        sut.replaceLoadedCollection(makeCollection())
+        CollectionDetailTestURLProtocol.failingMediaIDs = [101]
+
+        await sut.requestAll()
+
+        XCTAssertEqual(CollectionDetailTestURLProtocol.createRequestBodies.map(\.mediaId), [101, 104])
+        XCTAssertNil(movie(withId: 101)?.mediaInfo?.status)
+        XCTAssertEqual(movie(withId: 104)?.mediaInfo?.status, 2)
+        XCTAssertEqual(sut.selectedMovieIDs, Set([101]))
+        XCTAssertEqual(sut.batchErrorMessage, "Couldn't request 1 of 2 movies")
     }
 
     func test_toggleSelection_ignoresUnavailableMovies() {
@@ -63,31 +115,19 @@ final class CollectionDetailViewModelTests: XCTestCase {
         XCTAssertFalse(sut.hasSelection)
     }
 
-    func test_handleRequestSuccess_marksMoviePendingAdvancesQueueAndClearsCompletedSelection() {
+    func test_requestAll_isNoOpWhenAlreadyRequesting() async {
         sut.replaceLoadedCollection(makeCollection())
-        sut.requestAll()
+        CollectionDetailTestURLProtocol.requestDelayNanoseconds = 50_000_000
 
-        sut.handleRequestSuccess()
+        async let first: Void = sut.requestAll()
+        // Yield so the first batch can set isRequesting.
+        await Task.yield()
+        await Task.yield()
+        await sut.requestAll()
+        await first
 
-        XCTAssertEqual(sut.queuedRequestMovieIDs, [104])
-        XCTAssertEqual(sut.selectedMovieIDs, Set([104]))
-        XCTAssertEqual(sut.requestingMovieId, 104)
-        XCTAssertTrue(sut.showRequestSheet)
-        XCTAssertEqual(movie(withId: 101)?.mediaInfo?.status, 2)
-        XCTAssertEqual(sut.requestableMovies.map(\.id), [104])
-    }
-
-    func test_handleRequestSuccess_onLastQueuedMovieClosesSheetAndLeavesNoSelection() {
-        sut.replaceLoadedCollection(makeCollection())
-        sut.toggleSelection(movieId: 104)
-        sut.requestSelected()
-
-        sut.handleRequestSuccess()
-
-        XCTAssertTrue(sut.queuedRequestMovieIDs.isEmpty)
-        XCTAssertTrue(sut.selectedMovieIDs.isEmpty)
-        XCTAssertFalse(sut.showRequestSheet)
-        XCTAssertEqual(movie(withId: 104)?.mediaInfo?.status, 2)
+        // Only one batch should run; both movies still requested once each.
+        XCTAssertEqual(CollectionDetailTestURLProtocol.createRequestBodies.map(\.mediaId), [101, 104])
     }
 
     func test_loadCollection_integrationLoadsCollectionFromRepositoryStub() async throws {
@@ -122,7 +162,12 @@ final class CollectionDetailViewModelTests: XCTestCase {
             additionalProtocolClasses: [CollectionDetailTestURLProtocol.self]
         )
         let repository = MediaDetailRepository(apiClient: client)
-        return CollectionDetailViewModel(collectionId: collectionId, repository: repository)
+        let requestRepository = RequestRepository(apiClient: client)
+        return CollectionDetailViewModel(
+            collectionId: collectionId,
+            repository: repository,
+            requestRepository: requestRepository
+        )
     }
 
     private func movie(withId movieId: Int) -> MovieResult? {
@@ -180,8 +225,30 @@ final class CollectionDetailViewModelTests: XCTestCase {
     }
 }
 
-private final class CollectionDetailTestURLProtocol: URLProtocol {
+// MARK: - CollectionDetailTestURLProtocol
+
+private final class CollectionDetailTestURLProtocol: URLProtocol, @unchecked Sendable {
     static var collectionResponse: Collection?
+    static var failingMediaIDs: Set<Int> = []
+    static var requestDelayNanoseconds: UInt64 = 0
+
+    private static let lock = NSLock()
+    private static var _createRequestBodies: [MediaRequestBody] = []
+    private static var nextRequestID = 9000
+
+    static var createRequestBodies: [MediaRequestBody] {
+        lock.withLock { _createRequestBodies }
+    }
+
+    static func reset() {
+        lock.withLock {
+            collectionResponse = nil
+            failingMediaIDs = []
+            requestDelayNanoseconds = 0
+            _createRequestBodies = []
+            nextRequestID = 9000
+        }
+    }
 
     override class func canInit(with request: URLRequest) -> Bool {
         request.url?.host == "collection-tests.local"
@@ -197,7 +264,9 @@ private final class CollectionDetailTestURLProtocol: URLProtocol {
             return
         }
 
-        if request.httpMethod == "GET", url.path == "/api/v1/collection/42",
+        let method = request.httpMethod ?? "GET"
+
+        if method == "GET", url.path == "/api/v1/collection/42",
            let responseObject = Self.collectionResponse {
             do {
                 let data = try JSONEncoder().encode(responseObject)
@@ -217,6 +286,11 @@ private final class CollectionDetailTestURLProtocol: URLProtocol {
             }
         }
 
+        if method == "POST", url.path == "/api/v1/request" {
+            handleCreateRequest(url: url)
+            return
+        }
+
         let response = HTTPURLResponse(
             url: url,
             statusCode: 404,
@@ -229,4 +303,86 @@ private final class CollectionDetailTestURLProtocol: URLProtocol {
     }
 
     override func stopLoading() {}
+
+    private func handleCreateRequest(url: URL) {
+        guard let bodyData = request.httpBody ?? requestBodyFromStream(),
+              let body = try? JSONDecoder().decode(MediaRequestBody.self, from: bodyData) else {
+            client?.urlProtocol(self, didFailWithError: URLError(.cannotParseResponse))
+            return
+        }
+
+        let delay = Self.lock.withLock { Self.requestDelayNanoseconds }
+        if delay > 0 {
+            // URLProtocol callbacks are sync; sleep to simulate in-flight work for re-entrancy tests.
+            Thread.sleep(forTimeInterval: TimeInterval(delay) / 1_000_000_000)
+        }
+
+        Self.lock.withLock {
+            Self._createRequestBodies.append(body)
+        }
+
+        let shouldFail = Self.lock.withLock { Self.failingMediaIDs.contains(body.mediaId) }
+        if shouldFail {
+            let response = HTTPURLResponse(
+                url: url,
+                statusCode: 500,
+                httpVersion: nil,
+                headerFields: ["Content-Type": "application/json"]
+            )!
+            let data = Data("{\"message\":\"stub failure\"}".utf8)
+            client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+            client?.urlProtocol(self, didLoad: data)
+            client?.urlProtocolDidFinishLoading(self)
+            return
+        }
+
+        let requestID = Self.lock.withLock { () -> Int in
+            Self.nextRequestID += 1
+            return Self.nextRequestID
+        }
+
+        let payload: [String: Any] = [
+            "id": requestID,
+            "status": 1,
+            "media": [
+                "id": body.mediaId,
+                "tmdbId": body.mediaId,
+                "status": 2
+            ]
+        ]
+
+        do {
+            let data = try JSONSerialization.data(withJSONObject: payload)
+            let response = HTTPURLResponse(
+                url: url,
+                statusCode: 201,
+                httpVersion: nil,
+                headerFields: ["Content-Type": "application/json"]
+            )!
+            client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+            client?.urlProtocol(self, didLoad: data)
+            client?.urlProtocolDidFinishLoading(self)
+        } catch {
+            client?.urlProtocol(self, didFailWithError: error)
+        }
+    }
+
+    private func requestBodyFromStream() -> Data? {
+        guard let stream = request.httpBodyStream else { return nil }
+        stream.open()
+        defer { stream.close() }
+        var data = Data()
+        let bufferSize = 1024
+        let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)
+        defer { buffer.deallocate() }
+        while stream.hasBytesAvailable {
+            let read = stream.read(buffer, maxLength: bufferSize)
+            if read > 0 {
+                data.append(buffer, count: read)
+            } else {
+                break
+            }
+        }
+        return data.isEmpty ? nil : data
+    }
 }

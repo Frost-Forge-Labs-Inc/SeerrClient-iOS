@@ -7,8 +7,10 @@ final class CollectionRequestSelectionUITests: XCTestCase {
         continueAfterFailure = false
     }
 
+    /// One-tap Request Selected on a multi-movie selection marks every chosen
+    /// movie Pending without presenting a per-movie CreateRequest sheet.
     @MainActor
-    func testSelectingSubsetRequestsChosenMovieAndUpdatesStatusInCollection() throws {
+    func testSelectingMultipleMoviesRequestsAllChosenInOneTap() throws {
         let app = launchApp()
 
         let collectionScreen = app.scrollViews["collection.screen"]
@@ -16,31 +18,66 @@ final class CollectionRequestSelectionUITests: XCTestCase {
 
         let firstRow = app.descendants(matching: .any)["collection.row.1001"]
         XCTAssertTrue(firstRow.waitForExistence(timeout: timeout))
+        let secondRow = app.descendants(matching: .any)["collection.row.1002"]
+        XCTAssertTrue(secondRow.waitForExistence(timeout: timeout))
 
-        let selectionButton = app.buttons["collection.select.1001"]
-        XCTAssertTrue(selectionButton.waitForExistence(timeout: timeout))
-        XCTAssertTrue(selectionButton.isHittable)
-        selectionButton.tap()
+        let selectFirst = app.buttons["collection.select.1001"]
+        XCTAssertTrue(selectFirst.waitForExistence(timeout: timeout))
+        XCTAssertTrue(selectFirst.isHittable)
+        selectFirst.tap()
+
+        let selectSecond = app.buttons["collection.select.1002"]
+        XCTAssertTrue(selectSecond.waitForExistence(timeout: timeout))
+        XCTAssertTrue(selectSecond.isHittable)
+        selectSecond.tap()
 
         let requestSelectedButton = app.buttons["collection.requestSelected"]
         XCTAssertTrue(requestSelectedButton.waitForExistence(timeout: timeout))
         XCTAssertTrue(requestSelectedButton.isHittable)
         requestSelectedButton.tap()
 
-        let submitButton = app.buttons["Submit Request"]
-        XCTAssertTrue(submitButton.waitForExistence(timeout: timeout))
-        XCTAssertTrue(submitButton.isHittable)
-        submitButton.tap()
+        // Batch path: no per-movie Submit Request sheet.
+        XCTAssertFalse(app.buttons["Submit Request"].waitForExistence(timeout: 1))
 
-        let pendingStatus = app.descendants(matching: .any)["collection.status.1001.pending"]
-        XCTAssertTrue(pendingStatus.waitForExistence(timeout: timeout))
+        let pendingFirst = app.descendants(matching: .any)["collection.status.1001.pending"]
+        XCTAssertTrue(pendingFirst.waitForExistence(timeout: timeout))
+        let pendingSecond = app.descendants(matching: .any)["collection.status.1002.pending"]
+        XCTAssertTrue(pendingSecond.waitForExistence(timeout: timeout))
 
-        let selectionSummary = app.staticTexts["collection.selectionSummary"]
-        XCTAssertTrue(selectionSummary.waitForExistence(timeout: timeout))
-        XCTAssertEqual(selectionSummary.label, "No movies selected")
+        // Both requestable movies are now pending; selection chips are gone.
+        XCTAssertFalse(app.buttons["collection.select.1001"].waitForExistence(timeout: 1))
+        XCTAssertFalse(app.buttons["collection.select.1002"].exists)
+        // Already-pending/available movies never had a select control for 1003/1004 remaining state.
+        XCTAssertFalse(app.buttons["collection.requestSelected"].exists)
+        XCTAssertFalse(app.buttons["collection.requestAll"].exists)
+    }
 
-        XCTAssertFalse(app.buttons["collection.select.1001"].exists)
-        XCTAssertTrue(app.buttons["collection.select.1002"].exists)
+    /// Request All requests every requestable movie in one tap.
+    @MainActor
+    func testRequestAllMarksMultipleMoviesPendingInOneTap() throws {
+        let app = launchApp()
+
+        let collectionScreen = app.scrollViews["collection.screen"]
+        XCTAssertTrue(collectionScreen.waitForExistence(timeout: timeout))
+
+        XCTAssertTrue(app.descendants(matching: .any)["collection.row.1001"].waitForExistence(timeout: timeout))
+        XCTAssertTrue(app.descendants(matching: .any)["collection.row.1002"].waitForExistence(timeout: timeout))
+
+        let requestAllButton = app.buttons["collection.requestAll"]
+        XCTAssertTrue(requestAllButton.waitForExistence(timeout: timeout))
+        XCTAssertTrue(requestAllButton.isHittable)
+        requestAllButton.tap()
+
+        XCTAssertFalse(app.buttons["Submit Request"].waitForExistence(timeout: 1))
+
+        let pendingFirst = app.descendants(matching: .any)["collection.status.1001.pending"]
+        XCTAssertTrue(pendingFirst.waitForExistence(timeout: timeout))
+        let pendingSecond = app.descendants(matching: .any)["collection.status.1002.pending"]
+        XCTAssertTrue(pendingSecond.waitForExistence(timeout: timeout))
+
+        XCTAssertFalse(app.buttons["collection.select.1001"].waitForExistence(timeout: 1))
+        XCTAssertFalse(app.buttons["collection.select.1002"].exists)
+        XCTAssertFalse(app.buttons["collection.requestAll"].exists)
     }
 
     @MainActor
