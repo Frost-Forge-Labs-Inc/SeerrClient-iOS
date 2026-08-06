@@ -28,7 +28,26 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "D50000000000000000000030"
+               BuildableName = "SeerrClientTVUITests.xctest"
+               BlueprintName = "SeerrClientTVUITests"
+               ReferencedContainer = "container:SeerrClient.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "70510000000000000000A001"
+            BuildableName = "SeerrClientTV.app"
+            BlueprintName = "SeerrClientTV"
+            ReferencedContainer = "container:SeerrClient.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
