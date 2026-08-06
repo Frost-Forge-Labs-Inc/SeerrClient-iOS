@@ -117,17 +117,44 @@ final class CollectionDetailViewModelTests: XCTestCase {
 
     func test_requestAll_isNoOpWhenAlreadyRequesting() async {
         sut.replaceLoadedCollection(makeCollection())
-        CollectionDetailTestURLProtocol.requestDelayNanoseconds = 50_000_000
+
+        // Gate the first createRequest so the batch stays in flight under our control
+        // (no sleep/yield races). Subsequent createRequests are not held.
+        let firstCreateEntered = expectation(description: "first createRequest entered")
+        let releaseFirstCreate = DispatchSemaphore(value: 0)
+        CollectionDetailTestURLProtocol.createRequestHold = {
+            CollectionDetailTestURLProtocol.createRequestHold = nil
+            firstCreateEntered.fulfill()
+            releaseFirstCreate.wait()
+        }
 
         async let first: Void = sut.requestAll()
-        // Yield so the first batch can set isRequesting.
-        await Task.yield()
-        await Task.yield()
+        await fulfillment(of: [firstCreateEntered], timeout: 5)
+
+        // First batch is mid-flight: isRequesting must be true before we re-enter.
+        XCTAssertTrue(sut.isRequesting)
+
+        // Clear selection while the batch holds. A buggy requestAll that selectAll()s
+        // before its isRequesting guard would re-populate selection even though the
+        // batch itself no-ops. The guard must prevent that mutation.
+        sut.clearSelection()
+        XCTAssertTrue(sut.selectedMovieIDs.isEmpty)
+
         await sut.requestAll()
+
+        XCTAssertTrue(
+            sut.selectedMovieIDs.isEmpty,
+            "requestAll must not call selectAll while a batch is already in flight"
+        )
+        // Only the held first createRequest has run so far (still blocked).
+        XCTAssertEqual(CollectionDetailTestURLProtocol.createRequestBodies.map(\.mediaId), [])
+
+        releaseFirstCreate.signal()
         await first
 
-        // Only one batch should run; both movies still requested once each.
+        // Exactly one batch: both requestable movies once each.
         XCTAssertEqual(CollectionDetailTestURLProtocol.createRequestBodies.map(\.mediaId), [101, 104])
+        XCTAssertFalse(sut.isRequesting)
     }
 
     func test_loadCollection_integrationLoadsCollectionFromRepositoryStub() async throws {
@@ -230,7 +257,9 @@ final class CollectionDetailViewModelTests: XCTestCase {
 private final class CollectionDetailTestURLProtocol: URLProtocol, @unchecked Sendable {
     static var collectionResponse: Collection?
     static var failingMediaIDs: Set<Int> = []
-    static var requestDelayNanoseconds: UInt64 = 0
+    /// Optional blocking hook invoked on the URL-loading thread before a createRequest
+    /// is recorded/completed. Tests use this to keep a batch deterministically in flight.
+    static var createRequestHold: (() -> Void)?
 
     private static let lock = NSLock()
     private static var _createRequestBodies: [MediaRequestBody] = []
@@ -244,7 +273,7 @@ private final class CollectionDetailTestURLProtocol: URLProtocol, @unchecked Sen
         lock.withLock {
             collectionResponse = nil
             failingMediaIDs = []
-            requestDelayNanoseconds = 0
+            createRequestHold = nil
             _createRequestBodies = []
             nextRequestID = 9000
         }
@@ -311,11 +340,10 @@ private final class CollectionDetailTestURLProtocol: URLProtocol, @unchecked Sen
             return
         }
 
-        let delay = Self.lock.withLock { Self.requestDelayNanoseconds }
-        if delay > 0 {
-            // URLProtocol callbacks are sync; sleep to simulate in-flight work for re-entrancy tests.
-            Thread.sleep(forTimeInterval: TimeInterval(delay) / 1_000_000_000)
-        }
+        // Optional test hold (runs on URL-loading thread). Taken before the body is
+        // recorded so tests can observe an empty body list while a batch is mid-flight.
+        let hold = Self.lock.withLock { Self.createRequestHold }
+        hold?()
 
         Self.lock.withLock {
             Self._createRequestBodies.append(body)

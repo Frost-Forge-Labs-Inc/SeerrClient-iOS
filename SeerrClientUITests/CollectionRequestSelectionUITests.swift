@@ -47,7 +47,7 @@ final class CollectionRequestSelectionUITests: XCTestCase {
         // Both requestable movies are now pending; selection chips are gone.
         XCTAssertFalse(app.buttons["collection.select.1001"].waitForExistence(timeout: 1))
         XCTAssertFalse(app.buttons["collection.select.1002"].exists)
-        // Already-pending/available movies never had a select control for 1003/1004 remaining state.
+        // Movies 1003/1004 were already pending/available and never had select controls.
         XCTAssertFalse(app.buttons["collection.requestSelected"].exists)
         XCTAssertFalse(app.buttons["collection.requestAll"].exists)
     }

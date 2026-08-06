@@ -152,6 +152,8 @@ public final class CollectionDetailViewModel {
 
     /// One-tap batch: request every requestable movie with default movie options.
     public func requestAll() async {
+        // Do not mutate selection if a batch is already in flight (re-entry no-op).
+        guard !isRequesting else { return }
         selectAll()
         await performBatchRequest(movieIDs: orderedRequestableMovieIDs)
     }
@@ -253,7 +255,8 @@ public final class CollectionDetailViewModel {
         }
 
         if failureCount > 0 {
-            batchErrorMessage = "Couldn't request \(failureCount) of \(total) movies"
+            let movieWord = total == 1 ? "movie" : "movies"
+            batchErrorMessage = "Couldn't request \(failureCount) of \(total) \(movieWord)"
         }
     }
 
