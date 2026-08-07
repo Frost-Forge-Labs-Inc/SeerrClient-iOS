@@ -101,6 +101,8 @@
 		F4A000000000000000000003 /* LaunchFlowUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A000000000000000000004 /* LaunchFlowUITests.swift */; };
 		F5E75B8DCEA4839422965BF1 /* APIEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA9BC8FEC91C03F2E9EF262 /* APIEndpoints.swift */; };
 		FA4712AA673C6908505E1549 /* PersonSearchCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD05BFBDB2A8FDE3892F0A7 /* PersonSearchCardView.swift */; };
+		70520000000000000000A010 /* SeerrClientMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70520000000000000000A009 /* SeerrClientMacApp.swift */; };
+		70520000000000000000A013 /* Assets-macOS.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 70520000000000000000A012 /* Assets-macOS.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -219,6 +221,11 @@
 		FF31ECDFD93EF7800E74AFA1 /* TvShowDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TvShowDetailView.swift; sourceTree = "<group>"; };
 		FFB67CD0DFFCE6295E9E87C8 /* SeerrClientApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeerrClientApp.swift; sourceTree = "<group>"; };
 		FFC276DA8E190B9425423E1A /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
+		70520000000000000000A002 /* SeerrClientMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SeerrClientMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		70520000000000000000A009 /* SeerrClientMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeerrClientMacApp.swift; sourceTree = "<group>"; };
+		70520000000000000000A011 /* Info-macOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-macOS.plist"; sourceTree = "<group>"; };
+		70520000000000000000A012 /* Assets-macOS.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets-macOS.xcassets"; sourceTree = "<group>"; };
+		70520000000000000000A014 /* SeerrClientMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SeerrClientMac.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -412,8 +419,20 @@
 				E418DBD74F0261757BAE65C2 /* SeerrClient.app */,
 				4D82C291E836C1E1D59DFF4B /* SeerrClientTests.xctest */,
 				B100000000000000000000003 /* SeerrClientUITests.xctest */,
+				70520000000000000000A002 /* SeerrClientMac.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		70520000000000000000A008 /* App-macOS */ = {
+			isa = PBXGroup;
+			children = (
+				70520000000000000000A009 /* SeerrClientMacApp.swift */,
+				70520000000000000000A011 /* Info-macOS.plist */,
+				70520000000000000000A014 /* SeerrClientMac.entitlements */,
+				70520000000000000000A012 /* Assets-macOS.xcassets */,
+			);
+			path = "App-macOS";
 			sourceTree = "<group>";
 		};
 		7280BFAF535389DAA22B815A /* ViewModels */ = {
@@ -583,6 +602,7 @@
 			isa = PBXGroup;
 			children = (
 				333FDE8C21977C639CCE9388 /* App */,
+				70520000000000000000A008 /* App-macOS */,
 				2E923D3650FF5155D531868D /* Core */,
 				B6A0E75702CEE690EB8E95AF /* Features */,
 				CEE87EED834463BD311560B9 /* Assets.xcassets */,
@@ -755,6 +775,24 @@
 			productReference = B100000000000000000000003 /* SeerrClientUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		70520000000000000000A001 /* SeerrClientMac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 70520000000000000000A005 /* Build configuration list for PBXNativeTarget "SeerrClientMac" */;
+			buildPhases = (
+				70520000000000000000A006 /* Sources */,
+				70520000000000000000A007 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SeerrClientMac;
+			packageProductDependencies = (
+			);
+			productName = SeerrClientMac;
+			productReference = 70520000000000000000A002 /* SeerrClientMac.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -764,6 +802,10 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
+					70520000000000000000A001 = {
+						CreatedOnToolsVersion = 26.6;
+						ProvisioningStyle = Automatic;
+					};
 					B100000000000000000000006 = {
 						CreatedOnToolsVersion = 17.5;
 						TestTargetID = 9EA76F0C1C79685436156160;
@@ -787,6 +829,7 @@
 				9EA76F0C1C79685436156160 /* SeerrClient */,
 				5C6985FED49AADD9C9BE0632 /* SeerrClientTests */,
 				B100000000000000000000006 /* SeerrClientUITests */,
+				70520000000000000000A001 /* SeerrClientMac */,
 			);
 		};
 /* End PBXProject section */
@@ -808,9 +851,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		70520000000000000000A007 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70520000000000000000A013 /* Assets-macOS.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		70520000000000000000A006 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70520000000000000000A010 /* SeerrClientMacApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B100000000000000000000008 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1121,6 +1180,69 @@
 			};
 			name = Release;
 		};
+		70520000000000000000A003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SeerrClient/App-macOS/SeerrClientMac.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = WSM586GQ29;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = SeerrClient/App-macOS/Info-macOS.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.frostforgelabs.OctopusExplorer;
+				PRODUCT_NAME = SeerrClientMac;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5;
+			};
+			name = Debug;
+		};
+		70520000000000000000A004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SeerrClient/App-macOS/SeerrClientMac.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = WSM586GQ29;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = SeerrClient/App-macOS/Info-macOS.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.frostforgelabs.OctopusExplorer;
+				PRODUCT_NAME = SeerrClientMac;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5;
+			};
+			name = Release;
+		};
 		EDA8CBE7EA0851B3D568D27D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1227,6 +1349,15 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
+		};
+		70520000000000000000A005 /* Build configuration list for PBXNativeTarget "SeerrClientMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				70520000000000000000A003 /* Debug */,
+				70520000000000000000A004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
