@@ -1,0 +1,172 @@
+// MacContentView.swift
+// SeerrClientMac
+//
+// macOS root shell: auth branching + 2-column NavigationSplitView sidebar.
+// Feature screens are placeholders until M3.
+
+import SwiftUI
+
+// MARK: - Focused Values (menu commands)
+
+/// Routes the View → Toggle Sidebar (⌘0) command into the active scene.
+/// Shared with `MacAppCommands` in `SeerrClientMacApp`.
+struct MacSidebarVisibilityKey: FocusedValueKey {
+    typealias Value = Binding<NavigationSplitViewVisibility>
+}
+
+extension FocusedValues {
+    var macSidebarVisibility: Binding<NavigationSplitViewVisibility>? {
+        get { self[MacSidebarVisibilityKey.self] }
+        set { self[MacSidebarVisibilityKey.self] = newValue }
+    }
+}
+
+// MARK: - MacContentView
+
+/// macOS root view. Branches on the same `AppState` flags as iOS `ContentView`:
+/// server setup → login → main split shell → loading.
+struct MacContentView: View {
+
+    // MARK: - Dependencies
+
+    @Environment(AppState.self) private var appState
+    @Environment(ServerStore.self) private var serverStore
+
+    // MARK: - State
+
+    @State private var selectedTab = UITestLaunchConfiguration.current.initialTab
+    @State private var columnVisibility: NavigationSplitViewVisibility = .all
+
+    private var defaultSessionTab: AppTab {
+        UITestLaunchConfiguration.current.initialTab
+    }
+
+    // MARK: - Body
+
+    var body: some View {
+        Group {
+            if appState.showServerSetup {
+                MacServerListView()
+            } else if appState.showLogin, let server = appState.activeServer {
+                MacLoginView(
+                    server: server,
+                    appState: appState,
+                    serverStore: serverStore
+                )
+            } else if appState.showMainInterface {
+                mainSplitShell
+            } else {
+                loadingView
+            }
+        }
+        .frame(
+            minWidth: 960, idealWidth: 1240, maxWidth: .infinity,
+            minHeight: 640, idealHeight: 820, maxHeight: .infinity
+        )
+        .animation(.easeInOut(duration: 0.25), value: appState.showServerSetup)
+        .animation(.easeInOut(duration: 0.25), value: appState.showMainInterface)
+        .onChange(of: appState.activeServer?.id) { _, newValue in
+            guard newValue != nil else { return }
+            selectedTab = defaultSessionTab
+        }
+        .onChange(of: appState.activeServerCapabilities?.supportsWatchlistRead) { _, supported in
+            selectedTab = TabSelectionPolicy.resolvedTab(
+                current: selectedTab,
+                supportsWatchlistRead: supported,
+                defaultSessionTab: defaultSessionTab
+            )
+        }
+    }
+
+    // MARK: - Main Split Shell
+
+    @ViewBuilder
+    private var mainSplitShell: some View {
+        let supportsWatchlistRead = appState.activeServerCapabilities?.supportsWatchlistRead ?? false
+        let title = appState.activeServerCapabilities?.applicationTitle ?? "Octopus Explorer"
+        let subtitle = appState.activeServer?.displayName ?? ""
+
+        NavigationSplitView(columnVisibility: $columnVisibility) {
+            List(selection: $selectedTab) {
+                Label("Discover", systemImage: "film.stack")
+                    .tag(AppTab.discover)
+                Label("Search", systemImage: "magnifyingglass")
+                    .tag(AppTab.search)
+                Label("Requests", systemImage: "tray.full")
+                    .tag(AppTab.requests)
+                if supportsWatchlistRead {
+                    Label("Watchlist", systemImage: "bookmark")
+                        .tag(AppTab.watchlist)
+                }
+                Label("Profile", systemImage: "person.circle")
+                    .tag(AppTab.profile)
+            }
+            .listStyle(.sidebar)
+            .navigationSplitViewColumnWidth(min: 180, ideal: 220, max: 260)
+        } detail: {
+            NavigationStack {
+                detailContent(for: selectedTab)
+            }
+        }
+        .navigationTitle(title)
+        .navigationSubtitle(subtitle)
+        .focusedSceneValue(\.macSidebarVisibility, $columnVisibility)
+    }
+
+    // MARK: - Detail Placeholders (M3 fills these)
+
+    @ViewBuilder
+    private func detailContent(for tab: AppTab) -> some View {
+        switch tab {
+        case .discover:
+            tabPlaceholder(systemImage: "film.stack", title: "Discover", message: "coming in M3")
+        case .search:
+            tabPlaceholder(systemImage: "magnifyingglass", title: "Search", message: "coming in M3")
+        case .requests:
+            tabPlaceholder(systemImage: "tray.full", title: "Requests", message: "coming in M3")
+        case .watchlist:
+            tabPlaceholder(systemImage: "bookmark", title: "Watchlist", message: "coming in M3")
+        case .profile:
+            tabPlaceholder(systemImage: "person.circle", title: "Profile", message: "coming in M3")
+        }
+    }
+
+    @ViewBuilder
+    private func tabPlaceholder(systemImage: String, title: String, message: String) -> some View {
+        VStack(spacing: 16) {
+            Image(systemName: systemImage)
+                .font(.system(size: 52))
+                .foregroundStyle(.tint)
+            Text(title)
+                .font(.largeTitle.weight(.semibold))
+            Text(message)
+                .font(.title3)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    // MARK: - Loading
+
+    @ViewBuilder
+    private var loadingView: some View {
+        VStack(spacing: 16) {
+            ProgressView()
+                .controlSize(.large)
+            Text("Loading…")
+                .font(.title3)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+// MARK: - Preview
+
+#Preview("Server Setup") {
+    let store = ServerStore()
+    let state = AppState(serverStore: store)
+    MacContentView()
+        .environment(state)
+        .environment(store)
+}

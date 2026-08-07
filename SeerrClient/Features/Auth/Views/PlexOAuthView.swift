@@ -5,14 +5,14 @@
 //
 // Flow:
 //  1. POST https://plex.tv/api/v2/pins → receive pin { id, code }
-//  2. Open https://app.plex.tv/auth#?clientID=...&code=... in Safari via UIApplication.shared.open()
+//  2. Open https://app.plex.tv/auth#?clientID=...&code=... in the system browser
+//     via SwiftUI's openURL environment action
 //  3. Poll GET https://plex.tv/api/v2/pins/{id} at 2-second intervals until
 //     the `authToken` field is non-nil (or the user cancels)
 //  4. Call the `onAuthenticated(authToken:)` callback so the caller can POST
 //     /auth/plex on the Seerr server
 
 import SwiftUI
-import UIKit
 
 // MARK: - Plex OAuth Constants
 
@@ -77,8 +77,10 @@ private final class PlexOAuthViewModel {
 
     /// Begins the Plex pin OAuth flow.
     ///
-    /// - Parameter onSuccess: Called with the auth token when the user completes auth.
-    func start(onSuccess: @escaping (String) -> Void) {
+    /// - Parameters:
+    ///   - openURL: SwiftUI openURL action that opens the default system browser.
+    ///   - onSuccess: Called with the auth token when the user completes auth.
+    func start(openURL: OpenURLAction, onSuccess: @escaping (String) -> Void) {
         guard !isInProgress else { return }
         pollTask?.cancel()
         state = .requestingPin
@@ -90,7 +92,7 @@ private final class PlexOAuthViewModel {
                 state = .awaitingAuth
 
                 // Open the Plex web auth URL.
-                openPlexAuth(code: pin.code)
+                openPlexAuth(code: pin.code, openURL: openURL)
 
                 // Start polling for token.
                 state = .polling
@@ -141,7 +143,7 @@ private final class PlexOAuthViewModel {
 
     // MARK: - Step 2: Open Browser
 
-    private func openPlexAuth(code: String) {
+    private func openPlexAuth(code: String, openURL: OpenURLAction) {
         guard var components = URLComponents(string: PlexOAuth.plexAuthWebApp) else { return }
 
         // Plex auth URL uses a fragment for params (not query string).
@@ -156,11 +158,11 @@ private final class PlexOAuthViewModel {
 
         guard let authURL = components.url else { return }
 
-        // Open in Safari via UIApplication.shared.open() — this is the standard
+        // Open in the default system browser via openURL — this is the standard
         // approach for Plex OAuth. The app does not expect a redirect callback;
         // the polling loop handles completion independently. Using the system browser
         // also lets Plex reuse existing browser cookies if the user is already signed in.
-        UIApplication.shared.open(authURL)
+        openURL(authURL)
     }
 
     // MARK: - Step 3: Poll for Token
@@ -242,6 +244,7 @@ struct PlexOAuthView: View {
     // MARK: - State
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
     @State private var oauthVM = PlexOAuthViewModel()
 
     // MARK: - Body
@@ -303,9 +306,11 @@ struct PlexOAuthView: View {
                 Spacer()
             }
             .padding(.horizontal, 32)
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(placement: cancelToolbarPlacement) {
                     Button("Cancel") {
                         oauthVM.cancel()
                         dismiss()
@@ -314,11 +319,26 @@ struct PlexOAuthView: View {
             }
         }
         .onAppear {
-            oauthVM.start { token in
+            oauthVM.start(openURL: openURL) { token in
                 onAuthenticated(token)
                 dismiss()
             }
         }
+        .onDisappear {
+            // Defense-in-depth: cancel the pin-poll task if the sheet is dismissed
+            // by any means (swipe, Escape) rather than the explicit Cancel button.
+            oauthVM.cancel()
+        }
+    }
+
+    // MARK: - Toolbar Placement
+
+    private var cancelToolbarPlacement: ToolbarItemPlacement {
+        #if os(macOS)
+        .cancellationAction
+        #else
+        .navigationBarLeading
+        #endif
     }
 
     // MARK: - Sub-Views
@@ -332,7 +352,7 @@ struct PlexOAuthView: View {
                 .multilineTextAlignment(.center)
 
             Button {
-                oauthVM.start { token in
+                oauthVM.start(openURL: openURL) { token in
                     onAuthenticated(token)
                     dismiss()
                 }
@@ -377,7 +397,7 @@ struct PlexOAuthView: View {
                 .multilineTextAlignment(.center)
 
             Button {
-                oauthVM.start { token in
+                oauthVM.start(openURL: openURL) { token in
                     onAuthenticated(token)
                     dismiss()
                 }

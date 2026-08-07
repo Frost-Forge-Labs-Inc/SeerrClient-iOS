@@ -3,7 +3,7 @@
 //
 // macOS app entry point. Mirrors the iOS SeerrClientApp bootstrap:
 // constructs ServerStore + AppState, runs UITest bootstrap when enabled,
-// injects both into the environment, and presents MacRootView as the root.
+// injects both into the environment, and presents MacContentView as the root.
 
 import SwiftUI
 
@@ -15,7 +15,7 @@ import SwiftUI
 /// - Creates the singleton `AppState` that tracks the active server and auth status.
 /// - Creates the singleton `ServerStore` for persisting server configurations.
 /// - Injects both into the SwiftUI environment.
-/// - Presents `MacRootView` as the root scene (placeholders in M2a).
+/// - Presents `MacContentView` as the root scene (shell + login + server setup in M2b).
 @main
 struct SeerrClientMacApp: App {
 
@@ -44,11 +44,48 @@ struct SeerrClientMacApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MacRootView()
+            MacContentView()
                 .environment(appState)
                 .environment(serverStore)
+                .frame(minWidth: 960, minHeight: 640)
         }
-        .windowResizability(.contentSize)
-        .defaultSize(width: 1200, height: 800)
+        .windowResizability(.contentMinSize)
+        .defaultSize(width: 1240, height: 820)
+        .windowToolbarStyle(.unified(showsTitle: true))
+        .commands {
+            MacAppCommands(appState: appState)
+        }
+    }
+}
+
+// MARK: - Menu Commands (M2b minimal set)
+
+/// Minimal menu bar commands for M2b: Toggle Sidebar (⌘0) and Switch Server (⌘⇧K).
+/// Refresh / Find / poster density / Settings{} deferred to M3.
+private struct MacAppCommands: Commands {
+
+    let appState: AppState
+
+    @FocusedValue(\.macSidebarVisibility) private var sidebarVisibility
+
+    var body: some Commands {
+        // View → Toggle Sidebar (⌘0). Replaces the default sidebar group so we own the shortcut.
+        CommandGroup(replacing: .sidebar) {
+            Button("Toggle Sidebar") {
+                guard let sidebarVisibility else { return }
+                sidebarVisibility.wrappedValue =
+                    sidebarVisibility.wrappedValue == .detailOnly ? .all : .detailOnly
+            }
+            .keyboardShortcut("0", modifiers: .command)
+            .disabled(sidebarVisibility == nil)
+        }
+
+        CommandMenu("Server") {
+            Button("Switch Server / Account…") {
+                appState.returnToServerList()
+            }
+            .keyboardShortcut("k", modifiers: [.command, .shift])
+            .disabled(appState.showServerSetup)
+        }
     }
 }

@@ -139,7 +139,12 @@
 		70520000000000000000B034 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DF43906E0E406A94453EF1 /* AppState.swift */; };
 		70520000000000000000B035 /* TabSelectionPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = C500000000000000000000002 /* TabSelectionPolicy.swift */; };
 		70520000000000000000B036 /* UITestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000010 /* UITestSupport.swift */; };
-		70520000000000000000B038 /* MacRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70520000000000000000B037 /* MacRootView.swift */; };
+		70520000000000000000B038 /* MacContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70520000000000000000B037 /* MacContentView.swift */; };
+		70520000000000000000B040 /* PlatformColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70520000000000000000B039 /* PlatformColor.swift */; };
+		70520000000000000000B042 /* MacLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70520000000000000000B041 /* MacLoginView.swift */; };
+		70520000000000000000B044 /* MacServerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70520000000000000000B043 /* MacServerListView.swift */; };
+		70520000000000000000B046 /* MacAddServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70520000000000000000B045 /* MacAddServerView.swift */; };
+		70520000000000000000B047 /* PlexOAuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51003BCD28BD393CA457D535 /* PlexOAuthView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -263,7 +268,11 @@
 		70520000000000000000A011 /* Info-macOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-macOS.plist"; sourceTree = "<group>"; };
 		70520000000000000000A012 /* Assets-macOS.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets-macOS.xcassets"; sourceTree = "<group>"; };
 		70520000000000000000A014 /* SeerrClientMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SeerrClientMac.entitlements; sourceTree = "<group>"; };
-		70520000000000000000B037 /* MacRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacRootView.swift; sourceTree = "<group>"; };
+		70520000000000000000B037 /* MacContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacContentView.swift; sourceTree = "<group>"; };
+		70520000000000000000B039 /* PlatformColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformColor.swift; sourceTree = "<group>"; };
+		70520000000000000000B041 /* MacLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacLoginView.swift; sourceTree = "<group>"; };
+		70520000000000000000B043 /* MacServerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacServerListView.swift; sourceTree = "<group>"; };
+		70520000000000000000B045 /* MacAddServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacAddServerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -293,6 +302,7 @@
 				2B2E2AF58B675A4D937EF594 /* Repositories */,
 				7280BFAF535389DAA22B815A /* ViewModels */,
 				1C7C291376341FF9C6E63D76 /* Views */,
+				70520000000000000000B049 /* Views-macOS */,
 			);
 			path = ServerSetup;
 			sourceTree = "<group>";
@@ -352,6 +362,7 @@
 				C14B77DC4DAAA329610B5F51 /* Models */,
 				A6630818BF449B532B1A3A95 /* Navigation */,
 				29FA13DAA52BDF7547B1739E /* Networking */,
+				70520000000000000000B039 /* PlatformColor.swift */,
 				8FA6A624AC72349C43E33EAA /* Storage */,
 				45EF2489B853A7F9CFE594CE /* Utilities */,
 				B29B254700932AB71E9ECB63 /* Views */,
@@ -466,12 +477,29 @@
 			isa = PBXGroup;
 			children = (
 				70520000000000000000A009 /* SeerrClientMacApp.swift */,
-				70520000000000000000B037 /* MacRootView.swift */,
+				70520000000000000000B037 /* MacContentView.swift */,
 				70520000000000000000A011 /* Info-macOS.plist */,
 				70520000000000000000A014 /* SeerrClientMac.entitlements */,
 				70520000000000000000A012 /* Assets-macOS.xcassets */,
 			);
 			path = "App-macOS";
+			sourceTree = "<group>";
+		};
+		70520000000000000000B048 /* Views-macOS */ = {
+			isa = PBXGroup;
+			children = (
+				70520000000000000000B041 /* MacLoginView.swift */,
+			);
+			path = "Views-macOS";
+			sourceTree = "<group>";
+		};
+		70520000000000000000B049 /* Views-macOS */ = {
+			isa = PBXGroup;
+			children = (
+				70520000000000000000B043 /* MacServerListView.swift */,
+				70520000000000000000B045 /* MacAddServerView.swift */,
+			);
+			path = "Views-macOS";
 			sourceTree = "<group>";
 		};
 		7280BFAF535389DAA22B815A /* ViewModels */ = {
@@ -700,6 +728,7 @@
 				DD63420CF12ECE7C90046BA6 /* Repositories */,
 				743281D0A2EC8B7A0A03B805 /* ViewModels */,
 				FB94C5E1F628C94E87689C82 /* Views */,
+				70520000000000000000B048 /* Views-macOS */,
 			);
 			path = Auth;
 			sourceTree = "<group>";
@@ -906,7 +935,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				70520000000000000000A010 /* SeerrClientMacApp.swift in Sources */,
-				70520000000000000000B038 /* MacRootView.swift in Sources */,
+				70520000000000000000B038 /* MacContentView.swift in Sources */,
+				70520000000000000000B040 /* PlatformColor.swift in Sources */,
+				70520000000000000000B042 /* MacLoginView.swift in Sources */,
+				70520000000000000000B044 /* MacServerListView.swift in Sources */,
+				70520000000000000000B046 /* MacAddServerView.swift in Sources */,
+				70520000000000000000B047 /* PlexOAuthView.swift in Sources */,
 				70520000000000000000B001 /* SeerrModels.swift in Sources */,
 				70520000000000000000B002 /* ServerConfiguration.swift in Sources */,
 				70520000000000000000B003 /* MediaNavDestinations.swift in Sources */,
