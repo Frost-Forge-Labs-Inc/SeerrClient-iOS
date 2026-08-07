@@ -2,7 +2,7 @@
 // SeerrClientMac
 //
 // macOS root shell: auth branching + 2-column NavigationSplitView sidebar.
-// M3a: Discover + Search + media detail navigation destinations.
+// M3b: Discover + Search + Requests + Watchlist + media detail destinations.
 
 import SwiftUI
 
@@ -147,9 +147,18 @@ struct MacContentView: View {
                     RequestDetailView(requestID: dest.requestID)
                 }
         case .requests:
-            tabPlaceholder(systemImage: "tray.full", title: "Requests", message: "coming in M3")
+            RequestsView()
         case .watchlist:
-            tabPlaceholder(systemImage: "bookmark", title: "Watchlist", message: "coming in M3")
+            WatchlistView()
+                .navigationDestination(for: MovieNavDestination.self) { dest in
+                    MovieDetailView(movieId: dest.id, movieTitle: dest.title)
+                }
+                .navigationDestination(for: TvNavDestination.self) { dest in
+                    TvShowDetailView(tvId: dest.id, showTitle: dest.title)
+                }
+                .navigationDestination(for: CollectionNavDestination.self) { dest in
+                    CollectionDetailView(collectionId: dest.id, collectionName: dest.name)
+                }
         case .profile:
             tabPlaceholder(systemImage: "person.circle", title: "Profile", message: "coming in M3")
         }

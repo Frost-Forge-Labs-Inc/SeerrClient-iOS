@@ -69,7 +69,11 @@ struct WatchlistView: View {
                 proxy.size.width,
                 UITestLaunchConfiguration.current.watchlistContainerWidth ?? proxy.size.width
             )
+            #if os(macOS)
+            let layout = WatchlistGridLayout(containerWidth: renderedWidth, minimumCardWidth: 180)
+            #else
             let layout = WatchlistGridLayout(containerWidth: renderedWidth)
+            #endif
 
             Group {
                 if let viewModel {
@@ -82,7 +86,9 @@ struct WatchlistView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
         .navigationTitle("Watchlist")
+        #if !os(macOS)
         .navigationBarTitleDisplayMode(.large)
+        #endif
         .task {
             guard let viewModel = makeViewModelIfNeeded() else { return }
 
@@ -164,7 +170,7 @@ struct WatchlistView: View {
                 LazyVGrid(columns: layout.columns, spacing: layout.spacing) {
                     ForEach(0..<8, id: \.self) { _ in
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(Color(.systemGray5))
+                            .fill(Color.platformFill)
                             .frame(height: layout.cardWidth * 1.5)
                             .overlay { ShimmerView() }
                     }

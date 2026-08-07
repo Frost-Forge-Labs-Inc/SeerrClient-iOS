@@ -167,6 +167,8 @@
 		70520000000000000000B063 /* RequestDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71C254BEA64FC0AA7FDFAFB /* RequestDetailView.swift */; };
 		70520000000000000000B064 /* RequestCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9CACE529E1925DFDD5CF20 /* RequestCardView.swift */; };
 		70520000000000000000B071 /* PlatformColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70520000000000000000B039 /* PlatformColor.swift */; };
+		70520000000000000000B073 /* RequestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70520000000000000000B072 /* RequestsView.swift */; };
+		70520000000000000000B075 /* WatchlistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0008919C3BEB59A2D341CC18 /* WatchlistView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -295,6 +297,7 @@
 		70520000000000000000B041 /* MacLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacLoginView.swift; sourceTree = "<group>"; };
 		70520000000000000000B043 /* MacServerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacServerListView.swift; sourceTree = "<group>"; };
 		70520000000000000000B045 /* MacAddServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacAddServerView.swift; sourceTree = "<group>"; };
+		70520000000000000000B072 /* RequestsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -568,12 +571,21 @@
 			path = Storage;
 			sourceTree = "<group>";
 		};
+		70520000000000000000B074 /* Views-macOS */ = {
+			isa = PBXGroup;
+			children = (
+				70520000000000000000B072 /* RequestsView.swift */,
+			);
+			path = "Views-macOS";
+			sourceTree = "<group>";
+		};
 		91908D1BCB3D309D2702F969 /* Requests */ = {
 			isa = PBXGroup;
 			children = (
 				B0CF517DAB0A6C622C486AD2 /* Repositories */,
 				15A3F5EC4788F924EF3029E1 /* ViewModels */,
 				F4BC47AC41B72688A5401BDF /* Views */,
+				70520000000000000000B074 /* Views-macOS */,
 			);
 			path = Requests;
 			sourceTree = "<group>";
@@ -1020,6 +1032,8 @@
 				70520000000000000000B062 /* CreateRequestView.swift in Sources */,
 				70520000000000000000B063 /* RequestDetailView.swift in Sources */,
 				70520000000000000000B064 /* RequestCardView.swift in Sources */,
+				70520000000000000000B073 /* RequestsView.swift in Sources */,
+				70520000000000000000B075 /* WatchlistView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
