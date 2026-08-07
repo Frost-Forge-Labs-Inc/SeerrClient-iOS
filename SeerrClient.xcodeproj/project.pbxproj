@@ -103,6 +103,43 @@
 		FA4712AA673C6908505E1549 /* PersonSearchCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD05BFBDB2A8FDE3892F0A7 /* PersonSearchCardView.swift */; };
 		70520000000000000000A010 /* SeerrClientMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70520000000000000000A009 /* SeerrClientMacApp.swift */; };
 		70520000000000000000A013 /* Assets-macOS.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 70520000000000000000A012 /* Assets-macOS.xcassets */; };
+		70520000000000000000B001 /* SeerrModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9E349149C88570515FD1F3 /* SeerrModels.swift */; };
+		70520000000000000000B002 /* ServerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBEB581AA47ACD7AC2BF46A2 /* ServerConfiguration.swift */; };
+		70520000000000000000B003 /* MediaNavDestinations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87C5B119185D13BDC0B2ACC /* MediaNavDestinations.swift */; };
+		70520000000000000000B004 /* APIEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA9BC8FEC91C03F2E9EF262 /* APIEndpoints.swift */; };
+		70520000000000000000B005 /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC276DA8E190B9425423E1A /* APIError.swift */; };
+		70520000000000000000B006 /* SeerrAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F23B78D85AD082DF788C99 /* SeerrAPIClient.swift */; };
+		70520000000000000000B007 /* TrustManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A21FB0924B241FDC4D8DC9 /* TrustManager.swift */; };
+		70520000000000000000B008 /* UITestURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000011 /* UITestURLProtocol.swift */; };
+		70520000000000000000B009 /* URLNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27074C23E43436441EF6F02F /* URLNormalizer.swift */; };
+		70520000000000000000B010 /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81677D5A77C4A46EED374C39 /* KeychainManager.swift */; };
+		70520000000000000000B011 /* ServerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC2FF07F37E85C5506E7A09E /* ServerStore.swift */; };
+		70520000000000000000B012 /* DateFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A002FFC73E8F244FA27489C /* DateFormatting.swift */; };
+		70520000000000000000B013 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199CDE54AD436C7475063960 /* Logger.swift */; };
+		70520000000000000000B014 /* TMDBImageURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69B950886B50BE2637AA796 /* TMDBImageURL.swift */; };
+		70520000000000000000B015 /* ShimmerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B06681BFD58F3624A783EF4 /* ShimmerView.swift */; };
+		70520000000000000000B016 /* AuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74273EE34B44ADDCFCA9326 /* AuthRepository.swift */; };
+		70520000000000000000B017 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2E98367B74869339FA13D2 /* AuthViewModel.swift */; };
+		70520000000000000000B018 /* DiscoverRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB38D0BE2C5D424D1208B1C /* DiscoverRepository.swift */; };
+		70520000000000000000B019 /* DiscoverViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B51E03581D50B930FC87D744 /* DiscoverViewModel.swift */; };
+		70520000000000000000B020 /* MediaDetailRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5971F7AFF27722D93F4B2C4A /* MediaDetailRepository.swift */; };
+		70520000000000000000B021 /* CollectionDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D756A645A74A0BAA910B2F /* CollectionDetailViewModel.swift */; };
+		70520000000000000000B022 /* MovieDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 108613EEFAC5605F2FFE339D /* MovieDetailViewModel.swift */; };
+		70520000000000000000B023 /* TvShowDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F1D3BB4C54F0F6C79EC2F /* TvShowDetailViewModel.swift */; };
+		70520000000000000000B024 /* RequestRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611335D5B4B13E4CCE58A230 /* RequestRepository.swift */; };
+		70520000000000000000B025 /* RequestDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A22094D4EC82D7864FB6326 /* RequestDetailViewModel.swift */; };
+		70520000000000000000B026 /* RequestListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D1E4FA44C1BCA098500049 /* RequestListViewModel.swift */; };
+		70520000000000000000B027 /* SearchRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86D75F539EE4FB9EDCCD4FD8 /* SearchRepository.swift */; };
+		70520000000000000000B028 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73FDBE818C29FCA8DBA88E3 /* SearchViewModel.swift */; };
+		70520000000000000000B029 /* ServerRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559DE2B239D468A40F567DF2 /* ServerRepository.swift */; };
+		70520000000000000000B030 /* ServerSetupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4FE6055B66B1402A9BA91C3 /* ServerSetupViewModel.swift */; };
+		70520000000000000000B031 /* ProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78ABD9B388909ABD99B582D2 /* ProfileRepository.swift */; };
+		70520000000000000000B032 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08F8FBBCF15E572E36DDEE7D /* ProfileViewModel.swift */; };
+		70520000000000000000B033 /* WatchlistViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE74B4F94F2F612047C9284C /* WatchlistViewModel.swift */; };
+		70520000000000000000B034 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DF43906E0E406A94453EF1 /* AppState.swift */; };
+		70520000000000000000B035 /* TabSelectionPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = C500000000000000000000002 /* TabSelectionPolicy.swift */; };
+		70520000000000000000B036 /* UITestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000010 /* UITestSupport.swift */; };
+		70520000000000000000B038 /* MacRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70520000000000000000B037 /* MacRootView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -226,6 +263,7 @@
 		70520000000000000000A011 /* Info-macOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-macOS.plist"; sourceTree = "<group>"; };
 		70520000000000000000A012 /* Assets-macOS.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets-macOS.xcassets"; sourceTree = "<group>"; };
 		70520000000000000000A014 /* SeerrClientMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SeerrClientMac.entitlements; sourceTree = "<group>"; };
+		70520000000000000000B037 /* MacRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacRootView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -428,6 +466,7 @@
 			isa = PBXGroup;
 			children = (
 				70520000000000000000A009 /* SeerrClientMacApp.swift */,
+				70520000000000000000B037 /* MacRootView.swift */,
 				70520000000000000000A011 /* Info-macOS.plist */,
 				70520000000000000000A014 /* SeerrClientMac.entitlements */,
 				70520000000000000000A012 /* Assets-macOS.xcassets */,
@@ -867,6 +906,43 @@
 			buildActionMask = 2147483647;
 			files = (
 				70520000000000000000A010 /* SeerrClientMacApp.swift in Sources */,
+				70520000000000000000B038 /* MacRootView.swift in Sources */,
+				70520000000000000000B001 /* SeerrModels.swift in Sources */,
+				70520000000000000000B002 /* ServerConfiguration.swift in Sources */,
+				70520000000000000000B003 /* MediaNavDestinations.swift in Sources */,
+				70520000000000000000B004 /* APIEndpoints.swift in Sources */,
+				70520000000000000000B005 /* APIError.swift in Sources */,
+				70520000000000000000B006 /* SeerrAPIClient.swift in Sources */,
+				70520000000000000000B007 /* TrustManager.swift in Sources */,
+				70520000000000000000B008 /* UITestURLProtocol.swift in Sources */,
+				70520000000000000000B009 /* URLNormalizer.swift in Sources */,
+				70520000000000000000B010 /* KeychainManager.swift in Sources */,
+				70520000000000000000B011 /* ServerStore.swift in Sources */,
+				70520000000000000000B012 /* DateFormatting.swift in Sources */,
+				70520000000000000000B013 /* Logger.swift in Sources */,
+				70520000000000000000B014 /* TMDBImageURL.swift in Sources */,
+				70520000000000000000B015 /* ShimmerView.swift in Sources */,
+				70520000000000000000B016 /* AuthRepository.swift in Sources */,
+				70520000000000000000B017 /* AuthViewModel.swift in Sources */,
+				70520000000000000000B018 /* DiscoverRepository.swift in Sources */,
+				70520000000000000000B019 /* DiscoverViewModel.swift in Sources */,
+				70520000000000000000B020 /* MediaDetailRepository.swift in Sources */,
+				70520000000000000000B021 /* CollectionDetailViewModel.swift in Sources */,
+				70520000000000000000B022 /* MovieDetailViewModel.swift in Sources */,
+				70520000000000000000B023 /* TvShowDetailViewModel.swift in Sources */,
+				70520000000000000000B024 /* RequestRepository.swift in Sources */,
+				70520000000000000000B025 /* RequestDetailViewModel.swift in Sources */,
+				70520000000000000000B026 /* RequestListViewModel.swift in Sources */,
+				70520000000000000000B027 /* SearchRepository.swift in Sources */,
+				70520000000000000000B028 /* SearchViewModel.swift in Sources */,
+				70520000000000000000B029 /* ServerRepository.swift in Sources */,
+				70520000000000000000B030 /* ServerSetupViewModel.swift in Sources */,
+				70520000000000000000B031 /* ProfileRepository.swift in Sources */,
+				70520000000000000000B032 /* ProfileViewModel.swift in Sources */,
+				70520000000000000000B033 /* WatchlistViewModel.swift in Sources */,
+				70520000000000000000B034 /* AppState.swift in Sources */,
+				70520000000000000000B035 /* TabSelectionPolicy.swift in Sources */,
+				70520000000000000000B036 /* UITestSupport.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
