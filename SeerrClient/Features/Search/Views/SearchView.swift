@@ -27,9 +27,17 @@ struct SearchView: View {
 
     // MARK: - Layout
 
+    #if os(macOS)
+    private let gridColumns = [
+        GridItem(.adaptive(minimum: 180), spacing: 20)
+    ]
+    private let gridSpacing: CGFloat = 20
+    #else
     private let gridColumns = [
         GridItem(.adaptive(minimum: 130), spacing: 12)
     ]
+    private let gridSpacing: CGFloat = 16
+    #endif
 
     // MARK: - Body
 
@@ -42,6 +50,22 @@ struct SearchView: View {
             }
         }
         .navigationTitle("Search")
+        #if os(macOS)
+        .searchable(
+            text: Binding(
+                get: { viewModel?.searchQuery ?? pendingQuery },
+                set: {
+                    if viewModel != nil {
+                        viewModel?.searchQuery = $0
+                    } else {
+                        pendingQuery = $0
+                    }
+                }
+            ),
+            placement: .toolbar,
+            prompt: "Movies, TV shows, people..."
+        )
+        #else
         .searchable(
             text: Binding(
                 get: { viewModel?.searchQuery ?? pendingQuery },
@@ -56,6 +80,7 @@ struct SearchView: View {
             placement: .navigationBarDrawer(displayMode: .always),
             prompt: "Movies, TV shows, people..."
         )
+        #endif
         .task {
             if viewModel == nil {
                 guard let client = appState.apiClient else { return }
@@ -126,21 +151,21 @@ struct SearchView: View {
 
     @ViewBuilder
     private var loadingContent: some View {
-        LazyVGrid(columns: gridColumns, spacing: 16) {
+        LazyVGrid(columns: gridColumns, spacing: gridSpacing) {
             ForEach(0..<6, id: \.self) { _ in
                 VStack(alignment: .leading, spacing: 6) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(Color(.systemGray5))
+                        .fill(Color.platformFill)
                         .aspectRatio(2.0 / 3.0, contentMode: .fit)
                         .overlay { ShimmerView() }
                         .clipShape(RoundedRectangle(cornerRadius: 8))
 
                     RoundedRectangle(cornerRadius: 3)
-                        .fill(Color(.systemGray5))
+                        .fill(Color.platformFill)
                         .frame(height: 12)
 
                     RoundedRectangle(cornerRadius: 3)
-                        .fill(Color(.systemGray6))
+                        .fill(Color.platformSecondaryFill)
                         .frame(width: 60, height: 10)
                 }
             }
@@ -157,7 +182,7 @@ struct SearchView: View {
             VStack(spacing: 0) {
                 filterChips(vm)
 
-                LazyVGrid(columns: gridColumns, spacing: 16) {
+                LazyVGrid(columns: gridColumns, spacing: gridSpacing) {
                     ForEach(vm.results) { item in
                         if item.isPerson {
                             PersonSearchCardView(person: item) {

@@ -145,6 +145,28 @@
 		70520000000000000000B044 /* MacServerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70520000000000000000B043 /* MacServerListView.swift */; };
 		70520000000000000000B046 /* MacAddServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70520000000000000000B045 /* MacAddServerView.swift */; };
 		70520000000000000000B047 /* PlexOAuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51003BCD28BD393CA457D535 /* PlexOAuthView.swift */; };
+		70520000000000000000B050 /* DiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB1D51FC4F2154A8F0E010E /* DiscoverView.swift */; };
+		70520000000000000000B051 /* DiscoverSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2F9EE06CCC51F03BC5B4F6 /* DiscoverSliderView.swift */; };
+		70520000000000000000B052 /* MediaCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69D7F345716A3DE42F3294A /* MediaCardView.swift */; };
+		70520000000000000000B053 /* StatusBadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BAF214E68CE207CB709358 /* StatusBadgeView.swift */; };
+		70520000000000000000B054 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA416916A3938B893C902DD4 /* SearchView.swift */; };
+		70520000000000000000B055 /* SearchFiltersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8691565367C74E25BBCE6CCA /* SearchFiltersView.swift */; };
+		70520000000000000000B056 /* PersonSearchCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD05BFBDB2A8FDE3892F0A7 /* PersonSearchCardView.swift */; };
+		70520000000000000000B057 /* MovieDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6312DDACD311AA170C2B35B3 /* MovieDetailView.swift */; };
+		70520000000000000000B058 /* TvShowDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF31ECDFD93EF7800E74AFA1 /* TvShowDetailView.swift */; };
+		70520000000000000000B059 /* CollectionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD6AD08FC1494D6184ACE7B2 /* CollectionDetailView.swift */; };
+		70520000000000000000B05A /* CastCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC5117590DD72AE3D81042E /* CastCardView.swift */; };
+		70520000000000000000B05B /* CastCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D80AE934D8EE61E68CC5F /* CastCarouselView.swift */; };
+		70520000000000000000B05C /* EpisodeCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EBB05AAEDED3FBD74CE5011 /* EpisodeCardView.swift */; };
+		70520000000000000000B05D /* EpisodeListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D817ADAEC73E667AF2AACDDB /* EpisodeListView.swift */; };
+		70520000000000000000B05E /* MediaDetailHeroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 429FE31E1061D26176F2FF86 /* MediaDetailHeroView.swift */; };
+		70520000000000000000B05F /* MediaMetadataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08B59BC79632764E4364FC5D /* MediaMetadataView.swift */; };
+		70520000000000000000B060 /* MediaHorizontalRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CACE715F2E81DB7F34E04B /* MediaHorizontalRowView.swift */; };
+		70520000000000000000B061 /* RequestButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006621B1BAB219A3DA268155 /* RequestButtonView.swift */; };
+		70520000000000000000B062 /* CreateRequestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C72A5BFF47CB301F381200 /* CreateRequestView.swift */; };
+		70520000000000000000B063 /* RequestDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71C254BEA64FC0AA7FDFAFB /* RequestDetailView.swift */; };
+		70520000000000000000B064 /* RequestCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9CACE529E1925DFDD5CF20 /* RequestCardView.swift */; };
+		70520000000000000000B071 /* PlatformColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70520000000000000000B039 /* PlatformColor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -977,6 +999,27 @@
 				70520000000000000000B034 /* AppState.swift in Sources */,
 				70520000000000000000B035 /* TabSelectionPolicy.swift in Sources */,
 				70520000000000000000B036 /* UITestSupport.swift in Sources */,
+				70520000000000000000B050 /* DiscoverView.swift in Sources */,
+				70520000000000000000B051 /* DiscoverSliderView.swift in Sources */,
+				70520000000000000000B052 /* MediaCardView.swift in Sources */,
+				70520000000000000000B053 /* StatusBadgeView.swift in Sources */,
+				70520000000000000000B054 /* SearchView.swift in Sources */,
+				70520000000000000000B055 /* SearchFiltersView.swift in Sources */,
+				70520000000000000000B056 /* PersonSearchCardView.swift in Sources */,
+				70520000000000000000B057 /* MovieDetailView.swift in Sources */,
+				70520000000000000000B058 /* TvShowDetailView.swift in Sources */,
+				70520000000000000000B059 /* CollectionDetailView.swift in Sources */,
+				70520000000000000000B05A /* CastCardView.swift in Sources */,
+				70520000000000000000B05B /* CastCarouselView.swift in Sources */,
+				70520000000000000000B05C /* EpisodeCardView.swift in Sources */,
+				70520000000000000000B05D /* EpisodeListView.swift in Sources */,
+				70520000000000000000B05E /* MediaDetailHeroView.swift in Sources */,
+				70520000000000000000B05F /* MediaMetadataView.swift in Sources */,
+				70520000000000000000B060 /* MediaHorizontalRowView.swift in Sources */,
+				70520000000000000000B061 /* RequestButtonView.swift in Sources */,
+				70520000000000000000B062 /* CreateRequestView.swift in Sources */,
+				70520000000000000000B063 /* RequestDetailView.swift in Sources */,
+				70520000000000000000B064 /* RequestCardView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1063,6 +1106,7 @@
 				1AA4AFDBF19E0B179817133F /* ServerSetupViewModel.swift in Sources */,
 				71AD4E3660A3A157516A5398 /* ServerStore.swift in Sources */,
 				B3C998630B5747E9F90FA870 /* ShimmerView.swift in Sources */,
+				70520000000000000000B071 /* PlatformColor.swift in Sources */,
 				9C1ABC8EA6F97142A90A8646 /* StatusBadgeView.swift in Sources */,
 				438E49E22858126B23CF4BFF /* TMDBImageURL.swift in Sources */,
 				EC8FF0FE880AC023DF8143C9 /* TrustManager.swift in Sources */,

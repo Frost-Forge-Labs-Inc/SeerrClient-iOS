@@ -64,7 +64,7 @@ struct PersonSearchCardView: View {
         .clipShape(Circle())
         .background {
             Circle()
-                .fill(Color(.systemGray5))
+                .fill(Color.platformFill)
         }
     }
 
@@ -73,7 +73,7 @@ struct PersonSearchCardView: View {
     private var profilePlaceholder: some View {
         ZStack {
             Circle()
-                .fill(Color(.systemGray5))
+                .fill(Color.platformFill)
             Image(systemName: "person.fill")
                 .font(.title2)
                 .foregroundStyle(.secondary)

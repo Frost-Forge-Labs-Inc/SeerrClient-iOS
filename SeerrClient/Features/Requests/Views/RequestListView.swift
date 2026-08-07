@@ -5,13 +5,8 @@
 
 import SwiftUI
 
-// MARK: - RequestNavDestination
-
-struct RequestNavDestination: Hashable {
-    let requestID: Int
-}
-
 // MARK: - RequestListView
+// RequestNavDestination lives in RequestDetailView.swift (shared nav type).
 
 struct RequestListView: View {
 

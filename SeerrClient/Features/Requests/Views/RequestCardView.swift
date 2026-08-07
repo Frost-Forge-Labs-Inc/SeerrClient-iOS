@@ -138,7 +138,7 @@ struct RequestCardView: View {
             Spacer(minLength: 0)
         }
         .padding(12)
-        .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
+        .background(Color.platformSecondaryBackground, in: RoundedRectangle(cornerRadius: 12))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilityLabel)
     }
@@ -155,7 +155,7 @@ struct RequestCardView: View {
                     .aspectRatio(contentMode: .fill)
             default:
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(Color(.systemGray5))
+                    .fill(Color.platformFill)
                     .overlay {
                         Image(systemName: "film")
                             .font(.title3)

@@ -105,7 +105,7 @@ struct MediaMetadataView: View {
                         .font(.caption)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 4)
-                        .background(Color(.systemGray5))
+                        .background(Color.platformFill)
                         .clipShape(Capsule())
                 }
             }

@@ -2,7 +2,7 @@
 // SeerrClientMac
 //
 // macOS root shell: auth branching + 2-column NavigationSplitView sidebar.
-// Feature screens are placeholders until M3.
+// M3a: Discover + Search + media detail navigation destinations.
 
 import SwiftUI
 
@@ -113,15 +113,39 @@ struct MacContentView: View {
         .focusedSceneValue(\.macSidebarVisibility, $columnVisibility)
     }
 
-    // MARK: - Detail Placeholders (M3 fills these)
+    // MARK: - Detail Content
 
     @ViewBuilder
     private func detailContent(for tab: AppTab) -> some View {
         switch tab {
         case .discover:
-            tabPlaceholder(systemImage: "film.stack", title: "Discover", message: "coming in M3")
+            DiscoverView()
+                .navigationDestination(for: MovieNavDestination.self) { dest in
+                    MovieDetailView(movieId: dest.id, movieTitle: dest.title)
+                }
+                .navigationDestination(for: TvNavDestination.self) { dest in
+                    TvShowDetailView(tvId: dest.id, showTitle: dest.title)
+                }
+                .navigationDestination(for: CollectionNavDestination.self) { dest in
+                    CollectionDetailView(collectionId: dest.id, collectionName: dest.name)
+                }
+                .navigationDestination(for: RequestNavDestination.self) { dest in
+                    RequestDetailView(requestID: dest.requestID)
+                }
         case .search:
-            tabPlaceholder(systemImage: "magnifyingglass", title: "Search", message: "coming in M3")
+            SearchView()
+                .navigationDestination(for: MovieNavDestination.self) { dest in
+                    MovieDetailView(movieId: dest.id, movieTitle: dest.title)
+                }
+                .navigationDestination(for: TvNavDestination.self) { dest in
+                    TvShowDetailView(tvId: dest.id, showTitle: dest.title)
+                }
+                .navigationDestination(for: CollectionNavDestination.self) { dest in
+                    CollectionDetailView(collectionId: dest.id, collectionName: dest.name)
+                }
+                .navigationDestination(for: RequestNavDestination.self) { dest in
+                    RequestDetailView(requestID: dest.requestID)
+                }
         case .requests:
             tabPlaceholder(systemImage: "tray.full", title: "Requests", message: "coming in M3")
         case .watchlist:

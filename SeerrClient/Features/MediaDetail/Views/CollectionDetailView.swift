@@ -40,7 +40,24 @@ struct CollectionDetailView: View {
             }
         }
         .navigationTitle(collectionName)
+        #if !os(macOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
+        .toolbar {
+            #if os(macOS)
+            if let vm = viewModel {
+                let requestable = vm.requestableMovies
+                if !requestable.isEmpty {
+                    ToolbarItem(placement: .primaryAction) {
+                        Button("Request All") {
+                            vm.requestAll()
+                        }
+                        .accessibilityIdentifier("collection.requestAll")
+                    }
+                }
+            }
+            #endif
+        }
         .task {
             if viewModel == nil {
                 guard let client = appState.apiClient else { return }
@@ -72,6 +89,64 @@ struct CollectionDetailView: View {
 
     @ViewBuilder
     private func loadedContent(_ collection: Collection, vm: CollectionDetailViewModel) -> some View {
+        #if os(macOS)
+        GeometryReader { geo in
+            if geo.size.width >= 900 {
+                HStack(alignment: .top, spacing: 0) {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 16) {
+                            collectionBackdrop(collection)
+                            if let overview = collection.overview, !overview.isEmpty {
+                                Text(overview)
+                                    .font(.body)
+                                    .foregroundStyle(.secondary)
+                                    .padding(.horizontal)
+                            }
+                            let requestable = vm.requestableMovies
+                            if !requestable.isEmpty {
+                                requestControls(vm: vm, requestableCount: requestable.count)
+                                    .padding(.horizontal)
+                            } else {
+                                Text("All movies in this collection are already available or have active requests.")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                    .padding(.horizontal)
+                            }
+                            Spacer(minLength: 40)
+                        }
+                    }
+                    .frame(minWidth: 380, idealWidth: 440, maxWidth: 520)
+
+                    Divider()
+
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("\(collection.parts?.count ?? 0) Movies")
+                                .font(.headline)
+                                .padding(.horizontal)
+                                .padding(.top)
+                            LazyVStack(spacing: 12) {
+                                ForEach(collection.parts ?? [], id: \.id) { movie in
+                                    collectionMovieRow(movie, vm: vm)
+                                }
+                            }
+                            .padding(.horizontal)
+                            Spacer(minLength: 40)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+            } else {
+                singleColumnLoadedContent(collection, vm: vm)
+            }
+        }
+        .sheet(isPresented: Binding(
+            get: { vm.showRequestSheet },
+            set: { if !$0 { vm.dismissRequestSheet() } }
+        )) {
+            requestQueueSheet(vm: vm)
+        }
+        #else
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
 
@@ -83,7 +158,7 @@ struct CollectionDetailView: View {
                             .aspectRatio(16.0 / 9.0, contentMode: .fill)
                     } placeholder: {
                         Rectangle()
-                            .fill(Color(.systemGray5))
+                            .fill(Color.platformFill)
                             .aspectRatio(16.0 / 9.0, contentMode: .fit)
                             .overlay { ShimmerView() }
                     }
@@ -130,7 +205,60 @@ struct CollectionDetailView: View {
         )) {
             requestQueueSheet(vm: vm)
         }
+        #endif
     }
+
+    #if os(macOS)
+    @ViewBuilder
+    private func singleColumnLoadedContent(_ collection: Collection, vm: CollectionDetailViewModel) -> some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                collectionBackdrop(collection)
+                VStack(alignment: .leading, spacing: 16) {
+                    if let overview = collection.overview, !overview.isEmpty {
+                        Text(overview)
+                            .font(.body)
+                            .foregroundStyle(.secondary)
+                    }
+                    let requestable = vm.requestableMovies
+                    if !requestable.isEmpty {
+                        requestControls(vm: vm, requestableCount: requestable.count)
+                    } else {
+                        Text("All movies in this collection are already available or have active requests.")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                    Divider()
+                    Text("\(collection.parts?.count ?? 0) Movies")
+                        .font(.headline)
+                    LazyVStack(spacing: 12) {
+                        ForEach(collection.parts ?? [], id: \.id) { movie in
+                            collectionMovieRow(movie, vm: vm)
+                        }
+                    }
+                }
+                .padding()
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func collectionBackdrop(_ collection: Collection) -> some View {
+        if let backdropPath = collection.backdropPath {
+            AsyncImage(url: tmdbImageURL(backdropPath, size: "w780")) { image in
+                image
+                    .resizable()
+                    .aspectRatio(16.0 / 9.0, contentMode: .fill)
+            } placeholder: {
+                Rectangle()
+                    .fill(Color.platformFill)
+                    .aspectRatio(16.0 / 9.0, contentMode: .fit)
+                    .overlay { ShimmerView() }
+            }
+            .clipped()
+        }
+    }
+    #endif
 
     // MARK: - Collection Movie Row
 
@@ -146,7 +274,7 @@ struct CollectionDetailView: View {
                     .aspectRatio(2.0 / 3.0, contentMode: .fill)
             } placeholder: {
                 Rectangle()
-                    .fill(Color(.systemGray5))
+                    .fill(Color.platformFill)
             }
             .frame(width: 54, height: 81)
             .clipShape(RoundedRectangle(cornerRadius: 8))
@@ -313,11 +441,19 @@ struct CollectionDetailView: View {
             ) {
                 vm.handleRequestSuccess()
             }
+            #if os(macOS)
+            .frame(width: 480, height: 620)
+            #else
             .presentationDetents([.medium, .large])
+            #endif
             .id(movie.id)
         } else {
             ProgressView()
+                #if os(macOS)
+                .frame(width: 480, height: 200)
+                #else
                 .presentationDetents([.medium])
+                #endif
         }
     }
 
@@ -328,14 +464,14 @@ struct CollectionDetailView: View {
         ScrollView {
             VStack(spacing: 0) {
                 Rectangle()
-                    .fill(Color(.systemGray5))
+                    .fill(Color.platformFill)
                     .aspectRatio(16.0 / 9.0, contentMode: .fit)
                     .overlay { ShimmerView() }
 
                 VStack(alignment: .leading, spacing: 12) {
                     ForEach(0..<6, id: \.self) { _ in
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(Color(.systemGray5))
+                            .fill(Color.platformFill)
                             .frame(height: 81)
                             .overlay { ShimmerView() }
                     }

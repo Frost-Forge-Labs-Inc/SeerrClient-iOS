@@ -3,7 +3,7 @@
 //
 // Cross-platform Color shim. Maps semantic UIKit system colors to AppKit
 // equivalents so shared and macOS views can use one API.
-// M2b: macOS target membership only; iOS rollout is M3.
+// Shared by both iOS and macOS targets (behavior-preserving on iOS).
 
 import SwiftUI
 
@@ -51,6 +51,33 @@ extension Color {
         Color(nsColor: .controlBackgroundColor)
         #else
         Color(uiColor: .secondarySystemGroupedBackground)
+        #endif
+    }
+
+    /// Skeleton / placeholder fill (systemGray5 on iOS).
+    static var platformFill: Color {
+        #if os(macOS)
+        Color(nsColor: .quaternaryLabelColor)
+        #else
+        Color(.systemGray5)
+        #endif
+    }
+
+    /// Lighter skeleton / secondary placeholder fill (systemGray6 on iOS).
+    static var platformSecondaryFill: Color {
+        #if os(macOS)
+        Color(nsColor: .quaternaryLabelColor).opacity(0.5)
+        #else
+        Color(.systemGray6)
+        #endif
+    }
+
+    /// Stronger placeholder / gradient end fill (systemGray4 on iOS).
+    static var platformTertiaryFill: Color {
+        #if os(macOS)
+        Color(nsColor: .tertiaryLabelColor)
+        #else
+        Color(.systemGray4)
         #endif
     }
 }

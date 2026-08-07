@@ -36,8 +36,37 @@ struct TvShowDetailView: View {
             }
         }
         .navigationTitle(showTitle)
+        #if !os(macOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
         .toolbar {
+            #if os(macOS)
+            if let vm = viewModel, vm.tvShow != nil {
+                ToolbarItem(placement: .primaryAction) {
+                    Button("Request") {
+                        vm.showRequestSheet = true
+                    }
+                    .accessibilityLabel("Request this media")
+                }
+                if vm.allowsWatchlistMutations {
+                    ToolbarItem(placement: .primaryAction) {
+                        Button {
+                            vm.toggleWatchlist()
+                        } label: {
+                            if vm.isTogglingWatchlist {
+                                ProgressView()
+                                    .scaleEffect(0.8)
+                            } else {
+                                Image(systemName: vm.isOnWatchlist ? "bookmark.fill" : "bookmark")
+                                    .symbolRenderingMode(.hierarchical)
+                            }
+                        }
+                        .accessibilityLabel(vm.isOnWatchlist ? "Remove from Watchlist" : "Add to Watchlist")
+                        .accessibilityIdentifier("tv-detail.watchlist-button")
+                    }
+                }
+            }
+            #else
             if let vm = viewModel, vm.tvShow != nil, vm.allowsWatchlistMutations {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
@@ -55,6 +84,7 @@ struct TvShowDetailView: View {
                     .accessibilityIdentifier("tv-detail.watchlist-button")
                 }
             }
+            #endif
         }
         .task {
             if viewModel == nil {
@@ -102,14 +132,14 @@ struct TvShowDetailView: View {
         ScrollView {
             VStack(spacing: 0) {
                 Rectangle()
-                    .fill(Color(.systemGray5))
+                    .fill(Color.platformFill)
                     .aspectRatio(16.0 / 9.0, contentMode: .fit)
                     .overlay { ShimmerView() }
 
                 VStack(alignment: .leading, spacing: 12) {
                     ForEach(0..<3, id: \.self) { _ in
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(Color(.systemGray5))
+                            .fill(Color.platformFill)
                             .frame(height: 14)
                     }
                 }
@@ -122,6 +152,71 @@ struct TvShowDetailView: View {
 
     @ViewBuilder
     private func loadedContent(_ tvShow: TvDetails, vm: TvShowDetailViewModel) -> some View {
+        #if os(macOS)
+        GeometryReader { geo in
+            if geo.size.width >= 900 {
+                HStack(alignment: .top, spacing: 0) {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 20) {
+                            MediaDetailHeroView(
+                                backdropPath: tvShow.backdropPath,
+                                posterPath: tvShow.posterPath,
+                                mediaInfo: tvShow.mediaInfo
+                            )
+                            tvMetadata(tvShow)
+                            RequestButtonView(
+                                mediaInfo: tvShow.mediaInfo,
+                                isTvShow: true,
+                                showRequestSheet: Binding(
+                                    get: { vm.showRequestSheet },
+                                    set: { vm.showRequestSheet = $0 }
+                                ),
+                                activeRequestId: tvShow.mediaInfo?.requests?.first { $0.status == 1 || $0.status == 2 }?.id
+                            )
+                            Spacer(minLength: 40)
+                        }
+                    }
+                    .frame(minWidth: 380, idealWidth: 440, maxWidth: 520)
+
+                    Divider()
+
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 20) {
+                            CastCarouselView(credits: tvShow.credits)
+                            if let seasons = tvShow.seasons, !seasons.isEmpty {
+                                seasonSection(seasons: seasons, vm: vm)
+                            }
+                            if !vm.recommendations.isEmpty {
+                                MediaHorizontalRowView(title: "Recommendations", items: vm.recommendations)
+                            }
+                            if !vm.similar.isEmpty {
+                                MediaHorizontalRowView(title: "Similar Shows", items: vm.similar)
+                            }
+                            Spacer(minLength: 40)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+            } else {
+                singleColumnLoadedContent(tvShow, vm: vm)
+            }
+        }
+        .sheet(isPresented: Binding(
+            get: { vm.showRequestSheet },
+            set: { vm.showRequestSheet = $0 }
+        )) {
+            CreateRequestView(
+                mediaType: .tv,
+                mediaId: tvShow.id ?? tvId,
+                tvdbId: tvShow.externalIds?.tvdbId,
+                seasons: tvShow.seasons,
+                mediaInfo: tvShow.mediaInfo
+            ) {
+                Task { await vm.retryDetails() }
+            }
+            .frame(width: 480, height: 620)
+        }
+        #else
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 // Hero
@@ -208,7 +303,73 @@ struct TvShowDetailView: View {
             }
             .presentationDetents([.medium, .large])
         }
+        #endif
     }
+
+    #if os(macOS)
+    @ViewBuilder
+    private func singleColumnLoadedContent(_ tvShow: TvDetails, vm: TvShowDetailViewModel) -> some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                MediaDetailHeroView(
+                    backdropPath: tvShow.backdropPath,
+                    posterPath: tvShow.posterPath,
+                    mediaInfo: tvShow.mediaInfo
+                )
+                tvMetadata(tvShow)
+                CastCarouselView(credits: tvShow.credits)
+                if let seasons = tvShow.seasons, !seasons.isEmpty {
+                    seasonSection(seasons: seasons, vm: vm)
+                }
+                if !vm.recommendations.isEmpty {
+                    MediaHorizontalRowView(title: "Recommendations", items: vm.recommendations)
+                }
+                if !vm.similar.isEmpty {
+                    MediaHorizontalRowView(title: "Similar Shows", items: vm.similar)
+                }
+                RequestButtonView(
+                    mediaInfo: tvShow.mediaInfo,
+                    isTvShow: true,
+                    showRequestSheet: Binding(
+                        get: { vm.showRequestSheet },
+                        set: { vm.showRequestSheet = $0 }
+                    ),
+                    activeRequestId: tvShow.mediaInfo?.requests?.first { $0.status == 1 || $0.status == 2 }?.id
+                )
+                Spacer(minLength: 40)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func tvMetadata(_ tvShow: TvDetails) -> some View {
+        let firstYear = tvShow.firstAirDate.flatMap { $0.count >= 4 ? String($0.prefix(4)) : nil }
+        let endYear: String? = {
+            if tvShow.inProduction == true {
+                return "Present"
+            }
+            return tvShow.lastAirDate.flatMap { $0.count >= 4 ? String($0.prefix(4)) : nil }
+        }()
+        let runtime: String? = {
+            if let eps = tvShow.numberOfEpisodes, let seasons = tvShow.numberOfSeason {
+                return "\(seasons) seasons, \(eps) episodes"
+            }
+            return nil
+        }()
+
+        MediaMetadataView(
+            title: tvShow.name ?? showTitle,
+            tagline: tvShow.tagline,
+            overview: tvShow.overview,
+            year: firstYear,
+            endYear: endYear,
+            runtime: runtime,
+            rating: tvShow.voteAverage,
+            genres: tvShow.genres,
+            status: tvShow.status
+        )
+    }
+    #endif
 
     // MARK: - Season Section
 
