@@ -2,7 +2,7 @@
 // SeerrClientMac
 //
 // macOS root shell: auth branching + 2-column NavigationSplitView sidebar.
-// M3b: Discover + Search + Requests + Watchlist + media detail destinations.
+// M3c: Discover + Search + Requests + Watchlist + Profile + media detail destinations.
 
 import SwiftUI
 
@@ -37,8 +37,16 @@ struct MacContentView: View {
     @State private var selectedTab = UITestLaunchConfiguration.current.initialTab
     @State private var columnVisibility: NavigationSplitViewVisibility = .all
 
+    /// Same key as ProfileViewModel / MacSettingsView (`seerr.appTheme` Int rawValue).
+    /// Applied at root so every window follows the Preferences theme.
+    @AppStorage("seerr.appTheme") private var themeRaw: Int = AppTheme.system.rawValue
+
     private var defaultSessionTab: AppTab {
         UITestLaunchConfiguration.current.initialTab
+    }
+
+    private var preferredScheme: ColorScheme? {
+        (AppTheme(rawValue: themeRaw) ?? .system).colorScheme
     }
 
     // MARK: - Body
@@ -63,6 +71,7 @@ struct MacContentView: View {
             minWidth: 960, idealWidth: 1240, maxWidth: .infinity,
             minHeight: 640, idealHeight: 820, maxHeight: .infinity
         )
+        .preferredColorScheme(preferredScheme)
         .animation(.easeInOut(duration: 0.25), value: appState.showServerSetup)
         .animation(.easeInOut(duration: 0.25), value: appState.showMainInterface)
         .onChange(of: appState.activeServer?.id) { _, newValue in
@@ -160,23 +169,8 @@ struct MacContentView: View {
                     CollectionDetailView(collectionId: dest.id, collectionName: dest.name)
                 }
         case .profile:
-            tabPlaceholder(systemImage: "person.circle", title: "Profile", message: "coming in M3")
+            MacProfileView()
         }
-    }
-
-    @ViewBuilder
-    private func tabPlaceholder(systemImage: String, title: String, message: String) -> some View {
-        VStack(spacing: 16) {
-            Image(systemName: systemImage)
-                .font(.system(size: 52))
-                .foregroundStyle(.tint)
-            Text(title)
-                .font(.largeTitle.weight(.semibold))
-            Text(message)
-                .font(.title3)
-                .foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     // MARK: - Loading

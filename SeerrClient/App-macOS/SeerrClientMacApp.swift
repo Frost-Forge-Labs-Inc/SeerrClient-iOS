@@ -4,6 +4,7 @@
 // macOS app entry point. Mirrors the iOS SeerrClientApp bootstrap:
 // constructs ServerStore + AppState, runs UITest bootstrap when enabled,
 // injects both into the environment, and presents MacContentView as the root.
+// M3c: Settings{} Preferences window (Appearance + About).
 
 import SwiftUI
 
@@ -15,7 +16,7 @@ import SwiftUI
 /// - Creates the singleton `AppState` that tracks the active server and auth status.
 /// - Creates the singleton `ServerStore` for persisting server configurations.
 /// - Injects both into the SwiftUI environment.
-/// - Presents `MacContentView` as the root scene (shell + login + server setup in M2b).
+/// - Presents `MacContentView` as the root scene and `MacSettingsView` as Preferences.
 @main
 struct SeerrClientMacApp: App {
 
@@ -55,13 +56,21 @@ struct SeerrClientMacApp: App {
         .commands {
             MacAppCommands(appState: appState)
         }
+
+        // Preferences… (⌘,) — free via Settings{} scene.
+        Settings {
+            MacSettingsView()
+        }
+        .windowResizability(.contentSize)
+        .defaultSize(width: 480, height: 360)
     }
 }
 
-// MARK: - Menu Commands (M2b minimal set)
+// MARK: - Menu Commands
 
-/// Minimal menu bar commands for M2b: Toggle Sidebar (⌘0) and Switch Server (⌘⇧K).
-/// Refresh / Find / poster density / Settings{} deferred to M3.
+/// Menu bar commands: Toggle Sidebar (⌘0), Switch Server (⌘⇧K).
+/// Preferences (⌘,) is provided by the Settings{} scene.
+/// Refresh / Find / poster density deferred (would require invasive shared-view wiring).
 private struct MacAppCommands: Commands {
 
     let appState: AppState

@@ -169,6 +169,13 @@
 		70520000000000000000B071 /* PlatformColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70520000000000000000B039 /* PlatformColor.swift */; };
 		70520000000000000000B073 /* RequestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70520000000000000000B072 /* RequestsView.swift */; };
 		70520000000000000000B075 /* WatchlistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0008919C3BEB59A2D341CC18 /* WatchlistView.swift */; };
+		70520000000000000000B077 /* MacProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70520000000000000000B076 /* MacProfileView.swift */; };
+		70520000000000000000B079 /* MacSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70520000000000000000B078 /* MacSettingsView.swift */; };
+		70520000000000000000B07B /* ProfileHeaderSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BB8BDD36E7E8BA1633E119B /* ProfileHeaderSection.swift */; };
+		70520000000000000000B07C /* RequestSummarySection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B65E40D6328D4F11B39C90 /* RequestSummarySection.swift */; };
+		70520000000000000000B07D /* ServerInfoSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B636B641B400144C5B4A9D6E /* ServerInfoSection.swift */; };
+		70520000000000000000B07E /* AboutSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFE9A3868A19863AAB5B71E /* AboutSection.swift */; };
+		70520000000000000000B07F /* AppearanceSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E64979A476B83BBC55926763 /* AppearanceSection.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -298,6 +305,8 @@
 		70520000000000000000B043 /* MacServerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacServerListView.swift; sourceTree = "<group>"; };
 		70520000000000000000B045 /* MacAddServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacAddServerView.swift; sourceTree = "<group>"; };
 		70520000000000000000B072 /* RequestsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestsView.swift; sourceTree = "<group>"; };
+		70520000000000000000B076 /* MacProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacProfileView.swift; sourceTree = "<group>"; };
+		70520000000000000000B078 /* MacSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacSettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -464,8 +473,17 @@
 				43542A772485535FF551A593 /* Repositories */,
 				CDF889051AB6FF01D7869A51 /* ViewModels */,
 				BB21A7C79B2C15D2677E5988 /* Views */,
+				70520000000000000000B07A /* Views-macOS */,
 			);
 			path = Settings;
+			sourceTree = "<group>";
+		};
+		70520000000000000000B07A /* Views-macOS */ = {
+			isa = PBXGroup;
+			children = (
+				70520000000000000000B076 /* MacProfileView.swift */,
+			);
+			path = "Views-macOS";
 			sourceTree = "<group>";
 		};
 		5710BB3CEBE2DB7884A66557 /* Mocks */ = {
@@ -503,6 +521,7 @@
 			children = (
 				70520000000000000000A009 /* SeerrClientMacApp.swift */,
 				70520000000000000000B037 /* MacContentView.swift */,
+				70520000000000000000B078 /* MacSettingsView.swift */,
 				70520000000000000000A011 /* Info-macOS.plist */,
 				70520000000000000000A014 /* SeerrClientMac.entitlements */,
 				70520000000000000000A012 /* Assets-macOS.xcassets */,
@@ -1034,6 +1053,13 @@
 				70520000000000000000B064 /* RequestCardView.swift in Sources */,
 				70520000000000000000B073 /* RequestsView.swift in Sources */,
 				70520000000000000000B075 /* WatchlistView.swift in Sources */,
+				70520000000000000000B077 /* MacProfileView.swift in Sources */,
+				70520000000000000000B079 /* MacSettingsView.swift in Sources */,
+				70520000000000000000B07B /* ProfileHeaderSection.swift in Sources */,
+				70520000000000000000B07C /* RequestSummarySection.swift in Sources */,
+				70520000000000000000B07D /* ServerInfoSection.swift in Sources */,
+				70520000000000000000B07E /* AboutSection.swift in Sources */,
+				70520000000000000000B07F /* AppearanceSection.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

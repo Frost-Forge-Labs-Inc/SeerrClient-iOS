@@ -73,7 +73,7 @@ struct ProfileHeaderSection: View {
     private var avatarFallback: some View {
         ZStack {
             Circle()
-                .fill(Color(.systemGray5))
+                .fill(Color.platformFill)
 
             Text(initials)
                 .font(.title3.weight(.semibold))
