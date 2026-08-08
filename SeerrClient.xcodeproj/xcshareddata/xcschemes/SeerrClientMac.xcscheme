@@ -38,6 +38,16 @@
                ReferencedContainer = "container:SeerrClient.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "70520000000000000000A030"
+               BuildableName = "SeerrClientMacUITests.xctest"
+               BlueprintName = "SeerrClientMacUITests"
+               ReferencedContainer = "container:SeerrClient.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

@@ -99,16 +99,21 @@ struct MacContentView: View {
             List(selection: $selectedTab) {
                 Label("Discover", systemImage: "film.stack")
                     .tag(AppTab.discover)
+                    .accessibilityIdentifier("macSidebar.discover")
                 Label("Search", systemImage: "magnifyingglass")
                     .tag(AppTab.search)
+                    .accessibilityIdentifier("macSidebar.search")
                 Label("Requests", systemImage: "tray.full")
                     .tag(AppTab.requests)
+                    .accessibilityIdentifier("macSidebar.requests")
                 if supportsWatchlistRead {
                     Label("Watchlist", systemImage: "bookmark")
                         .tag(AppTab.watchlist)
+                        .accessibilityIdentifier("macSidebar.watchlist")
                 }
                 Label("Profile", systemImage: "person.circle")
                     .tag(AppTab.profile)
+                    .accessibilityIdentifier("macSidebar.profile")
             }
             .listStyle(.sidebar)
             .navigationSplitViewColumnWidth(min: 180, ideal: 220, max: 260)
