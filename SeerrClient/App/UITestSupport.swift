@@ -34,6 +34,7 @@ enum UITestScenario: String {
     case collectionRequestSelection = "collection_request_selection"
     case aboutNavigation = "about_navigation"
     case launchFlowServerSelection = "launch_flow_server_selection"
+    case search = "search"
 }
 
 // MARK: - UITestLaunchConfiguration
@@ -70,6 +71,8 @@ struct UITestLaunchConfiguration {
                 return .profile
             case .launchFlowServerSelection:
                 return .discover
+            case .search:
+                return .search
             case nil:
                 return .discover
             }
@@ -78,7 +81,7 @@ struct UITestLaunchConfiguration {
             switch scenario {
             case .collectionRequestSelection:
                 return .collectionDetail(id: 1000, name: "Collection UI Test")
-            case .watchlistRemoval, .watchlistMediaFilter, .requestMediaFilter, .aboutNavigation, .launchFlowServerSelection, nil:
+            case .watchlistRemoval, .watchlistMediaFilter, .requestMediaFilter, .aboutNavigation, .launchFlowServerSelection, .search, nil:
                 return .mainTabs
             }
         }()
@@ -121,6 +124,12 @@ enum UITestAppBootstrapper {
             bootstrapAboutNavigationScenario(appState: appState)
         case .launchFlowServerSelection:
             bootstrapLaunchFlowServerSelectionScenario(serverStore: serverStore)
+        case .search:
+            // Authenticated main tabs, opening on the Search tab (idle state).
+            // Seeds the future tvOS Search XCUITest; the search field itself is
+            // driven live via `.searchable` (keyboard/dictation), so no query is
+            // pre-populated here.
+            bootstrapAuthenticatedMainTabsScenario(appState: appState, watchlistedTmdbIds: [])
         }
     }
 

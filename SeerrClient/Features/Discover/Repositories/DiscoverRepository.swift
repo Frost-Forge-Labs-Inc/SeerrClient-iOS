@@ -152,7 +152,8 @@ public final class DiscoverRepository: @unchecked Sendable {
     /// without making an extra network call per item.
     ///
     /// For Jellyfin users the watchlist items carry an internal `id` and a separate
-    /// `tmdbId`; `effectiveTmdbId` resolves to `tmdbId ?? id` to handle both cases.
+    /// `tmdbId`; `effectiveTmdbId` resolves to `tmdbId ?? mediaInfo?.tmdbId ?? id`
+    /// so the real TMDB id is used even when only the nested media info carries it.
     ///
     /// Example:
     /// ```swift

@@ -1,3 +1,33 @@
+# ============================================================================
+# ⚠️  STALE / ABANDONED — DO NOT RUN `xcodegen generate` AGAINST THIS FILE  ⚠️
+# ----------------------------------------------------------------------------
+# This XcodeGen spec is NO LONGER the source of truth for the Xcode project.
+# The authoritative project definition is the hand-maintained
+# `SeerrClient.xcodeproj/project.pbxproj`. This file has drifted badly and is
+# kept only for historical reference. Regenerating from it WOULD BREAK the
+# project. Do not trust or edit it as if it were live.
+#
+# Decision (2026-07-19, tech-architect, tvOS pre-work): XcodeGen is abandoned
+# for this repo; continue editing `project.pbxproj` directly. Rationale:
+#   1. REVERTS THE REBRAND — this spec still says `com.rodrigoindustries` and
+#      `com.rodrigoindustries.SeerrClient`, but the merged reality is
+#      `com.frostforgelabs.OctopusExplorer`. A regen would silently undo the
+#      Octopus Explorer bundle-ID/rename that already shipped to `dev`.
+#   2. MISSING A TARGET — the real project has `SeerrClientUITests`; this spec
+#      does not, so a regen would delete the entire UI-test target.
+#   3. DROPS HAND-TUNED SETTINGS — the .pbxproj carries DEVELOPMENT_TEAM,
+#      CODE_SIGN_IDENTITY, all INFOPLIST_KEY_* (FaceID usage, LaunchScreen,
+#      orientations, CFBundleDisplayName), LD_RUNPATH_SEARCH_PATHS, TEST_HOST /
+#      BUNDLE_LOADER / TEST_TARGET_NAME wiring, and the full CLANG/GCC warning
+#      block — none of which are encoded here. A regen replaces them with
+#      XcodeGen defaults (this is the ~266-line unrelated churn seen before).
+#   4. CLOBBERS THE SHARED SCHEME — the shared `SeerrClient.xcscheme` is not
+#      declared here, so a regen deletes it.
+# Reconciling this file well enough to round-trip cleanly is disproportionate
+# to the goal (adding one tvOS target), and every future direct .pbxproj edit
+# would re-introduce drift. The tvOS target will be added by direct .pbxproj
+# edit, consistent with the repo's established convention.
+# ============================================================================
 name: SeerrClient
 options:
   bundleIdPrefix: com.rodrigoindustries

@@ -283,6 +283,11 @@ private final class UITestScenarioState: @unchecked Sendable {
                 watchlistContainsTvShow = false
                 requestedCollectionMovieIDs = []
                 nextRequestIdentifier = 7000
+            case .search:
+                watchlistContainsMovie = true
+                watchlistContainsTvShow = false
+                requestedCollectionMovieIDs = []
+                nextRequestIdentifier = 7000
             }
         }
     }
