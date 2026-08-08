@@ -24,7 +24,7 @@ struct SearchFilterChip: View {
                 .font(.callout.weight(.medium))
                 .padding(.horizontal, 14)
                 .padding(.vertical, 7)
-                .background(isSelected ? Color.accentColor : Color(.systemGray5))
+                .background(isSelected ? Color.accentColor : Color.platformFill)
                 // Note: .white works with default blue accent; for custom accent colors,
                 // consider colorScheme-aware label color for WCAG AA contrast.
                 .foregroundStyle(isSelected ? .white : .primary)

@@ -4,7 +4,11 @@
 // Tests for DiscoverMediaItem computed properties:
 // year, displayTitle, isMovie, isTv, effectiveTmdbId.
 
+#if os(macOS)
+@testable import SeerrClientMac
+#else
 @testable import SeerrClient
+#endif
 import XCTest
 
 final class DiscoverMediaItemTests: XCTestCase {

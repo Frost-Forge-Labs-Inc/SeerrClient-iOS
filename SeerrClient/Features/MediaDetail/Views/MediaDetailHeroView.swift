@@ -63,7 +63,7 @@ struct MediaDetailHeroView: View {
         .overlay(alignment: .bottom) {
             // Gradient fade at the bottom of the backdrop
             LinearGradient(
-                colors: [.clear, Color(.systemBackground).opacity(0.8), Color(.systemBackground)],
+                colors: [.clear, Color.platformSystemBackground.opacity(0.8), Color.platformSystemBackground],
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -74,7 +74,7 @@ struct MediaDetailHeroView: View {
     @ViewBuilder
     private func backdropPlaceholder(width: CGFloat) -> some View {
         Rectangle()
-            .fill(Color(.systemGray5))
+            .fill(Color.platformFill)
             .frame(width: width, height: width * 9 / 16)
     }
 
@@ -107,7 +107,7 @@ struct MediaDetailHeroView: View {
     @ViewBuilder
     private var posterPlaceholder: some View {
         RoundedRectangle(cornerRadius: 10)
-            .fill(Color(.systemGray5))
+            .fill(Color.platformFill)
             .aspectRatio(2.0 / 3.0, contentMode: .fit)
             .overlay {
                 Image(systemName: "film")

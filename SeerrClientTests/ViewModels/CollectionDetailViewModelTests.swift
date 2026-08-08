@@ -4,7 +4,11 @@
 // Covers the one-tap batch collection-request flow with pure view-model tests
 // plus an integration-style load via the real repository and a stubbed URLProtocol.
 
+#if os(macOS)
+@testable import SeerrClientMac
+#else
 @testable import SeerrClient
+#endif
 import XCTest
 
 @MainActor

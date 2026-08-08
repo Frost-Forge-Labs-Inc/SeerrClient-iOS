@@ -7,7 +7,11 @@
 //
 // The class is @MainActor because WatchlistViewModel is @MainActor @Observable.
 
+#if os(macOS)
+@testable import SeerrClientMac
+#else
 @testable import SeerrClient
+#endif
 import XCTest
 
 @MainActor

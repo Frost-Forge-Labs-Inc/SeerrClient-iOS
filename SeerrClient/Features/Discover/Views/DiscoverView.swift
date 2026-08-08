@@ -70,14 +70,34 @@ struct DiscoverView: View {
         }
     }
 
+    // MARK: - Layout metrics
+
+    /// Row spacing between slider sections (macOS: 32, iOS: 24).
+    private var rowSpacing: CGFloat {
+        #if os(macOS)
+        32
+        #else
+        24
+        #endif
+    }
+
+    /// Card size for slider rows (macOS: 200pt wide, iOS: default medium).
+    private var sliderCardSize: MediaCardSize {
+        #if os(macOS)
+        .custom(200)
+        #else
+        .medium
+        #endif
+    }
+
     // MARK: - Loaded
 
     @ViewBuilder
     private func loadedContent(_ vm: DiscoverViewModel) -> some View {
         ScrollView {
-            LazyVStack(spacing: 24) {
+            LazyVStack(spacing: rowSpacing) {
                 ForEach(vm.sliderRows) { row in
-                    DiscoverSliderView(content: row)
+                    DiscoverSliderView(content: row, cardSize: sliderCardSize)
                 }
             }
             .padding(.vertical)
@@ -92,9 +112,9 @@ struct DiscoverView: View {
     @ViewBuilder
     private var loadingContent: some View {
         ScrollView {
-            LazyVStack(spacing: 24) {
+            LazyVStack(spacing: rowSpacing) {
                 ForEach(0..<4, id: \.self) { _ in
-                    SkeletonSliderView()
+                    SkeletonSliderView(cardSize: sliderCardSize)
                 }
             }
             .padding(.vertical)

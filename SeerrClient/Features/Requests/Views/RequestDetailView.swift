@@ -5,6 +5,13 @@
 
 import SwiftUI
 
+// MARK: - RequestNavDestination
+
+/// Navigation destination for a request detail screen.
+struct RequestNavDestination: Hashable {
+    let requestID: Int
+}
+
 // MARK: - RequestDetailView
 
 struct RequestDetailView: View {
@@ -34,11 +41,28 @@ struct RequestDetailView: View {
             }
         }
         .navigationTitle("Request")
+        #if !os(macOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
         .toolbar {
             if let vm = viewModel,
                let request = vm.request,
                canDeleteRequest(request, currentUserID: vm.currentUserID) {
+                #if os(macOS)
+                ToolbarItem(placement: .primaryAction) {
+                    Button(role: .destructive) {
+                        vm.deleteRequest()
+                    } label: {
+                        if vm.isDeleting {
+                            ProgressView()
+                        } else {
+                            Image(systemName: "trash")
+                        }
+                    }
+                    .disabled(vm.isDeleting || vm.isApproving || vm.isDeclining)
+                    .accessibilityLabel("Delete request")
+                }
+                #else
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(role: .destructive) {
                         vm.deleteRequest()
@@ -52,6 +76,7 @@ struct RequestDetailView: View {
                     .disabled(vm.isDeleting || vm.isApproving || vm.isDeclining)
                     .accessibilityLabel("Delete request")
                 }
+                #endif
             }
         }
         .onChange(of: viewModel?.didDelete ?? false) { _, didDelete in
@@ -137,7 +162,7 @@ struct RequestDetailView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(14)
-                .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
+                .background(Color.platformSecondaryBackground, in: RoundedRectangle(cornerRadius: 12))
 
                 // Admin actions: approve (pending only), decline (pending or approved)
                 // Compute isAdmin from appState directly — avoids stale value from ViewModel init.
@@ -169,7 +194,7 @@ struct RequestDetailView: View {
                         .aspectRatio(contentMode: .fill)
                 default:
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(Color(.systemGray5))
+                        .fill(Color.platformFill)
                         .overlay {
                             Image(systemName: "film")
                                 .font(.title)
@@ -252,7 +277,7 @@ struct RequestDetailView: View {
             }
         }
         .padding(14)
-        .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
+        .background(Color.platformSecondaryBackground, in: RoundedRectangle(cornerRadius: 12))
     }
 
     // MARK: - Error

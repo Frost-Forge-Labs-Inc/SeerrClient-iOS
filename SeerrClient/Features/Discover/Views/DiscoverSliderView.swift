@@ -92,7 +92,7 @@ struct SkeletonSliderView: View {
         VStack(alignment: .leading, spacing: 10) {
             // Title skeleton
             RoundedRectangle(cornerRadius: 4)
-                .fill(Color(.systemGray5))
+                .fill(Color.platformFill)
                 .frame(width: 140, height: 20)
                 .padding(.horizontal)
 
@@ -102,17 +102,17 @@ struct SkeletonSliderView: View {
                     ForEach(0..<5, id: \.self) { _ in
                         VStack(alignment: .leading, spacing: 6) {
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(Color(.systemGray5))
+                                .fill(Color.platformFill)
                                 .frame(width: cardSize.width, height: cardSize.posterHeight)
                                 .overlay { ShimmerView() }
                                 .clipShape(RoundedRectangle(cornerRadius: 8))
 
                             RoundedRectangle(cornerRadius: 3)
-                                .fill(Color(.systemGray5))
+                                .fill(Color.platformFill)
                                 .frame(width: cardSize.width * 0.8, height: 12)
 
                             RoundedRectangle(cornerRadius: 3)
-                                .fill(Color(.systemGray6))
+                                .fill(Color.platformSecondaryFill)
                                 .frame(width: cardSize.width * 0.4, height: 10)
                         }
                     }

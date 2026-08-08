@@ -59,7 +59,7 @@ struct EpisodeCardView: View {
     @ViewBuilder
     private var stillPlaceholder: some View {
         Rectangle()
-            .fill(Color(.systemGray5))
+            .fill(Color.platformFill)
             .aspectRatio(16.0 / 9.0, contentMode: .fit)
             .overlay {
                 Image(systemName: "tv")

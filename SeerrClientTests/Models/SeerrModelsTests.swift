@@ -4,7 +4,11 @@
 // Codable round-trip tests for MediaRequest, SeasonRequest, ServiceProfile,
 // DiscoverResponse, and BackendType.
 
+#if os(macOS)
+@testable import SeerrClientMac
+#else
 @testable import SeerrClient
+#endif
 import XCTest
 
 final class SeerrModelsTests: XCTestCase {

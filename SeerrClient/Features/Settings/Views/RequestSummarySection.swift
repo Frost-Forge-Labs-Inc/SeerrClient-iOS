@@ -38,7 +38,7 @@ struct RequestSummarySection: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
-        .background(Color(.secondarySystemBackground))
+        .background(Color.platformSecondaryBackground)
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }

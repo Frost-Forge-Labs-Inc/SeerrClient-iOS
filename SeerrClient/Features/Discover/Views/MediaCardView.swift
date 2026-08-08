@@ -59,20 +59,34 @@ struct MediaCardView: View {
     /// Action triggered when the card is tapped.
     var onTap: (() -> Void)?
 
+    #if os(macOS)
+    @State private var isHovered = false
+    #endif
+
     var body: some View {
-        if let onTap {
-            Button {
-                onTap()
-            } label: {
+        Group {
+            if let onTap {
+                Button {
+                    onTap()
+                } label: {
+                    cardContent
+                }
+                .buttonStyle(MediaCardButtonStyle())
+            } else {
+                // When no tap action is provided the card is expected to be wrapped
+                // in a NavigationLink or similar container. Avoid nesting a Button
+                // inside another interactive element which causes duplicate taps.
                 cardContent
             }
-            .buttonStyle(MediaCardButtonStyle())
-        } else {
-            // When no tap action is provided the card is expected to be wrapped
-            // in a NavigationLink or similar container. Avoid nesting a Button
-            // inside another interactive element which causes duplicate taps.
-            cardContent
         }
+        #if os(macOS)
+        .onHover { hovering in
+            isHovered = hovering
+        }
+        .scaleEffect(isHovered ? 1.05 : 1.0)
+        .shadow(color: .black.opacity(isHovered ? 0.25 : 0), radius: isHovered ? 10 : 0, y: isHovered ? 4 : 0)
+        .animation(.easeInOut(duration: 0.15), value: isHovered)
+        #endif
     }
 
     @ViewBuilder
@@ -117,7 +131,7 @@ struct MediaCardView: View {
     private var posterPlaceholder: some View {
         ZStack {
             LinearGradient(
-                colors: [Color(.systemGray5), Color(.systemGray4)],
+                colors: [Color.platformFill, Color.platformTertiaryFill],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
@@ -132,7 +146,7 @@ struct MediaCardView: View {
     @ViewBuilder
     private var skeletonPlaceholder: some View {
         RoundedRectangle(cornerRadius: 8)
-            .fill(Color(.systemGray5))
+            .fill(Color.platformFill)
             .frame(width: size.width, height: size.posterHeight)
             .overlay {
                 ShimmerView()

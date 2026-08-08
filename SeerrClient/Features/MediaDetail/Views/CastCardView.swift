@@ -46,14 +46,14 @@ struct CastCardView: View {
         .frame(width: profileSize, height: profileSize)
         .clipShape(Circle())
         .background {
-            Circle().fill(Color(.systemGray5))
+            Circle().fill(Color.platformFill)
         }
     }
 
     @ViewBuilder
     private var profilePlaceholder: some View {
         ZStack {
-            Circle().fill(Color(.systemGray5))
+            Circle().fill(Color.platformFill)
             Image(systemName: "person.fill")
                 .font(.title3)
                 .foregroundStyle(.secondary)

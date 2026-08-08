@@ -35,8 +35,37 @@ struct MovieDetailView: View {
             }
         }
         .navigationTitle(movieTitle)
+        #if !os(macOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
         .toolbar {
+            #if os(macOS)
+            if let vm = viewModel, vm.movie != nil {
+                ToolbarItem(placement: .primaryAction) {
+                    Button("Request") {
+                        vm.showRequestSheet = true
+                    }
+                    .accessibilityLabel("Request this media")
+                }
+                if vm.allowsWatchlistMutations {
+                    ToolbarItem(placement: .primaryAction) {
+                        Button {
+                            vm.toggleWatchlist()
+                        } label: {
+                            if vm.isTogglingWatchlist {
+                                ProgressView()
+                                    .scaleEffect(0.8)
+                            } else {
+                                Image(systemName: vm.isOnWatchlist ? "bookmark.fill" : "bookmark")
+                                    .symbolRenderingMode(.hierarchical)
+                            }
+                        }
+                        .accessibilityLabel(vm.isOnWatchlist ? "Remove from Watchlist" : "Add to Watchlist")
+                        .accessibilityIdentifier("movieDetail.watchlistButton")
+                    }
+                }
+            }
+            #else
             if let vm = viewModel, vm.movie != nil, vm.allowsWatchlistMutations {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
@@ -54,6 +83,7 @@ struct MovieDetailView: View {
                     .accessibilityIdentifier("movieDetail.watchlistButton")
                 }
             }
+            #endif
         }
         .task {
             if viewModel == nil {
@@ -102,7 +132,7 @@ struct MovieDetailView: View {
             VStack(spacing: 0) {
                 // Backdrop skeleton
                 Rectangle()
-                    .fill(Color(.systemGray5))
+                    .fill(Color.platformFill)
                     .aspectRatio(16.0 / 9.0, contentMode: .fit)
                     .overlay { ShimmerView() }
 
@@ -110,7 +140,7 @@ struct MovieDetailView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     ForEach(0..<3, id: \.self) { _ in
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(Color(.systemGray5))
+                            .fill(Color.platformFill)
                             .frame(height: 14)
                     }
                 }
@@ -123,6 +153,58 @@ struct MovieDetailView: View {
 
     @ViewBuilder
     private func loadedContent(_ movie: MovieDetails, vm: MovieDetailViewModel) -> some View {
+        #if os(macOS)
+        GeometryReader { geo in
+            if geo.size.width >= 900 {
+                HStack(alignment: .top, spacing: 0) {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 20) {
+                            MediaDetailHeroView(
+                                backdropPath: movie.backdropPath,
+                                posterPath: movie.posterPath,
+                                mediaInfo: movie.mediaInfo
+                            )
+                            movieMetadata(movie)
+                            collectionLink(movie)
+                            requestButton(movie, vm: vm)
+                            Spacer(minLength: 40)
+                        }
+                    }
+                    .frame(minWidth: 380, idealWidth: 440, maxWidth: 520)
+
+                    Divider()
+
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 20) {
+                            CastCarouselView(credits: movie.credits)
+                            if !vm.recommendations.isEmpty {
+                                MediaHorizontalRowView(title: "Recommendations", items: vm.recommendations)
+                            }
+                            if !vm.similar.isEmpty {
+                                MediaHorizontalRowView(title: "Similar Movies", items: vm.similar)
+                            }
+                            Spacer(minLength: 40)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+            } else {
+                singleColumnLoadedContent(movie, vm: vm)
+            }
+        }
+        .sheet(isPresented: Binding(
+            get: { vm.showRequestSheet },
+            set: { vm.showRequestSheet = $0 }
+        )) {
+            CreateRequestView(
+                mediaType: .movie,
+                mediaId: movie.id ?? movieId
+            ) {
+                Task { await vm.retry() }
+            }
+            .frame(width: 480, height: 620)
+        }
+        #else
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 // Hero
@@ -211,7 +293,91 @@ struct MovieDetailView: View {
             }
             .presentationDetents([.medium, .large])
         }
+        #endif
     }
+
+    #if os(macOS)
+    @ViewBuilder
+    private func singleColumnLoadedContent(_ movie: MovieDetails, vm: MovieDetailViewModel) -> some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                MediaDetailHeroView(
+                    backdropPath: movie.backdropPath,
+                    posterPath: movie.posterPath,
+                    mediaInfo: movie.mediaInfo
+                )
+                movieMetadata(movie)
+                CastCarouselView(credits: movie.credits)
+                if !vm.recommendations.isEmpty {
+                    MediaHorizontalRowView(title: "Recommendations", items: vm.recommendations)
+                }
+                if !vm.similar.isEmpty {
+                    MediaHorizontalRowView(title: "Similar Movies", items: vm.similar)
+                }
+                collectionLink(movie)
+                requestButton(movie, vm: vm)
+                Spacer(minLength: 40)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func movieMetadata(_ movie: MovieDetails) -> some View {
+        MediaMetadataView(
+            title: movie.title ?? movieTitle,
+            tagline: movie.tagline,
+            overview: movie.overview,
+            year: movie.releaseDate.flatMap { $0.count >= 4 ? String($0.prefix(4)) : nil },
+            endYear: nil,
+            runtime: movie.runtime.flatMap { "\($0) min" },
+            rating: movie.voteAverage,
+            genres: movie.genres,
+            status: movie.status
+        )
+    }
+
+    @ViewBuilder
+    private func collectionLink(_ movie: MovieDetails) -> some View {
+        if let collection = movie.collection,
+           let collectionId = collection.id,
+           let collectionName = collection.name {
+            NavigationLink(value: CollectionNavDestination(id: collectionId, name: collectionName)) {
+                HStack {
+                    Image(systemName: "rectangle.stack.fill")
+                        .foregroundStyle(.tint)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Part of a Collection")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Text(collectionName)
+                            .font(.subheadline.weight(.semibold))
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.tertiary)
+                }
+                .padding()
+                .background(Color.platformSecondaryGroupedBackground)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+            }
+            .buttonStyle(.plain)
+            .padding(.horizontal)
+        }
+    }
+
+    @ViewBuilder
+    private func requestButton(_ movie: MovieDetails, vm: MovieDetailViewModel) -> some View {
+        RequestButtonView(
+            mediaInfo: movie.mediaInfo,
+            showRequestSheet: Binding(
+                get: { vm.showRequestSheet },
+                set: { vm.showRequestSheet = $0 }
+            ),
+            activeRequestId: movie.mediaInfo?.requests?.first { $0.status == 1 || $0.status == 2 }?.id
+        )
+    }
+    #endif
 
     // MARK: - Error
 
