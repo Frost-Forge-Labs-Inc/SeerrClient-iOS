@@ -2,7 +2,8 @@
 // SeerrClient
 //
 // Manages state for the Collection Detail screen. Loads the full TMDB collection
-// (name, overview, member movies) and drives the request-all / select-and-request flow.
+// (name, overview, member movies) and drives the one-tap batch request-all /
+// select-and-request flow.
 
 import Foundation
 
@@ -40,17 +41,11 @@ public final class CollectionDetailViewModel {
     /// IDs of movies the user has selected for a partial request.
     public private(set) var selectedMovieIDs: Set<Int> = []
 
-    /// Whether the "Request Selected" sheet is presented.
-    public var showRequestSheet: Bool = false
+    /// `true` while a batch request-all / request-selected operation is in flight.
+    public private(set) var isRequesting: Bool = false
 
-    /// Ordered queue of movie IDs currently being requested through the shared
-    /// single-movie request sheet.
-    public private(set) var queuedRequestMovieIDs: [Int] = []
-
-    /// The movie ID currently being requested via the request sheet.
-    public var requestingMovieId: Int? {
-        queuedRequestMovieIDs.first
-    }
+    /// Concise error from the last batch (e.g. partial failure). Cleared on next batch.
+    public private(set) var batchErrorMessage: String?
 
     /// Convenience accessor for the loaded collection.
     public var collection: Collection? {
@@ -76,24 +71,25 @@ public final class CollectionDetailViewModel {
         !requestableMovies.isEmpty && selectedRequestMovieIDs.count == requestableMovies.count
     }
 
-    /// The movie currently shown in the request sheet.
-    public var activeRequestMovie: MovieResult? {
-        guard let requestingMovieId else { return nil }
-        return collection?.parts?.first(where: { $0.id == requestingMovieId })
-    }
-
     // MARK: - Dependencies
 
     @ObservationIgnored
     private let repository: MediaDetailRepository
     @ObservationIgnored
+    private let requestRepository: RequestRepository
+    @ObservationIgnored
     private let collectionId: Int
 
     // MARK: - Init
 
-    public init(collectionId: Int, repository: MediaDetailRepository) {
+    public init(
+        collectionId: Int,
+        repository: MediaDetailRepository,
+        requestRepository: RequestRepository
+    ) {
         self.collectionId = collectionId
         self.repository = repository
+        self.requestRepository = requestRepository
     }
 
     // MARK: - Loading
@@ -121,10 +117,10 @@ public final class CollectionDetailViewModel {
     }
 
     /// Replaces the currently loaded collection state while preserving view-model
-    /// ownership of selection and request-queue reconciliation.
+    /// ownership of selection reconciliation.
     func replaceLoadedCollection(_ collection: Collection) {
         loadState = .loaded(collection)
-        reconcileSelectionAndQueue()
+        reconcileSelection()
     }
 
     // MARK: - Selection
@@ -154,43 +150,17 @@ public final class CollectionDetailViewModel {
 
     // MARK: - Request Actions
 
-    /// Opens the request sheet to request all movies in the collection.
-    /// Each movie is individually requestable via the collection's parts list.
-    public func requestAll() {
+    /// One-tap batch: request every requestable movie with default movie options.
+    public func requestAll() async {
+        // Do not mutate selection if a batch is already in flight (re-entry no-op).
+        guard !isRequesting else { return }
         selectAll()
-        beginRequestFlow(movieIDs: orderedRequestableMovieIDs)
+        await performBatchRequest(movieIDs: orderedRequestableMovieIDs)
     }
 
-    /// Opens the request sheet for a single movie.
-    ///
-    /// - Parameter movieId: The TMDB movie identifier to request.
-    public func requestSingle(movieId: Int) {
-        beginRequestFlow(movieIDs: [movieId])
-    }
-
-    /// Opens the request sheet for the currently selected movies.
-    public func requestSelected() {
-        beginRequestFlow(movieIDs: selectedRequestMovieIDs)
-    }
-
-    /// Dismisses the request sheet and resets transient request state.
-    public func dismissRequestSheet() {
-        showRequestSheet = false
-        queuedRequestMovieIDs = []
-    }
-
-    /// Applies a successful request submission for the currently active movie,
-    /// updates its visible status to pending, and advances the request queue.
-    public func handleRequestSuccess() {
-        guard let movieId = requestingMovieId else { return }
-
-        selectedMovieIDs.remove(movieId)
-        queuedRequestMovieIDs = Array(queuedRequestMovieIDs.dropFirst())
-        markMovieAsPending(movieId: movieId)
-
-        if queuedRequestMovieIDs.isEmpty {
-            showRequestSheet = false
-        }
+    /// One-tap batch: request all currently selected requestable movies.
+    public func requestSelected() async {
+        await performBatchRequest(movieIDs: selectedRequestMovieIDs)
     }
 
     // MARK: - Status Helpers
@@ -241,22 +211,58 @@ public final class CollectionDetailViewModel {
         requestableMovies.map(\.id)
     }
 
-    private func beginRequestFlow(movieIDs: [Int]) {
+    /// Issues `createRequest` for each requestable movie ID (collection order),
+    /// using default movie options. Marks successes as pending, keeps failures
+    /// selected, and surfaces a concise partial-failure message.
+    private func performBatchRequest(movieIDs: [Int]) async {
         let filteredMovieIDs = orderedRequestableMovieIDs.filter { movieIDs.contains($0) }
         guard !filteredMovieIDs.isEmpty else { return }
+        guard !isRequesting else { return }
 
-        queuedRequestMovieIDs = filteredMovieIDs
-        showRequestSheet = true
+        isRequesting = true
+        batchErrorMessage = nil
+        defer { isRequesting = false }
+
+        let total = filteredMovieIDs.count
+        var failureCount = 0
+
+        for movieId in filteredMovieIDs {
+            let body = MediaRequestBody(
+                mediaType: .movie,
+                mediaId: movieId,
+                tvdbId: nil,
+                seasons: nil,
+                seasonsAll: nil,
+                is4k: false,
+                serverId: nil,
+                profileId: nil,
+                rootFolder: nil,
+                languageProfileId: nil,
+                userId: nil
+            )
+
+            do {
+                _ = try await requestRepository.createRequest(body: body)
+                selectedMovieIDs.remove(movieId)
+                markMovieAsPending(movieId: movieId)
+                AppLogger.info("CollectionDetailViewModel: requested movie \(movieId) from collection \(collectionId)")
+            } catch {
+                failureCount += 1
+                AppLogger.warning(
+                    "CollectionDetailViewModel: failed to request movie \(movieId) from collection \(collectionId): \(error)"
+                )
+            }
+        }
+
+        if failureCount > 0 {
+            let movieWord = total == 1 ? "movie" : "movies"
+            batchErrorMessage = "Couldn't request \(failureCount) of \(total) \(movieWord)"
+        }
     }
 
-    private func reconcileSelectionAndQueue() {
+    private func reconcileSelection() {
         let requestable = Set(orderedRequestableMovieIDs)
         selectedMovieIDs.formIntersection(requestable)
-        queuedRequestMovieIDs = queuedRequestMovieIDs.filter { requestable.contains($0) }
-
-        if queuedRequestMovieIDs.isEmpty {
-            showRequestSheet = false
-        }
     }
 
     private func markMovieAsPending(movieId: Int) {
