@@ -3,7 +3,11 @@
 //
 // Tests for Requests-tab media segmentation, filtered pagination, and loading.
 
+#if os(macOS)
+@testable import SeerrClientMac
+#else
 @testable import SeerrClient
+#endif
 import XCTest
 
 @MainActor

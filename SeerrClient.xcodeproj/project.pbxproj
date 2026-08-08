@@ -176,6 +176,17 @@
 		70520000000000000000B07D /* ServerInfoSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B636B641B400144C5B4A9D6E /* ServerInfoSection.swift */; };
 		70520000000000000000B07E /* AboutSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFE9A3868A19863AAB5B71E /* AboutSection.swift */; };
 		70520000000000000000B07F /* AppearanceSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E64979A476B83BBC55926763 /* AppearanceSection.swift */; };
+		70520000000000000000B101 /* AboutContentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A000000000000000000002 /* AboutContentTests.swift */; };
+		70520000000000000000B102 /* AppStateNavigationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A000000000000000000002 /* AppStateNavigationTests.swift */; };
+		70520000000000000000B103 /* TabSelectionPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C500000000000000000000004 /* TabSelectionPolicyTests.swift */; };
+		70520000000000000000B104 /* CollectionDetailViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A000000000000000000002 /* CollectionDetailViewModelTests.swift */; };
+		70520000000000000000B105 /* DiscoverMediaItemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0E8AF893654BCD6C39AC12 /* DiscoverMediaItemTests.swift */; };
+		70520000000000000000B106 /* MockRequestListFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A000000000000000000005 /* MockRequestListFetcher.swift */; };
+		70520000000000000000B107 /* MockWatchlistFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D61F6815EFC57AC8DF4F8424 /* MockWatchlistFetcher.swift */; };
+		70520000000000000000B108 /* RequestListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A000000000000000000004 /* RequestListViewModelTests.swift */; };
+		70520000000000000000B109 /* SeerrModelsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A65F11D0875344C5E92CB0 /* SeerrModelsTests.swift */; };
+		70520000000000000000B110 /* ServerDetectionResultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66E1E51275191AF431112E6C /* ServerDetectionResultTests.swift */; };
+		70520000000000000000B111 /* WatchlistViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487D98B554FDDAA3F90661D4 /* WatchlistViewModelTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -192,6 +203,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 9EA76F0C1C79685436156160;
 			remoteInfo = SeerrClient;
+		};
+		70520000000000000000A027 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D4DC02BCE452C41F4C338432 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 70520000000000000000A001;
+			remoteInfo = SeerrClientMac;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -307,6 +325,7 @@
 		70520000000000000000B072 /* RequestsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestsView.swift; sourceTree = "<group>"; };
 		70520000000000000000B076 /* MacProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacProfileView.swift; sourceTree = "<group>"; };
 		70520000000000000000B078 /* MacSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacSettingsView.swift; sourceTree = "<group>"; };
+		70520000000000000000A021 /* SeerrClientMacTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SeerrClientMacTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -512,6 +531,7 @@
 				4D82C291E836C1E1D59DFF4B /* SeerrClientTests.xctest */,
 				B100000000000000000000003 /* SeerrClientUITests.xctest */,
 				70520000000000000000A002 /* SeerrClientMac.app */,
+				70520000000000000000A021 /* SeerrClientMacTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -914,6 +934,24 @@
 			productReference = 70520000000000000000A002 /* SeerrClientMac.app */;
 			productType = "com.apple.product-type.application";
 		};
+		70520000000000000000A020 /* SeerrClientMacTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 70520000000000000000A023 /* Build configuration list for PBXNativeTarget "SeerrClientMacTests" */;
+			buildPhases = (
+				70520000000000000000A022 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				70520000000000000000A026 /* PBXTargetDependency */,
+			);
+			name = SeerrClientMacTests;
+			packageProductDependencies = (
+			);
+			productName = SeerrClientMacTests;
+			productReference = 70520000000000000000A021 /* SeerrClientMacTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -951,6 +989,7 @@
 				5C6985FED49AADD9C9BE0632 /* SeerrClientTests */,
 				B100000000000000000000006 /* SeerrClientUITests */,
 				70520000000000000000A001 /* SeerrClientMac */,
+				70520000000000000000A020 /* SeerrClientMacTests */,
 			);
 		};
 /* End PBXProject section */
@@ -1177,6 +1216,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		70520000000000000000A022 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70520000000000000000B101 /* AboutContentTests.swift in Sources */,
+				70520000000000000000B102 /* AppStateNavigationTests.swift in Sources */,
+				70520000000000000000B103 /* TabSelectionPolicyTests.swift in Sources */,
+				70520000000000000000B104 /* CollectionDetailViewModelTests.swift in Sources */,
+				70520000000000000000B105 /* DiscoverMediaItemTests.swift in Sources */,
+				70520000000000000000B106 /* MockRequestListFetcher.swift in Sources */,
+				70520000000000000000B107 /* MockWatchlistFetcher.swift in Sources */,
+				70520000000000000000B108 /* RequestListViewModelTests.swift in Sources */,
+				70520000000000000000B109 /* SeerrModelsTests.swift in Sources */,
+				70520000000000000000B110 /* ServerDetectionResultTests.swift in Sources */,
+				70520000000000000000B111 /* WatchlistViewModelTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1189,6 +1246,11 @@
 			isa = PBXTargetDependency;
 			target = 9EA76F0C1C79685436156160 /* SeerrClient */;
 			targetProxy = A553AA1E29B70026AD56A011 /* PBXContainerItemProxy */;
+		};
+		70520000000000000000A026 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 70520000000000000000A001 /* SeerrClientMac */;
+			targetProxy = 70520000000000000000A027 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1505,6 +1567,48 @@
 			};
 			name = Debug;
 		};
+		70520000000000000000A024 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = WSM586GQ29;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.frostforgelabs.OctopusExplorerMacTests;
+				SDKROOT = macosx;
+				SWIFT_STRICT_CONCURRENCY = targeted;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SeerrClientMac.app/Contents/MacOS/SeerrClientMac";
+			};
+			name = Debug;
+		};
+		70520000000000000000A025 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = WSM586GQ29;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.frostforgelabs.OctopusExplorerMacTests;
+				SDKROOT = macosx;
+				SWIFT_STRICT_CONCURRENCY = targeted;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SeerrClientMac.app/Contents/MacOS/SeerrClientMac";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1552,6 +1656,15 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		70520000000000000000A023 /* Build configuration list for PBXNativeTarget "SeerrClientMacTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				70520000000000000000A024 /* Debug */,
+				70520000000000000000A025 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};

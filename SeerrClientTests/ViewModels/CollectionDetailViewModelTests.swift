@@ -5,7 +5,11 @@
 // one integration-style test that loads the collection via the real repository
 // and API client using a stubbed URLProtocol.
 
+#if os(macOS)
+@testable import SeerrClientMac
+#else
 @testable import SeerrClient
+#endif
 import XCTest
 
 @MainActor

@@ -4,7 +4,11 @@
 // A test double for WatchlistFetching. Allows tests to stub responses and
 // errors without any network activity.
 
+#if os(macOS)
+@testable import SeerrClientMac
+#else
 @testable import SeerrClient
+#endif
 import Foundation
 
 final class MockWatchlistFetcher: WatchlistFetching, @unchecked Sendable {

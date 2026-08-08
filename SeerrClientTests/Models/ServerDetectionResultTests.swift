@@ -4,7 +4,11 @@
 // Tests for the shared runtime compatibility model used by server detection and
 // saved-server reconnect flows.
 
+#if os(macOS)
+@testable import SeerrClientMac
+#else
 @testable import SeerrClient
+#endif
 import XCTest
 
 final class ServerDetectionResultTests: XCTestCase {

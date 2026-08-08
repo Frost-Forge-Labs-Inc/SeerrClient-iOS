@@ -3,7 +3,11 @@
 //
 // Test double for request-list loading and inline moderation actions.
 
+#if os(macOS)
+@testable import SeerrClientMac
+#else
 @testable import SeerrClient
+#endif
 import Foundation
 
 final class MockRequestListFetcher: RequestListFetching, @unchecked Sendable {

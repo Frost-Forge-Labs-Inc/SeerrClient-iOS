@@ -1,4 +1,8 @@
+#if os(macOS)
+@testable import SeerrClientMac
+#else
 @testable import SeerrClient
+#endif
 import XCTest
 
 /// Exhaustively covers the tab-reset decision matrix for watchlist capability changes.
