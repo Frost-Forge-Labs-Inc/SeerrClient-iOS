@@ -84,8 +84,12 @@ struct TVRootView: View {
                         TVRequestDetailView(requestID: dest.requestID)
                     }
             }
-                .tabItem { Label("Discover", systemImage: "film.stack") }
-                .accessibilityIdentifier("tab.discover")
+                .tabItem {
+                    // tab.* identifiers live ONLY on the focusable tab-bar item
+                    // (not the content pane — content uses tvos.*.screen).
+                    Label("Discover", systemImage: "film.stack")
+                        .accessibilityIdentifier("tab.discover")
+                }
                 .tag(AppTab.discover)
 
             NavigationStack {
@@ -97,8 +101,10 @@ struct TVRootView: View {
                         TVShowDetailView(tvId: dest.id, showTitle: dest.title)
                     }
             }
-                .tabItem { Label("Search", systemImage: "magnifyingglass") }
-                .accessibilityIdentifier("tab.search")
+                .tabItem {
+                    Label("Search", systemImage: "magnifyingglass")
+                        .accessibilityIdentifier("tab.search")
+                }
                 .tag(AppTab.search)
 
             NavigationStack {
@@ -107,8 +113,10 @@ struct TVRootView: View {
                         TVRequestDetailView(requestID: dest.requestID)
                     }
             }
-                .tabItem { Label("Requests", systemImage: "tray.full") }
-                .accessibilityIdentifier("tab.requests")
+                .tabItem {
+                    Label("Requests", systemImage: "tray.full")
+                        .accessibilityIdentifier("tab.requests")
+                }
                 .tag(AppTab.requests)
 
             if supportsWatchlistRead {
@@ -121,8 +129,10 @@ struct TVRootView: View {
                             TVShowDetailView(tvId: dest.id, showTitle: dest.title)
                         }
                 }
-                    .tabItem { Label("Watchlist", systemImage: "bookmark") }
-                    .accessibilityIdentifier("tab.watchlist")
+                    .tabItem {
+                        Label("Watchlist", systemImage: "bookmark")
+                            .accessibilityIdentifier("tab.watchlist")
+                    }
                     .tag(AppTab.watchlist)
             }
 
@@ -134,8 +144,8 @@ struct TVRootView: View {
                 .tabItem {
                     Image(systemName: "person.circle")
                         .accessibilityLabel("Profile")
+                        .accessibilityIdentifier("tab.profile")
                 }
-                .accessibilityIdentifier("tab.profile")
                 .tag(AppTab.profile)
         }
     }

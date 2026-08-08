@@ -45,6 +45,7 @@ struct TVLoginView: View {
                 Task { await viewModel?.loginPlex(authToken: authToken) }
             }
         }
+        .accessibilityIdentifier("tvos.login.screen")
     }
 
     private func content(_ viewModel: AuthViewModel) -> some View {
