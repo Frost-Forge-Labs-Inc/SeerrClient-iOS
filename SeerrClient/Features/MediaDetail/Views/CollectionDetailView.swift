@@ -2,7 +2,7 @@
 // SeerrClient
 //
 // Displays a TMDB movie collection with its member films, their availability
-// status, and buttons to request all or selected movies.
+// status, and buttons to request all or selected movies in one tap.
 
 import SwiftUI
 
@@ -13,7 +13,7 @@ import SwiftUI
 ///
 /// Shows the collection name, backdrop, overview, and a list of member movies.
 /// Each movie shows its availability state and request-selection affordance.
-/// Users can request all requestable movies or a selected subset.
+/// Users can request all requestable movies or a selected subset in one action.
 struct CollectionDetailView: View {
 
     // MARK: - Dependencies
@@ -43,26 +43,16 @@ struct CollectionDetailView: View {
         #if !os(macOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
-        .toolbar {
-            #if os(macOS)
-            if let vm = viewModel {
-                let requestable = vm.requestableMovies
-                if !requestable.isEmpty {
-                    ToolbarItem(placement: .primaryAction) {
-                        Button("Request All") {
-                            vm.requestAll()
-                        }
-                        .accessibilityIdentifier("collection.requestAll")
-                    }
-                }
-            }
-            #endif
-        }
         .task {
             if viewModel == nil {
                 guard let client = appState.apiClient else { return }
-                let repo = MediaDetailRepository(apiClient: client)
-                viewModel = CollectionDetailViewModel(collectionId: collectionId, repository: repo)
+                let mediaRepo = MediaDetailRepository(apiClient: client)
+                let requestRepo = RequestRepository(apiClient: client)
+                viewModel = CollectionDetailViewModel(
+                    collectionId: collectionId,
+                    repository: mediaRepo,
+                    requestRepository: requestRepo
+                )
             }
             await viewModel?.loadCollection()
         }
@@ -103,7 +93,7 @@ struct CollectionDetailView: View {
                                     .padding(.horizontal)
                             }
                             let requestable = vm.requestableMovies
-                            if !requestable.isEmpty {
+                            if !requestable.isEmpty || vm.isRequesting {
                                 requestControls(vm: vm, requestableCount: requestable.count)
                                     .padding(.horizontal)
                             } else {
@@ -140,12 +130,6 @@ struct CollectionDetailView: View {
                 singleColumnLoadedContent(collection, vm: vm)
             }
         }
-        .sheet(isPresented: Binding(
-            get: { vm.showRequestSheet },
-            set: { if !$0 { vm.dismissRequestSheet() } }
-        )) {
-            requestQueueSheet(vm: vm)
-        }
         #else
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
@@ -174,9 +158,9 @@ struct CollectionDetailView: View {
                             .foregroundStyle(.secondary)
                     }
 
-                    // Action row: Request All
+                    // Action row: Request All / Request Selected
                     let requestable = vm.requestableMovies
-                    if !requestable.isEmpty {
+                    if !requestable.isEmpty || vm.isRequesting {
                         requestControls(vm: vm, requestableCount: requestable.count)
                     } else {
                         Text("All movies in this collection are already available or have active requests.")
@@ -199,12 +183,6 @@ struct CollectionDetailView: View {
                 .padding()
             }
         }
-        .sheet(isPresented: Binding(
-            get: { vm.showRequestSheet },
-            set: { if !$0 { vm.dismissRequestSheet() } }
-        )) {
-            requestQueueSheet(vm: vm)
-        }
         #endif
     }
 
@@ -221,7 +199,7 @@ struct CollectionDetailView: View {
                             .foregroundStyle(.secondary)
                     }
                     let requestable = vm.requestableMovies
-                    if !requestable.isEmpty {
+                    if !requestable.isEmpty || vm.isRequesting {
                         requestControls(vm: vm, requestableCount: requestable.count)
                     } else {
                         Text("All movies in this collection are already available or have active requests.")
@@ -362,6 +340,7 @@ struct CollectionDetailView: View {
                     }
                 }
                 .buttonStyle(.bordered)
+                .disabled(vm.isRequesting || requestableCount == 0)
                 .accessibilityIdentifier(
                     vm.allRequestableMoviesSelected ? "collection.clearSelection" : "collection.selectAll"
                 )
@@ -372,11 +351,23 @@ struct CollectionDetailView: View {
                     .accessibilityIdentifier("collection.selectionSummary")
 
                 Spacer()
+
+                if vm.isRequesting {
+                    ProgressView()
+                        .accessibilityIdentifier("collection.requesting")
+                }
+            }
+
+            if let batchErrorMessage = vm.batchErrorMessage {
+                Text(batchErrorMessage)
+                    .font(.footnote)
+                    .foregroundStyle(.red)
+                    .accessibilityIdentifier("collection.batchError")
             }
 
             HStack(spacing: 12) {
                 Button {
-                    vm.requestSelected()
+                    Task { await vm.requestSelected() }
                 } label: {
                     Label(
                         vm.hasSelection ? "Request Selected (\(vm.selectedRequestMovieIDs.count))" : "Request Selected",
@@ -386,17 +377,18 @@ struct CollectionDetailView: View {
                     .padding(.vertical, 12)
                 }
                 .buttonStyle(.bordered)
-                .disabled(!vm.hasSelection)
+                .disabled(!vm.hasSelection || vm.isRequesting)
                 .accessibilityIdentifier("collection.requestSelected")
 
                 Button {
-                    vm.requestAll()
+                    Task { await vm.requestAll() }
                 } label: {
                     Label("Request All", systemImage: "arrow.down.circle.fill")
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
                 }
                 .buttonStyle(.borderedProminent)
+                .disabled(vm.isRequesting || requestableCount == 0)
                 .accessibilityIdentifier("collection.requestAll")
             }
         }
@@ -422,38 +414,12 @@ struct CollectionDetailView: View {
             .buttonStyle(.plain)
             .frame(width: 44, height: 44)
             .contentShape(Rectangle())
+            .disabled(vm.isRequesting)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(vm.isSelected(movieId: movie.id) ? "Deselect \(movie.title)" : "Select \(movie.title)")
             .accessibilityValue(vm.isSelected(movieId: movie.id) ? "Selected" : "Not selected")
             .accessibilityAddTraits(.isButton)
             .accessibilityIdentifier("collection.select.\(movie.id)")
-        }
-    }
-
-    @ViewBuilder
-    private func requestQueueSheet(vm: CollectionDetailViewModel) -> some View {
-        if let movie = vm.activeRequestMovie {
-            CreateRequestView(
-                mediaType: .movie,
-                mediaId: movie.id,
-                mediaInfo: movie.mediaInfo,
-                dismissOnSuccess: vm.queuedRequestMovieIDs.count <= 1
-            ) {
-                vm.handleRequestSuccess()
-            }
-            #if os(macOS)
-            .frame(width: 480, height: 620)
-            #else
-            .presentationDetents([.medium, .large])
-            #endif
-            .id(movie.id)
-        } else {
-            ProgressView()
-                #if os(macOS)
-                .frame(width: 480, height: 200)
-                #else
-                .presentationDetents([.medium])
-                #endif
         }
     }
 

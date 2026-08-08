@@ -27,6 +27,55 @@
 		461FA6B96694952B917DE8E2 /* MovieDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 108613EEFAC5605F2FFE339D /* MovieDetailViewModel.swift */; };
 		4A53C4364D7148F2F1325FC0 /* ProfileHeaderSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BB8BDD36E7E8BA1633E119B /* ProfileHeaderSection.swift */; };
 		4C7C52B874F8ADB62D37FB1F /* WatchlistViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487D98B554FDDAA3F90661D4 /* WatchlistViewModelTests.swift */; };
+		70510000000000000000A010 /* SeerrClientTVApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70510000000000000000A009 /* SeerrClientTVApp.swift */; };
+		70510000000000000000A013 /* Assets-tvOS.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 70510000000000000000A012 /* Assets-tvOS.xcassets */; };
+		70510000000000000000A015 /* ContentView-tvOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70510000000000000000A014 /* ContentView-tvOS.swift */; };
+		70510000000000000000B001 /* SeerrModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9E349149C88570515FD1F3 /* SeerrModels.swift */; };
+		70510000000000000000B002 /* ServerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBEB581AA47ACD7AC2BF46A2 /* ServerConfiguration.swift */; };
+		70510000000000000000B003 /* APIEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA9BC8FEC91C03F2E9EF262 /* APIEndpoints.swift */; };
+		70510000000000000000B004 /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC276DA8E190B9425423E1A /* APIError.swift */; };
+		70510000000000000000B005 /* SeerrAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F23B78D85AD082DF788C99 /* SeerrAPIClient.swift */; };
+		70510000000000000000B006 /* TrustManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A21FB0924B241FDC4D8DC9 /* TrustManager.swift */; };
+		70510000000000000000B007 /* UITestURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000011 /* UITestURLProtocol.swift */; };
+		70510000000000000000B008 /* URLNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27074C23E43436441EF6F02F /* URLNormalizer.swift */; };
+		70510000000000000000B009 /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81677D5A77C4A46EED374C39 /* KeychainManager.swift */; };
+		70510000000000000000B010 /* ServerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC2FF07F37E85C5506E7A09E /* ServerStore.swift */; };
+		70510000000000000000B011 /* DateFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A002FFC73E8F244FA27489C /* DateFormatting.swift */; };
+		70510000000000000000B012 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199CDE54AD436C7475063960 /* Logger.swift */; };
+		70510000000000000000B013 /* TMDBImageURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69B950886B50BE2637AA796 /* TMDBImageURL.swift */; };
+		70510000000000000000B014 /* ShimmerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B06681BFD58F3624A783EF4 /* ShimmerView.swift */; };
+		70510000000000000000B015 /* MediaNavDestinations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87C5B119185D13BDC0B2ACC /* MediaNavDestinations.swift */; };
+		70510000000000000000B016 /* TabSelectionPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = C500000000000000000000002 /* TabSelectionPolicy.swift */; };
+		70510000000000000000B017 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DF43906E0E406A94453EF1 /* AppState.swift */; };
+		70510000000000000000B018 /* UITestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000010 /* UITestSupport.swift */; };
+		70510000000000000000B019 /* AuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74273EE34B44ADDCFCA9326 /* AuthRepository.swift */; };
+		70510000000000000000B020 /* DiscoverRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB38D0BE2C5D424D1208B1C /* DiscoverRepository.swift */; };
+		70510000000000000000B021 /* MediaDetailRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5971F7AFF27722D93F4B2C4A /* MediaDetailRepository.swift */; };
+		70510000000000000000B022 /* ProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78ABD9B388909ABD99B582D2 /* ProfileRepository.swift */; };
+		70510000000000000000B023 /* RequestRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611335D5B4B13E4CCE58A230 /* RequestRepository.swift */; };
+		70510000000000000000B024 /* SearchRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86D75F539EE4FB9EDCCD4FD8 /* SearchRepository.swift */; };
+		70510000000000000000B025 /* ServerRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559DE2B239D468A40F567DF2 /* ServerRepository.swift */; };
+		70510000000000000000B026 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B2E98367B74869339FA13D2 /* AuthViewModel.swift */; };
+		70510000000000000000B027 /* DiscoverViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B51E03581D50B930FC87D744 /* DiscoverViewModel.swift */; };
+		70510000000000000000B028 /* CollectionDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D756A645A74A0BAA910B2F /* CollectionDetailViewModel.swift */; };
+		70510000000000000000B029 /* MovieDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 108613EEFAC5605F2FFE339D /* MovieDetailViewModel.swift */; };
+		70510000000000000000B030 /* RequestDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A22094D4EC82D7864FB6326 /* RequestDetailViewModel.swift */; };
+		70510000000000000000B031 /* RequestListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D1E4FA44C1BCA098500049 /* RequestListViewModel.swift */; };
+		70510000000000000000B032 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08F8FBBCF15E572E36DDEE7D /* ProfileViewModel.swift */; };
+		70510000000000000000B033 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73FDBE818C29FCA8DBA88E3 /* SearchViewModel.swift */; };
+		70510000000000000000B034 /* ServerSetupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4FE6055B66B1402A9BA91C3 /* ServerSetupViewModel.swift */; };
+		70510000000000000000B035 /* TvShowDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8F1D3BB4C54F0F6C79EC2F /* TvShowDetailViewModel.swift */; };
+		70510000000000000000B036 /* WatchlistViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE74B4F94F2F612047C9284C /* WatchlistViewModel.swift */; };
+		70510000000000000000C101 /* TVContentSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70510000000000000000C001 /* TVContentSupport.swift */; };
+		70510000000000000000C102 /* TVDiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70510000000000000000C002 /* TVDiscoverView.swift */; };
+		70510000000000000000C103 /* TVWatchlistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70510000000000000000C003 /* TVWatchlistView.swift */; };
+		70510000000000000000C104 /* TVRequestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70510000000000000000C004 /* TVRequestsView.swift */; };
+		70510000000000000000C109 /* TVSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70510000000000000000C009 /* TVSearchView.swift */; };
+		70510000000000000000C105 /* TVProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70510000000000000000C005 /* TVProfileView.swift */; };
+		70510000000000000000C106 /* TVMediaDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70510000000000000000C006 /* TVMediaDetailView.swift */; };
+		70510000000000000000C107 /* TVServerSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70510000000000000000C007 /* TVServerSetupView.swift */; };
+		70510000000000000000C108 /* TVLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70510000000000000000C008 /* TVLoginView.swift */; };
+		70510000000000000000C10A /* TVPlexOAuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70510000000000000000C00A /* TVPlexOAuthView.swift */; };
 		50A385491AC7DE95CA94A5B8 /* CastCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4D80AE934D8EE61E68CC5F /* CastCarouselView.swift */; };
 		5836E1B8DF927AD0FF62F670 /* DiscoverSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2F9EE06CCC51F03BC5B4F6 /* DiscoverSliderView.swift */; };
 		5B542C3F047A5AF18CCCDC1D /* ServerInfoSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B636B641B400144C5B4A9D6E /* ServerInfoSection.swift */; };
@@ -259,6 +308,21 @@
 		66E1E51275191AF431112E6C /* ServerDetectionResultTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetectionResultTests.swift; sourceTree = "<group>"; };
 		6B80980E75F51890E352DE28 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		6EFE9A3868A19863AAB5B71E /* AboutSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutSection.swift; sourceTree = "<group>"; };
+		70510000000000000000A002 /* SeerrClientTV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SeerrClientTV.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		70510000000000000000A009 /* SeerrClientTVApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeerrClientTVApp.swift; sourceTree = "<group>"; };
+		70510000000000000000A014 /* ContentView-tvOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView-tvOS.swift"; sourceTree = "<group>"; };
+		70510000000000000000C001 /* TVContentSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVContentSupport.swift; sourceTree = "<group>"; };
+		70510000000000000000C002 /* TVDiscoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVDiscoverView.swift; sourceTree = "<group>"; };
+		70510000000000000000C003 /* TVWatchlistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVWatchlistView.swift; sourceTree = "<group>"; };
+		70510000000000000000C004 /* TVRequestsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVRequestsView.swift; sourceTree = "<group>"; };
+		70510000000000000000C005 /* TVProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVProfileView.swift; sourceTree = "<group>"; };
+		70510000000000000000C006 /* TVMediaDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVMediaDetailView.swift; sourceTree = "<group>"; };
+		70510000000000000000C007 /* TVServerSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVServerSetupView.swift; sourceTree = "<group>"; };
+		70510000000000000000C008 /* TVLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVLoginView.swift; sourceTree = "<group>"; };
+		70510000000000000000C00A /* TVPlexOAuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVPlexOAuthView.swift; sourceTree = "<group>"; };
+		70510000000000000000C009 /* TVSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVSearchView.swift; sourceTree = "<group>"; };
+		70510000000000000000A011 /* Info-tvOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-tvOS.plist"; sourceTree = "<group>"; };
+		70510000000000000000A012 /* Assets-tvOS.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets-tvOS.xcassets"; sourceTree = "<group>"; };
 		78ABD9B388909ABD99B582D2 /* ProfileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileRepository.swift; sourceTree = "<group>"; };
 		7BA9BC8FEC91C03F2E9EF262 /* APIEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIEndpoints.swift; sourceTree = "<group>"; };
 		7CCAD2AEBC9B5070D704CC42 /* ServerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListView.swift; sourceTree = "<group>"; };
@@ -373,6 +437,7 @@
 				7280BFAF535389DAA22B815A /* ViewModels */,
 				1C7C291376341FF9C6E63D76 /* Views */,
 				70520000000000000000B049 /* Views-macOS */,
+				70510000000000000000C014 /* Views-tvOS */,
 			);
 			path = ServerSetup;
 			sourceTree = "<group>";
@@ -472,6 +537,7 @@
 				8EDCB193CE5698AB1E51393D /* Repositories */,
 				E80BF905F333428DE38E8251 /* ViewModels */,
 				EE2232F456CD0D4ADA43921C /* Views */,
+				70510000000000000000C016 /* Views-tvOS */,
 			);
 			path = Search;
 			sourceTree = "<group>";
@@ -500,6 +566,7 @@
 				D10BACCCD943A8C0CB817381 /* Repositories */,
 				F74BAD8E0BB89B9B87C208BA /* ViewModels */,
 				DF51682CA8BB447639A08B49 /* Views */,
+				70510000000000000000C010 /* Views-tvOS */,
 			);
 			path = Discover;
 			sourceTree = "<group>";
@@ -511,6 +578,7 @@
 				CDF889051AB6FF01D7869A51 /* ViewModels */,
 				BB21A7C79B2C15D2677E5988 /* Views */,
 				70520000000000000000B07A /* Views-macOS */,
+				70510000000000000000C012 /* Views-tvOS */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -538,6 +606,7 @@
 				A917C884870CF3B2E728FF9D /* Repositories */,
 				004F44999B4462628033354E /* ViewModels */,
 				DB05223BA1DB20506A9353EB /* Views */,
+				70510000000000000000C013 /* Views-tvOS */,
 			);
 			path = MediaDetail;
 			sourceTree = "<group>";
@@ -551,6 +620,7 @@
 				70520000000000000000A002 /* SeerrClientMac.app */,
 				70520000000000000000A021 /* SeerrClientMacTests.xctest */,
 				70520000000000000000A031 /* SeerrClientMacUITests.xctest */,
+				70510000000000000000A002 /* SeerrClientTV.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -583,6 +653,76 @@
 				70520000000000000000B045 /* MacAddServerView.swift */,
 			);
 			path = "Views-macOS";
+			sourceTree = "<group>";
+		};
+		70510000000000000000A008 /* App-tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				70510000000000000000A009 /* SeerrClientTVApp.swift */,
+				70510000000000000000A014 /* ContentView-tvOS.swift */,
+				70510000000000000000C001 /* TVContentSupport.swift */,
+				70510000000000000000A011 /* Info-tvOS.plist */,
+				70510000000000000000A012 /* Assets-tvOS.xcassets */,
+			);
+			path = "App-tvOS";
+			sourceTree = "<group>";
+		};
+		70510000000000000000C016 /* Views-tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				70510000000000000000C009 /* TVSearchView.swift */,
+			);
+			path = "Views-tvOS";
+			sourceTree = "<group>";
+		};
+		70510000000000000000C010 /* Views-tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				70510000000000000000C002 /* TVDiscoverView.swift */,
+			);
+			path = "Views-tvOS";
+			sourceTree = "<group>";
+		};
+		70510000000000000000C011 /* Views-tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				70510000000000000000C004 /* TVRequestsView.swift */,
+			);
+			path = "Views-tvOS";
+			sourceTree = "<group>";
+		};
+		70510000000000000000C012 /* Views-tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				70510000000000000000C005 /* TVProfileView.swift */,
+				70510000000000000000C003 /* TVWatchlistView.swift */,
+			);
+			path = "Views-tvOS";
+			sourceTree = "<group>";
+		};
+		70510000000000000000C013 /* Views-tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				70510000000000000000C006 /* TVMediaDetailView.swift */,
+			);
+			path = "Views-tvOS";
+			sourceTree = "<group>";
+		};
+		70510000000000000000C014 /* Views-tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				70510000000000000000C007 /* TVServerSetupView.swift */,
+			);
+			path = "Views-tvOS";
+			sourceTree = "<group>";
+		};
+		70510000000000000000C015 /* Views-tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				70510000000000000000C008 /* TVLoginView.swift */,
+				70510000000000000000C00A /* TVPlexOAuthView.swift */,
+			);
+			path = "Views-tvOS";
 			sourceTree = "<group>";
 		};
 		7280BFAF535389DAA22B815A /* ViewModels */ = {
@@ -644,6 +784,7 @@
 				15A3F5EC4788F924EF3029E1 /* ViewModels */,
 				F4BC47AC41B72688A5401BDF /* Views */,
 				70520000000000000000B074 /* Views-macOS */,
+				70510000000000000000C011 /* Views-tvOS */,
 			);
 			path = Requests;
 			sourceTree = "<group>";
@@ -770,6 +911,7 @@
 			children = (
 				333FDE8C21977C639CCE9388 /* App */,
 				70520000000000000000A008 /* App-macOS */,
+				70510000000000000000A008 /* App-tvOS */,
 				2E923D3650FF5155D531868D /* Core */,
 				B6A0E75702CEE690EB8E95AF /* Features */,
 				CEE87EED834463BD311560B9 /* Assets.xcassets */,
@@ -829,6 +971,7 @@
 				743281D0A2EC8B7A0A03B805 /* ViewModels */,
 				FB94C5E1F628C94E87689C82 /* Views */,
 				70520000000000000000B048 /* Views-macOS */,
+				70510000000000000000C015 /* Views-tvOS */,
 			);
 			path = Auth;
 			sourceTree = "<group>";
@@ -904,6 +1047,24 @@
 			productName = SeerrClientTests;
 			productReference = 4D82C291E836C1E1D59DFF4B /* SeerrClientTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		70510000000000000000A001 /* SeerrClientTV */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 70510000000000000000A005 /* Build configuration list for PBXNativeTarget "SeerrClientTV" */;
+			buildPhases = (
+				70510000000000000000A006 /* Sources */,
+				70510000000000000000A007 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SeerrClientTV;
+			packageProductDependencies = (
+			);
+			productName = SeerrClientTV;
+			productReference = 70510000000000000000A002 /* SeerrClientTV.app */;
+			productType = "com.apple.product-type.application";
 		};
 		9EA76F0C1C79685436156160 /* SeerrClient */ = {
 			isa = PBXNativeTarget;
@@ -1015,6 +1176,10 @@
 						CreatedOnToolsVersion = 26.6;
 						TestTargetID = 70520000000000000000A001;
 					};
+					70510000000000000000A001 = {
+						CreatedOnToolsVersion = 26.6;
+						ProvisioningStyle = Automatic;
+					};
 					B100000000000000000000006 = {
 						CreatedOnToolsVersion = 17.5;
 						TestTargetID = 9EA76F0C1C79685436156160;
@@ -1041,6 +1206,7 @@
 				70520000000000000000A001 /* SeerrClientMac */,
 				70520000000000000000A020 /* SeerrClientMacTests */,
 				70520000000000000000A030 /* SeerrClientMacUITests */,
+				70510000000000000000A001 /* SeerrClientTV */,
 			);
 		};
 /* End PBXProject section */
@@ -1052,6 +1218,14 @@
 			files = (
 				7FB94BD3AC29CC5BFC7B12F6 /* Assets.xcassets in Resources */,
 				73A00903F8C5DEC97082EBBA /* LaunchScreen.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		70510000000000000000A007 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70510000000000000000A013 /* Assets-tvOS.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1150,6 +1324,61 @@
 				70520000000000000000B07D /* ServerInfoSection.swift in Sources */,
 				70520000000000000000B07E /* AboutSection.swift in Sources */,
 				70520000000000000000B07F /* AppearanceSection.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		70510000000000000000A006 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70510000000000000000A010 /* SeerrClientTVApp.swift in Sources */,
+				70510000000000000000A015 /* ContentView-tvOS.swift in Sources */,
+				70510000000000000000B001 /* SeerrModels.swift in Sources */,
+				70510000000000000000B002 /* ServerConfiguration.swift in Sources */,
+				70510000000000000000B003 /* APIEndpoints.swift in Sources */,
+				70510000000000000000B004 /* APIError.swift in Sources */,
+				70510000000000000000B005 /* SeerrAPIClient.swift in Sources */,
+				70510000000000000000B006 /* TrustManager.swift in Sources */,
+				70510000000000000000B007 /* UITestURLProtocol.swift in Sources */,
+				70510000000000000000B008 /* URLNormalizer.swift in Sources */,
+				70510000000000000000B009 /* KeychainManager.swift in Sources */,
+				70510000000000000000B010 /* ServerStore.swift in Sources */,
+				70510000000000000000B011 /* DateFormatting.swift in Sources */,
+				70510000000000000000B012 /* Logger.swift in Sources */,
+				70510000000000000000B013 /* TMDBImageURL.swift in Sources */,
+				70510000000000000000B014 /* ShimmerView.swift in Sources */,
+				70510000000000000000B015 /* MediaNavDestinations.swift in Sources */,
+				70510000000000000000B016 /* TabSelectionPolicy.swift in Sources */,
+				70510000000000000000B017 /* AppState.swift in Sources */,
+				70510000000000000000B018 /* UITestSupport.swift in Sources */,
+				70510000000000000000B019 /* AuthRepository.swift in Sources */,
+				70510000000000000000B020 /* DiscoverRepository.swift in Sources */,
+				70510000000000000000B021 /* MediaDetailRepository.swift in Sources */,
+				70510000000000000000B022 /* ProfileRepository.swift in Sources */,
+				70510000000000000000B023 /* RequestRepository.swift in Sources */,
+				70510000000000000000B024 /* SearchRepository.swift in Sources */,
+				70510000000000000000B025 /* ServerRepository.swift in Sources */,
+				70510000000000000000B026 /* AuthViewModel.swift in Sources */,
+				70510000000000000000B027 /* DiscoverViewModel.swift in Sources */,
+				70510000000000000000B028 /* CollectionDetailViewModel.swift in Sources */,
+				70510000000000000000B029 /* MovieDetailViewModel.swift in Sources */,
+				70510000000000000000B030 /* RequestDetailViewModel.swift in Sources */,
+				70510000000000000000B031 /* RequestListViewModel.swift in Sources */,
+				70510000000000000000B032 /* ProfileViewModel.swift in Sources */,
+				70510000000000000000B033 /* SearchViewModel.swift in Sources */,
+				70510000000000000000B034 /* ServerSetupViewModel.swift in Sources */,
+				70510000000000000000B035 /* TvShowDetailViewModel.swift in Sources */,
+				70510000000000000000B036 /* WatchlistViewModel.swift in Sources */,
+				70510000000000000000C101 /* TVContentSupport.swift in Sources */,
+				70510000000000000000C102 /* TVDiscoverView.swift in Sources */,
+				70510000000000000000C103 /* TVWatchlistView.swift in Sources */,
+				70510000000000000000C104 /* TVRequestsView.swift in Sources */,
+				70510000000000000000C105 /* TVProfileView.swift in Sources */,
+				70510000000000000000C106 /* TVMediaDetailView.swift in Sources */,
+				70510000000000000000C107 /* TVServerSetupView.swift in Sources */,
+				70510000000000000000C108 /* TVLoginView.swift in Sources */,
+				70510000000000000000C10A /* TVPlexOAuthView.swift in Sources */,
+				70510000000000000000C109 /* TVSearchView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1449,6 +1678,65 @@
 			};
 			name = Release;
 		};
+		70510000000000000000A003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = WSM586GQ29;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "SeerrClient/App-tvOS/Info-tvOS.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Octopus Explorer";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.frostforgelabs.OctopusExplorer;
+				PRODUCT_NAME = SeerrClientTV;
+				SDKROOT = appletvos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 18.0;
+			};
+			name = Debug;
+		};
+		70510000000000000000A004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = WSM586GQ29;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "SeerrClient/App-tvOS/Info-tvOS.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Octopus Explorer";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.frostforgelabs.OctopusExplorer;
+				PRODUCT_NAME = SeerrClientTV;
+				SDKROOT = appletvos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 18.0;
+			};
+			name = Release;
+		};
 		A368AC3D269C4102AC230B5A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1718,6 +2006,15 @@
 			buildConfigurations = (
 				3F611DA3265137CA0B18A322 /* Debug */,
 				6D3596B9EB4BE6DB558FBFC0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		70510000000000000000A005 /* Build configuration list for PBXNativeTarget "SeerrClientTV" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				70510000000000000000A003 /* Debug */,
+				70510000000000000000A004 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
