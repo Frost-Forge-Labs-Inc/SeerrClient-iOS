@@ -13,12 +13,22 @@ import Foundation
 final class UITestURLProtocol: URLProtocol {
     static let baseURLString = "http://ui-test.seerr:5055"
 
-    private static let host = "ui-test.seerr"
+    /// Hosts intercepted by the UI-test stub layer.
+    /// - `ui-test.seerr`: primary remembered/default server (has keychain creds in
+    ///   `launch_flow_server_selection`).
+    /// - `ui-test-alt.seerr`: alternate "needs login" server used by the same
+    ///   scenario; must be mocked so TVLoginView's silent restore probe does not
+    ///   hit real DNS inside a fully-mocked test.
+    private static let hosts: Set<String> = [
+        "ui-test.seerr",
+        "ui-test-alt.seerr"
+    ]
     private static let state = UITestScenarioState()
 
     override class func canInit(with request: URLRequest) -> Bool {
         guard UITestLaunchConfiguration.current.isEnabled,
-              request.url?.host == host else {
+              let host = request.url?.host,
+              hosts.contains(host) else {
             return false
         }
         return true
@@ -65,9 +75,14 @@ final class UITestURLProtocol: URLProtocol {
         switch (method, path) {
         case ("GET", "/api/v1/auth/me"):
             if UITestLaunchConfiguration.current.scenario == .launchFlowServerSelection {
+                // Keychain entries are keyed by the server base URL. Check the
+                // request's own origin (not a hardcoded primary host) so the
+                // alternate server (ui-test-alt.seerr) correctly returns 401 when
+                // it has no saved credentials, while the remembered server restores.
+                let serverBaseURL = Self.serverBaseURLString(for: url)
                 let hasSavedSignIn =
-                    KeychainManager.shared.read(.authMethod, server: Self.baseURLString) != nil
-                    || KeychainManager.shared.read(.sessionToken, server: Self.baseURLString) != nil
+                    KeychainManager.shared.read(.authMethod, server: serverBaseURL) != nil
+                    || KeychainManager.shared.read(.sessionToken, server: serverBaseURL) != nil
 
                 if !hasSavedSignIn {
                     return try jsonResponse(
@@ -228,6 +243,16 @@ final class UITestURLProtocol: URLProtocol {
             headers: ["Content-Type": "application/json"],
             body: data
         )
+    }
+
+    /// Reconstructs the base URL string used as the Keychain server key
+    /// (scheme://host:port), matching how ServerConfiguration.baseURL is stored.
+    private static func serverBaseURLString(for url: URL) -> String {
+        var components = URLComponents()
+        components.scheme = url.scheme
+        components.host = url.host
+        components.port = url.port
+        return components.string ?? baseURLString
     }
 }
 

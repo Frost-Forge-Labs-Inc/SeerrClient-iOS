@@ -27,6 +27,7 @@ struct TVServerSetupView: View {
                 isAddingServer = serverStore.servers.isEmpty
             }
         }
+        .accessibilityIdentifier("tvos.serversetup.screen")
     }
 
     private func content(_ viewModel: ServerSetupViewModel) -> some View {
@@ -102,6 +103,7 @@ struct TVServerSetupView: View {
                             )
                         }
                         .buttonStyle(.card)
+                        .accessibilityIdentifier("tvos.serversetup.select.\(server.id.uuidString)")
                         .contextMenu {
                             if serverStore.hasSavedSignIn(for: server) {
                                 Button("Forget Sign-In") {
