@@ -122,12 +122,29 @@ struct CreateRequestView: View {
                     qualityProfiles = try await mediaType == .movie
                         ? repo.fetchRadarrProfiles()
                         : repo.fetchSonarrProfiles()
+#if DEBUG
+                    if ScreenshotDemoConfiguration.current.isEnabled {
+                        selectedProfileId = qualityProfiles.first?.id
+                    }
+#endif
                 } catch {
                     AppLogger.warning("CreateRequestView: quality profiles fetch failed for \(mediaType.rawValue): \(error)")
                 }
             }
         }
         .onAppear {
+#if DEBUG
+            if ScreenshotDemoConfiguration.current.isEnabled,
+               ScreenshotDemoConfiguration.current.scene == .requestFlow,
+               mediaType == .tv {
+                // Show the per-season picker, and preselect the first requestable
+                // season so the primary action reads as enabled in the capture.
+                allSeasons = false
+                if let firstRequestable = requestableSeasonNumbers.first {
+                    selectedSeasonNumbers = [firstRequestable]
+                }
+            }
+#endif
             // If there are already requested seasons, default to individual selection mode
             if mediaType == .tv && !requestableSeasonNumbers.isEmpty && hasAnyRequestedOrAvailableSeasons {
                 allSeasons = false

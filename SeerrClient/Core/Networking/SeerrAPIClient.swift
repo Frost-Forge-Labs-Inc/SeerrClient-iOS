@@ -103,6 +103,8 @@ public actor SeerrAPIClient {
 #if DEBUG
         if UITestLaunchConfiguration.current.isEnabled {
             protocolClasses.insert(UITestURLProtocol.self, at: 0)
+        } else if ScreenshotDemoConfiguration.current.isEnabled {
+            protocolClasses.insert(ScreenshotDemoURLProtocol.self, at: 0)
         }
 #endif
         if !protocolClasses.isEmpty {

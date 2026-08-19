@@ -118,6 +118,21 @@
 		B200000000000000000000005 /* IPadSidebarSplitUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B200000000000000000000006 /* IPadSidebarSplitUITests.swift */; };
 		B10000000000000000000000E /* UITestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000010 /* UITestSupport.swift */; };
 		B10000000000000000000000F /* UITestURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000011 /* UITestURLProtocol.swift */; };
+		A90000000000000000000001 /* ScreenshotDemoConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90000000000000000000011 /* ScreenshotDemoConfiguration.swift */; };
+		A90000000000000000000002 /* ScreenshotDemoCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90000000000000000000012 /* ScreenshotDemoCatalog.swift */; };
+		A90000000000000000000003 /* ScreenshotDemoResponseBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90000000000000000000013 /* ScreenshotDemoResponseBuilder.swift */; };
+		A90000000000000000000004 /* ScreenshotDemoURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90000000000000000000014 /* ScreenshotDemoURLProtocol.swift */; };
+		A90000000000000000000005 /* ScreenshotDemoBootstrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90000000000000000000015 /* ScreenshotDemoBootstrapper.swift */; };
+		A90000000000000000000006 /* ScreenshotDemoConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90000000000000000000011 /* ScreenshotDemoConfiguration.swift */; };
+		A90000000000000000000007 /* ScreenshotDemoCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90000000000000000000012 /* ScreenshotDemoCatalog.swift */; };
+		A90000000000000000000008 /* ScreenshotDemoResponseBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90000000000000000000013 /* ScreenshotDemoResponseBuilder.swift */; };
+		A90000000000000000000009 /* ScreenshotDemoURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90000000000000000000014 /* ScreenshotDemoURLProtocol.swift */; };
+		A9000000000000000000000A /* ScreenshotDemoBootstrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90000000000000000000015 /* ScreenshotDemoBootstrapper.swift */; };
+		A9000000000000000000000B /* ScreenshotDemoConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90000000000000000000011 /* ScreenshotDemoConfiguration.swift */; };
+		A9000000000000000000000C /* ScreenshotDemoCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90000000000000000000012 /* ScreenshotDemoCatalog.swift */; };
+		A9000000000000000000000D /* ScreenshotDemoResponseBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90000000000000000000013 /* ScreenshotDemoResponseBuilder.swift */; };
+		A9000000000000000000000E /* ScreenshotDemoURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90000000000000000000014 /* ScreenshotDemoURLProtocol.swift */; };
+		A9000000000000000000000F /* ScreenshotDemoBootstrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90000000000000000000015 /* ScreenshotDemoBootstrapper.swift */; };
 		B3C998630B5747E9F90FA870 /* ShimmerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B06681BFD58F3624A783EF4 /* ShimmerView.swift */; };
 		B4AFE01403540AC0F4BC0B29 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08F8FBBCF15E572E36DDEE7D /* ProfileViewModel.swift */; };
 		B4D887908584618E9FC565BE /* CastCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC5117590DD72AE3D81042E /* CastCardView.swift */; };
@@ -353,6 +368,11 @@
 		B100000000000000000000003 /* SeerrClientUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SeerrClientUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B100000000000000000000010 /* UITestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestSupport.swift; sourceTree = "<group>"; };
 		B100000000000000000000011 /* UITestURLProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestURLProtocol.swift; sourceTree = "<group>"; };
+		A90000000000000000000011 /* ScreenshotDemoConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotDemoConfiguration.swift; sourceTree = "<group>"; };
+		A90000000000000000000012 /* ScreenshotDemoCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotDemoCatalog.swift; sourceTree = "<group>"; };
+		A90000000000000000000013 /* ScreenshotDemoResponseBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotDemoResponseBuilder.swift; sourceTree = "<group>"; };
+		A90000000000000000000014 /* ScreenshotDemoURLProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotDemoURLProtocol.swift; sourceTree = "<group>"; };
+		A90000000000000000000015 /* ScreenshotDemoBootstrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotDemoBootstrapper.swift; sourceTree = "<group>"; };
 		B200000000000000000000002 /* TabNavigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabNavigator.swift; sourceTree = "<group>"; };
 		B200000000000000000000004 /* TabNavigationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabNavigationUITests.swift; sourceTree = "<group>"; };
 		B200000000000000000000006 /* IPadSidebarSplitUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPadSidebarSplitUITests.swift; sourceTree = "<group>"; };
@@ -533,6 +553,7 @@
 		333FDE8C21977C639CCE9388 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				A90000000000000000000010 /* ScreenshotDemoData */,
 				C9DF43906E0E406A94453EF1 /* AppState.swift */,
 				64C47E6800275508DB03C916 /* ContentView.swift */,
 				3DA21C4FF404997FFF405DA9 /* Info.plist */,
@@ -543,6 +564,18 @@
 				B100000000000000000000010 /* UITestSupport.swift */,
 			);
 			path = App;
+			sourceTree = "<group>";
+		};
+		A90000000000000000000010 /* ScreenshotDemoData */ = {
+			isa = PBXGroup;
+			children = (
+				A90000000000000000000011 /* ScreenshotDemoConfiguration.swift */,
+				A90000000000000000000012 /* ScreenshotDemoCatalog.swift */,
+				A90000000000000000000013 /* ScreenshotDemoResponseBuilder.swift */,
+				A90000000000000000000014 /* ScreenshotDemoURLProtocol.swift */,
+				A90000000000000000000015 /* ScreenshotDemoBootstrapper.swift */,
+			);
+			path = ScreenshotDemoData;
 			sourceTree = "<group>";
 		};
 		3382CBACDCC430B31FF6B8B5 /* Models */ = {
@@ -1370,6 +1403,11 @@
 				70520000000000000000B034 /* AppState.swift in Sources */,
 				70520000000000000000B035 /* TabSelectionPolicy.swift in Sources */,
 				70520000000000000000B036 /* UITestSupport.swift in Sources */,
+				A90000000000000000000006 /* ScreenshotDemoConfiguration.swift in Sources */,
+				A90000000000000000000007 /* ScreenshotDemoCatalog.swift in Sources */,
+				A90000000000000000000008 /* ScreenshotDemoResponseBuilder.swift in Sources */,
+				A90000000000000000000009 /* ScreenshotDemoURLProtocol.swift in Sources */,
+				A9000000000000000000000A /* ScreenshotDemoBootstrapper.swift in Sources */,
 				70520000000000000000B050 /* DiscoverView.swift in Sources */,
 				70520000000000000000B051 /* DiscoverSliderView.swift in Sources */,
 				70520000000000000000B052 /* MediaCardView.swift in Sources */,
@@ -1427,6 +1465,11 @@
 				70510000000000000000B016 /* TabSelectionPolicy.swift in Sources */,
 				70510000000000000000B017 /* AppState.swift in Sources */,
 				70510000000000000000B018 /* UITestSupport.swift in Sources */,
+				A9000000000000000000000B /* ScreenshotDemoConfiguration.swift in Sources */,
+				A9000000000000000000000C /* ScreenshotDemoCatalog.swift in Sources */,
+				A9000000000000000000000D /* ScreenshotDemoResponseBuilder.swift in Sources */,
+				A9000000000000000000000E /* ScreenshotDemoURLProtocol.swift in Sources */,
+				A9000000000000000000000F /* ScreenshotDemoBootstrapper.swift in Sources */,
 				70510000000000000000B019 /* AuthRepository.swift in Sources */,
 				70510000000000000000B020 /* DiscoverRepository.swift in Sources */,
 				70510000000000000000B021 /* MediaDetailRepository.swift in Sources */,
@@ -1544,6 +1587,11 @@
 				835E30BA4370E001018A15FB /* SeerrAPIClient.swift in Sources */,
 				DE5050F748DD9EEACEBE82DB /* SeerrClientApp.swift in Sources */,
 				B10000000000000000000000E /* UITestSupport.swift in Sources */,
+				A90000000000000000000001 /* ScreenshotDemoConfiguration.swift in Sources */,
+				A90000000000000000000002 /* ScreenshotDemoCatalog.swift in Sources */,
+				A90000000000000000000003 /* ScreenshotDemoResponseBuilder.swift in Sources */,
+				A90000000000000000000004 /* ScreenshotDemoURLProtocol.swift in Sources */,
+				A90000000000000000000005 /* ScreenshotDemoBootstrapper.swift in Sources */,
 				37D1C04FE387044755C68A47 /* SeerrModels.swift in Sources */,
 				83957F5CCC7E0D4152487E92 /* ServerConfiguration.swift in Sources */,
 				5B542C3F047A5AF18CCCDC1D /* ServerInfoSection.swift in Sources */,
