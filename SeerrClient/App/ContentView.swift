@@ -28,11 +28,23 @@ struct ContentView: View {
     /// True for the first 2.5 s of the app's life — drives the launch animation overlay.
     /// Lives here (not in LoginView) so task-cancellation from auth state transitions
     /// cannot shorten the minimum display time.
-    @State private var isInLaunchPhase = !UITestLaunchConfiguration.current.disableLaunchAnimation
-    @State private var selectedTab = UITestLaunchConfiguration.current.initialTab
+    @State private var isInLaunchPhase = ContentView.shouldShowLaunchAnimation
+    @State private var selectedTab = ContentView.launchTab
+
+    private static var shouldShowLaunchAnimation: Bool {
+        !UITestLaunchConfiguration.current.disableLaunchAnimation
+            && !ScreenshotDemoConfiguration.current.isEnabled
+    }
+
+    private static var launchTab: AppTab {
+        ScreenshotDemoConfiguration.current.isEnabled
+            ? ScreenshotDemoConfiguration.current.initialTab
+            : UITestLaunchConfiguration.current.initialTab
+    }
 
     private var defaultSessionTab: AppTab {
-        UITestLaunchConfiguration.current.initialTab
+        if ScreenshotDemoConfiguration.current.isEnabled { return ScreenshotDemoConfiguration.current.initialTab }
+        return UITestLaunchConfiguration.current.initialTab
     }
 
     // MARK: - Body
@@ -90,6 +102,25 @@ struct ContentView: View {
     @ViewBuilder
     private var mainInterfacePlaceholder: some View {
 #if DEBUG
+        if ScreenshotDemoConfiguration.current.isEnabled {
+            switch ScreenshotDemoConfiguration.current.rootDestination {
+            case .mainTabs:
+                standardMainInterface
+            case .movieDetail(let id, let title):
+                NavigationStack { MovieDetailView(movieId: id, movieTitle: title) }
+            case .tvDetail(let id, let title):
+                NavigationStack { TvShowDetailView(tvId: id, showTitle: title) }
+            }
+        } else {
+            uiTestOrStandardMainInterface
+        }
+#else
+        uiTestOrStandardMainInterface
+#endif
+    }
+
+    @ViewBuilder
+    private var uiTestOrStandardMainInterface: some View {
         switch UITestLaunchConfiguration.current.rootDestination {
         case .collectionDetail(let collectionId, let collectionName):
             NavigationStack {
@@ -104,9 +135,6 @@ struct ContentView: View {
         case .mainTabs:
             standardMainInterface
         }
-#else
-        standardMainInterface
-#endif
     }
 
     @ViewBuilder

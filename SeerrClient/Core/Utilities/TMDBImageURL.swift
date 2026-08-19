@@ -151,6 +151,14 @@ public enum TMDBImageURL {
     /// - Returns: A fully-qualified `URL`, or `nil` if `path` is `nil` or malformed.
     public static func build(path: String?, sizeSegment: String) -> URL? {
         guard let path, !path.isEmpty else { return nil }
+#if DEBUG
+        let demoConfiguration = ScreenshotDemoConfiguration.current
+        if demoConfiguration.isEnabled,
+           let root = demoConfiguration.catalogRoot {
+            let fileURL = URL(fileURLWithPath: root).appendingPathComponent(path)
+            return FileManager.default.fileExists(atPath: fileURL.path) ? fileURL : nil
+        }
+#endif
         // Ensure the path starts with "/" for correct URL concatenation.
         let normalised = path.hasPrefix("/") ? path : "/\(path)"
         return URL(string: "\(baseURL)\(sizeSegment)\(normalised)")

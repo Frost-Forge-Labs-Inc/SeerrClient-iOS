@@ -25,6 +25,14 @@ struct TvShowDetailView: View {
 
     @State private var viewModel: TvShowDetailViewModel?
 
+    #if DEBUG
+    /// The stable destination for the season picker and episode list.
+    private static let screenshotDemoEpisodesSectionID = "screenshot-demo-episodes-section"
+
+    /// Limits automatic screenshot-demo scrolls so they do not override user interaction.
+    @State private var screenshotDemoEpisodesScrollAttempts = 0
+    #endif
+
     // MARK: - Body
 
     var body: some View {
@@ -106,6 +114,12 @@ struct TvShowDetailView: View {
                 viewModel = vm
             }
             await viewModel?.loadDetails()
+#if DEBUG
+            if ScreenshotDemoConfiguration.current.isEnabled,
+               ScreenshotDemoConfiguration.current.scene == .requestFlow {
+                viewModel?.showRequestSheet = true
+            }
+#endif
         }
     }
 
@@ -217,76 +231,109 @@ struct TvShowDetailView: View {
             .frame(width: 480, height: 620)
         }
         #else
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                // Hero
-                MediaDetailHeroView(
-                    backdropPath: tvShow.backdropPath,
-                    posterPath: tvShow.posterPath,
-                    mediaInfo: tvShow.mediaInfo
-                )
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    // Hero
+                    MediaDetailHeroView(
+                        backdropPath: tvShow.backdropPath,
+                        posterPath: tvShow.posterPath,
+                        mediaInfo: tvShow.mediaInfo
+                    )
 
-                // Metadata
-                let firstYear = tvShow.firstAirDate.flatMap { $0.count >= 4 ? String($0.prefix(4)) : nil }
-                let endYear: String? = {
-                    // For shows still in production, show "Present".
-                    // For shows that have ended (Ended, Canceled, etc.) show the last air year.
-                    if tvShow.inProduction == true {
-                        return "Present"
+                    // Metadata
+                    let firstYear = tvShow.firstAirDate.flatMap { $0.count >= 4 ? String($0.prefix(4)) : nil }
+                    let endYear: String? = {
+                        // For shows still in production, show "Present".
+                        // For shows that have ended (Ended, Canceled, etc.) show the last air year.
+                        if tvShow.inProduction == true {
+                            return "Present"
+                        }
+                        // Treat any non-in-production show with a lastAirDate as ended.
+                        return tvShow.lastAirDate.flatMap { $0.count >= 4 ? String($0.prefix(4)) : nil }
+                    }()
+                    let runtime: String? = {
+                        if let eps = tvShow.numberOfEpisodes, let seasons = tvShow.numberOfSeason {
+                            let seasonLabel = seasons == 1 ? "season" : "seasons"
+                            let episodeLabel = eps == 1 ? "episode" : "episodes"
+                            return "\(seasons) \(seasonLabel), \(eps) \(episodeLabel)"
+                        }
+                        return nil
+                    }()
+
+                    MediaMetadataView(
+                        title: tvShow.name ?? showTitle,
+                        tagline: tvShow.tagline,
+                        overview: tvShow.overview,
+                        year: firstYear,
+                        endYear: endYear,
+                        runtime: runtime,
+                        rating: tvShow.voteAverage,
+                        genres: tvShow.genres,
+                        status: tvShow.status
+                    )
+
+                    // Cast
+                    CastCarouselView(credits: tvShow.credits)
+
+                    // Season Picker + Episodes
+                    if let seasons = tvShow.seasons, !seasons.isEmpty {
+                        #if DEBUG
+                        seasonSection(seasons: seasons, vm: vm)
+                            .id(Self.screenshotDemoEpisodesSectionID)
+                        #else
+                        seasonSection(seasons: seasons, vm: vm)
+                        #endif
                     }
-                    // Treat any non-in-production show with a lastAirDate as ended.
-                    return tvShow.lastAirDate.flatMap { $0.count >= 4 ? String($0.prefix(4)) : nil }
-                }()
-                let runtime: String? = {
-                    if let eps = tvShow.numberOfEpisodes, let seasons = tvShow.numberOfSeason {
-                        return "\(seasons) seasons, \(eps) episodes"
+
+                    // Recommendations
+                    if !vm.recommendations.isEmpty {
+                        MediaHorizontalRowView(title: "Recommendations", items: vm.recommendations)
                     }
-                    return nil
-                }()
 
-                MediaMetadataView(
-                    title: tvShow.name ?? showTitle,
-                    tagline: tvShow.tagline,
-                    overview: tvShow.overview,
-                    year: firstYear,
-                    endYear: endYear,
-                    runtime: runtime,
-                    rating: tvShow.voteAverage,
-                    genres: tvShow.genres,
-                    status: tvShow.status
-                )
+                    // Similar Shows
+                    if !vm.similar.isEmpty {
+                        MediaHorizontalRowView(title: "Similar Shows", items: vm.similar)
+                    }
 
-                // Cast
-                CastCarouselView(credits: tvShow.credits)
+                    // Request Button
+                    RequestButtonView(
+                        mediaInfo: tvShow.mediaInfo,
+                        isTvShow: true,
+                        showRequestSheet: Binding(
+                            get: { vm.showRequestSheet },
+                            set: { vm.showRequestSheet = $0 }
+                        ),
+                        activeRequestId: tvShow.mediaInfo?.requests?.first { $0.status == 1 || $0.status == 2 }?.id
+                    )
 
-                // Season Picker + Episodes
-                if let seasons = tvShow.seasons, !seasons.isEmpty {
-                    seasonSection(seasons: seasons, vm: vm)
+                    Spacer(minLength: 40)
                 }
-
-                // Recommendations
-                if !vm.recommendations.isEmpty {
-                    MediaHorizontalRowView(title: "Recommendations", items: vm.recommendations)
-                }
-
-                // Similar Shows
-                if !vm.similar.isEmpty {
-                    MediaHorizontalRowView(title: "Similar Shows", items: vm.similar)
-                }
-
-                // Request Button
-                RequestButtonView(
-                    mediaInfo: tvShow.mediaInfo,
-                    isTvShow: true,
-                    showRequestSheet: Binding(
-                        get: { vm.showRequestSheet },
-                        set: { vm.showRequestSheet = $0 }
-                    ),
-                    activeRequestId: tvShow.mediaInfo?.requests?.first { $0.status == 1 || $0.status == 2 }?.id
-                )
-
-                Spacer(minLength: 40)
             }
+            #if DEBUG
+            .onChange(of: vm.season) { _, season in
+                guard season != nil,
+                      ScreenshotDemoConfiguration.current.isEnabled,
+                      ScreenshotDemoConfiguration.current.scrollAnchor == .episodes,
+                      screenshotDemoEpisodesScrollAttempts == 0 else { return }
+
+                screenshotDemoEpisodesScrollAttempts = 1
+                withAnimation(nil) {
+                    proxy.scrollTo(Self.screenshotDemoEpisodesSectionID, anchor: .top)
+                }
+
+                Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: 350_000_000)
+
+                    guard screenshotDemoEpisodesScrollAttempts == 1 else { return }
+
+                    screenshotDemoEpisodesScrollAttempts = 2
+                    withAnimation(nil) {
+                        proxy.scrollTo(Self.screenshotDemoEpisodesSectionID, anchor: .top)
+                    }
+                }
+            }
+            #endif
         }
         .sheet(isPresented: Binding(
             get: { vm.showRequestSheet },
@@ -301,9 +348,21 @@ struct TvShowDetailView: View {
             ) {
                 Task { await vm.retryDetails() }
             }
-            .presentationDetents([.medium, .large])
+            .presentationDetents(Self.requestSheetDetents)
         }
         #endif
+    }
+
+    /// The request sheet detents. Screenshot Demo Mode pins iPad to the large
+    /// detent so the full season list and submit action stay in frame.
+    private static var requestSheetDetents: Set<PresentationDetent> {
+#if DEBUG
+        if ScreenshotDemoConfiguration.current.isEnabled,
+           UIDevice.current.userInterfaceIdiom == .pad {
+            return [.large]
+        }
+#endif
+        return [.medium, .large]
     }
 
     #if os(macOS)
@@ -352,7 +411,9 @@ struct TvShowDetailView: View {
         }()
         let runtime: String? = {
             if let eps = tvShow.numberOfEpisodes, let seasons = tvShow.numberOfSeason {
-                return "\(seasons) seasons, \(eps) episodes"
+                let seasonLabel = seasons == 1 ? "season" : "seasons"
+                let episodeLabel = eps == 1 ? "episode" : "episodes"
+                return "\(seasons) \(seasonLabel), \(eps) \(episodeLabel)"
             }
             return nil
         }()

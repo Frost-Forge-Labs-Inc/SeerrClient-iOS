@@ -34,6 +34,17 @@ public final class ServerStore {
     private let serversKey    = "SeerrClient.servers"
     private let defaultKeyKey = "SeerrClient.defaultServerID"
     nonisolated private static let uiTestSuiteName = "SeerrClient.UITests"
+#if DEBUG
+    nonisolated private static let screenshotDemoSuiteName = "SeerrClient.ScreenshotDemo"
+    /// The isolated screenshot demo suite, resolved exactly once per process.
+    nonisolated private static let screenshotDemoDefaults: UserDefaults? = {
+        guard ScreenshotDemoConfiguration.current.isEnabled else { return nil }
+        return UserDefaults(suiteName: screenshotDemoSuiteName)
+    }()
+
+    /// Whether persistence is safely routed to the isolated screenshot demo suite.
+    nonisolated static let isUsingScreenshotDemoDefaults = screenshotDemoDefaults != nil
+#endif
 
     // MARK: - Stored State
 
@@ -250,12 +261,16 @@ public final class ServerStore {
         }
     }
 
-    nonisolated private static var defaults: UserDefaults {
+    /// The process-lifetime persistence destination selected at launch.
+    nonisolated private static let defaults: UserDefaults = {
 #if DEBUG
         if UITestLaunchConfiguration.current.isEnabled {
             return UserDefaults(suiteName: uiTestSuiteName) ?? .standard
         }
+        if let screenshotDemoDefaults {
+            return screenshotDemoDefaults
+        }
 #endif
         return .standard
-    }
+    }()
 }

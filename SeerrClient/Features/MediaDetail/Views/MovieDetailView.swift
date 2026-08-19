@@ -105,6 +105,12 @@ struct MovieDetailView: View {
                 viewModel = vm
             }
             await viewModel?.loadDetails()
+#if DEBUG
+            if ScreenshotDemoConfiguration.current.isEnabled,
+               ScreenshotDemoConfiguration.current.scene == .requestFlow {
+                viewModel?.showRequestSheet = true
+            }
+#endif
         }
     }
 

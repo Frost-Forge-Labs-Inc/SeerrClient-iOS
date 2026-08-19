@@ -35,6 +35,8 @@ struct SeerrClientApp: App {
 
         if uiTestConfiguration.isEnabled {
             UITestAppBootstrapper.configureIfNeeded(appState: state, serverStore: store)
+        } else if ScreenshotDemoConfiguration.current.isEnabled {
+            ScreenshotDemoBootstrapper.configureIfNeeded(appState: state, serverStore: store)
         }
         _appState = State(initialValue: state)
     }
