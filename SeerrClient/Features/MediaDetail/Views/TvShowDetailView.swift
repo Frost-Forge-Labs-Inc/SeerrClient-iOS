@@ -354,9 +354,9 @@ struct TvShowDetailView: View {
     }
 
     /// The request sheet detents. Screenshot Demo Mode pins iPad to the large
-    /// detent so the full season list and submit action stay in frame.
+    /// detent so the full season list and submit action stay in frame. The iPad check is iOS-only; other platforms always use the default detents.
     private static var requestSheetDetents: Set<PresentationDetent> {
-#if DEBUG
+#if DEBUG && os(iOS)
         if ScreenshotDemoConfiguration.current.isEnabled,
            UIDevice.current.userInterfaceIdiom == .pad {
             return [.large]
