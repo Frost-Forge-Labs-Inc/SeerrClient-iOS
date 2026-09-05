@@ -1,7 +1,7 @@
 // AboutSection.swift
 // SeerrClient
 //
-// Inline About/support content for the Profile screen.
+// Inline About content for the Profile screen.
 
 import SwiftUI
 
@@ -14,7 +14,6 @@ struct AboutSection: View {
             appInfoSection
             featuresSection
             documentationSection
-            supportSection
             acknowledgementsSection
         }
     }
@@ -85,18 +84,6 @@ struct AboutSection: View {
         }
     }
 
-    private var supportSection: some View {
-        Section {
-            ForEach(AboutContent.supportLinks) { link in
-                supportLinkRow(link, identifier: "about.support.\(link.id)")
-            }
-        } header: {
-            Text("Support Development")
-        } footer: {
-            Text("Support helps fund ongoing Octopus Explorer development.")
-        }
-    }
-
     private var acknowledgementsSection: some View {
         Section("Acknowledgements") {
             ForEach(AboutContent.acknowledgements) { acknowledgement in
@@ -123,20 +110,6 @@ struct AboutSection: View {
                 caption: link.caption,
                 icon: link.icon,
                 iconTint: Color.accentColor
-            )
-            .accessibilityElement(children: .combine)
-            .accessibilityIdentifier(identifier)
-        }
-    }
-
-    @ViewBuilder
-    private func supportLinkRow(_ link: SupportLink, identifier: String) -> some View {
-        Link(destination: link.url) {
-            externalLinkRow(
-                title: link.label,
-                caption: link.caption,
-                icon: link.icon,
-                iconTint: link.iconTint
             )
             .accessibilityElement(children: .combine)
             .accessibilityIdentifier(identifier)
@@ -252,16 +225,13 @@ enum AboutContent {
         ),
     ]
 
-    static let supportLinks: [SupportLink] = [
-        SupportLink(
-            id: "moreWaysToSupport",
-            label: "More ways to support",
-            caption: "Tip, sponsor, or learn how to contribute on seerrclient.dev",
-            icon: "heart",
-            iconTint: .pink,
-            url: URL(string: "https://seerrclient.dev/support-development/")!
-        ),
-    ]
+    // NOTE: There is intentionally no support/funding/sponsorship content in this
+    // type. App Review rejected build 1.0(3) on 2026-08-28 under Guideline 3.1.1
+    // (In-App Purchase) because the former "Support Development" section linked to
+    // https://seerrclient.dev/support-development/ (Buy Me a Coffee / Ko-fi /
+    // GitHub Sponsors). Do not re-add external funding links or copy here; in-app
+    // tipping, if any, must ship as a StoreKit 2 IAP tip jar (see planning docs).
+    // Lock-in test: AboutContentTests.test_noPaymentOrSponsorshipSurfaceInApp.
 
     static let acknowledgements: [Acknowledgement] = [
         Acknowledgement(
@@ -304,15 +274,6 @@ struct AboutLink: Identifiable, Equatable {
     let label: String
     let caption: String
     let icon: String
-    let url: URL
-}
-
-struct SupportLink: Identifiable {
-    let id: String
-    let label: String
-    let caption: String
-    let icon: String
-    let iconTint: Color
     let url: URL
 }
 

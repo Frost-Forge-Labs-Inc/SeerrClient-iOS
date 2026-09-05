@@ -8,7 +8,7 @@ final class AboutNavigationUITests: XCTestCase {
     }
 
     @MainActor
-    func testProfileShowsDirectFundingHooksAndJellyseerrAcknowledgement() throws {
+    func testProfileHasNoSupportSectionAndShowsJellyseerrAcknowledgement() throws {
         let app = launchApp()
 
         let profileTab = app.tabBars.buttons["Profile"]
@@ -17,11 +17,15 @@ final class AboutNavigationUITests: XCTestCase {
 
         XCTAssertTrue(app.descendants(matching: .any)["profile.screen"].waitForExistence(timeout: timeout))
 
-        let moreWaysToSupport = scrollToElement(in: app, identifier: "about.support.moreWaysToSupport")
-        XCTAssertTrue(moreWaysToSupport.waitForExistence(timeout: timeout))
-        XCTAssertTrue(moreWaysToSupport.isHittable)
+        // Scroll into the Acknowledgements section, which sits below where the removed Support Development section used to render.
+        let jellyseerrAcknowledgement = scrollToElement(in: app, identifier: "about.ack.jellyseerr")
+        XCTAssertTrue(jellyseerrAcknowledgement.waitForExistence(timeout: timeout))
 
-        // Path C: direct external payment CTAs must not appear in-app
+        // Guideline 3.1.1 (rejection 2026-08-28): no support / funding / sponsorship
+        // surface may exist anywhere in the Apple app.
+        XCTAssertFalse(app.staticTexts["Support Development"].exists)
+        XCTAssertFalse(app.descendants(matching: .any)["Support Development"].exists)
+        XCTAssertFalse(app.descendants(matching: .any)["about.support.moreWaysToSupport"].exists)
         XCTAssertFalse(app.descendants(matching: .any)["about.support.buyMeACoffee"].exists)
         XCTAssertFalse(app.descendants(matching: .any)["about.support.kofi"].exists)
         XCTAssertFalse(app.descendants(matching: .any)["about.support.githubSponsors"].exists)
@@ -29,9 +33,6 @@ final class AboutNavigationUITests: XCTestCase {
         XCTAssertFalse(app.descendants(matching: .any)["about.funding.entry"].exists)
         XCTAssertFalse(app.navigationBars["Funding Strategy"].exists)
         XCTAssertFalse(app.staticTexts["Funding Strategy"].exists)
-
-        let jellyseerrAcknowledgement = scrollToElement(in: app, identifier: "about.ack.jellyseerr")
-        XCTAssertTrue(jellyseerrAcknowledgement.waitForExistence(timeout: timeout))
     }
 
     @MainActor
