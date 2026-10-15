@@ -65,6 +65,8 @@ struct TVProfileView: View {
                     }
                 }
 
+                TipJarSection()
+
                 HStack(spacing: 18) {
                     Button("Refresh") {
                         Task { await viewModel.refresh() }

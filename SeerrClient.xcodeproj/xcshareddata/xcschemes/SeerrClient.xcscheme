@@ -79,6 +79,8 @@
             ReferencedContainer = "container:SeerrClient.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <StoreKitConfigurationFileReference identifier = "../../SeerrClient/Resources/OctopusExplorer.storekit">
+      </StoreKitConfigurationFileReference>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

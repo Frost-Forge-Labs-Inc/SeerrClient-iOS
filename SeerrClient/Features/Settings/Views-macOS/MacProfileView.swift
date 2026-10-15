@@ -102,6 +102,7 @@ struct MacProfileView: View {
                 ServerInfoSection(server: server, serverStatus: viewModel.serverStatus)
             }
 
+            TipJarSection()
             dangerSection(viewModel)
         }
         .formStyle(.grouped)

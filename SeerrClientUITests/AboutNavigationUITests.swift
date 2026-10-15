@@ -8,7 +8,7 @@ final class AboutNavigationUITests: XCTestCase {
     }
 
     @MainActor
-    func testProfileHasNoSupportSectionAndShowsJellyseerrAcknowledgement() throws {
+    func testProfileHasNoExternalSupportLinksAndShowsJellyseerrAcknowledgement() throws {
         let app = launchApp()
 
         let profileTab = app.tabBars.buttons["Profile"]
@@ -22,7 +22,7 @@ final class AboutNavigationUITests: XCTestCase {
         XCTAssertTrue(jellyseerrAcknowledgement.waitForExistence(timeout: timeout))
 
         // Guideline 3.1.1 (rejection 2026-08-28): no support / funding / sponsorship
-        // surface may exist anywhere in the Apple app.
+        // links may exist anywhere in the Apple app. StoreKit has its own entry.
         XCTAssertFalse(app.staticTexts["Support Development"].exists)
         XCTAssertFalse(app.descendants(matching: .any)["Support Development"].exists)
         XCTAssertFalse(app.descendants(matching: .any)["about.support.moreWaysToSupport"].exists)
@@ -33,6 +33,21 @@ final class AboutNavigationUITests: XCTestCase {
         XCTAssertFalse(app.descendants(matching: .any)["about.funding.entry"].exists)
         XCTAssertFalse(app.navigationBars["Funding Strategy"].exists)
         XCTAssertFalse(app.staticTexts["Funding Strategy"].exists)
+    }
+
+    @MainActor
+    func testProfileOpensStoreKitTipJar() {
+        let app = launchApp()
+        let profile = app.tabBars.buttons["Profile"]
+        XCTAssertTrue(profile.waitForExistence(timeout: timeout))
+        profile.tap()
+        let entry = scrollToElement(in: app, identifier: "tipJar.entry")
+        XCTAssertTrue(entry.isHittable)
+        entry.tap()
+        XCTAssertTrue(app.navigationBars["Tip the developer"].waitForExistence(timeout: timeout))
+        XCTAssertTrue(app.staticTexts["tipJar.disclosure"].label.contains("does not unlock any features"))
+        app.buttons["tipJar.done"].tap()
+        XCTAssertTrue(entry.waitForExistence(timeout: timeout))
     }
 
     @MainActor
