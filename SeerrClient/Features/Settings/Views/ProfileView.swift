@@ -111,6 +111,7 @@ struct ProfileView: View {
                 ServerInfoSection(server: server, serverStatus: viewModel.serverStatus)
             }
 
+            TipJarSection()
             AboutSection()
             dangerSection(viewModel)
         }

@@ -51,6 +51,7 @@ struct MacSettingsView: View {
 
     private var aboutTab: some View {
         Form {
+            TipJarSection()
             AboutSection()
         }
         .formStyle(.grouped)

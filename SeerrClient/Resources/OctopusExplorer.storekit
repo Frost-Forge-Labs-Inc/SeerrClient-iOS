@@ -1,0 +1,63 @@
+{
+  "identifier": "e81a6c9d-9777-4481-9bcd-4090b2a2abfb",
+  "nonRenewingSubscriptions": [],
+  "products": [
+    {
+      "displayPrice": "1.99",
+      "familyShareable": false,
+      "internalID": "1",
+      "localizations": [
+        {
+          "description": "Support Octopus Explorer development. It does not unlock any features.",
+          "displayName": "Small Tip",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.frostforgelabs.OctopusExplorer.support.tip.small",
+      "referenceName": "Small Tip",
+      "type": "Consumable"
+    },
+    {
+      "displayPrice": "4.99",
+      "familyShareable": false,
+      "internalID": "2",
+      "localizations": [
+        {
+          "description": "Support Octopus Explorer development. It does not unlock any features.",
+          "displayName": "Coffee",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.frostforgelabs.OctopusExplorer.support.tip.medium",
+      "referenceName": "Coffee",
+      "type": "Consumable"
+    },
+    {
+      "displayPrice": "9.99",
+      "familyShareable": false,
+      "internalID": "3",
+      "localizations": [
+        {
+          "description": "Support Octopus Explorer development. It does not unlock any features.",
+          "displayName": "Generous Tip",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.frostforgelabs.OctopusExplorer.support.tip.large",
+      "referenceName": "Generous Tip",
+      "type": "Consumable"
+    }
+  ],
+  "settings": {
+    "_applicationInternalID": "",
+    "_developerTeamID": "",
+    "_failTransactionsEnabled": false,
+    "_locale": "en_US",
+    "_storefront": "USA"
+  },
+  "subscriptionGroups": [],
+  "version": {
+    "major": 3,
+    "minor": 0
+  }
+}

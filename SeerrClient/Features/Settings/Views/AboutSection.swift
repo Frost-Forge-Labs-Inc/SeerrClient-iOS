@@ -225,13 +225,10 @@ enum AboutContent {
         ),
     ]
 
-    // NOTE: There is intentionally no support/funding/sponsorship content in this
-    // type. App Review rejected build 1.0(3) on 2026-08-28 under Guideline 3.1.1
-    // (In-App Purchase) because the former "Support Development" section linked to
-    // https://seerrclient.dev/support-development/ (Buy Me a Coffee / Ko-fi /
-    // GitHub Sponsors). Do not re-add external funding links or copy here; in-app
-    // tipping, if any, must ship as a StoreKit 2 IAP tip jar (see planning docs).
-    // Lock-in test: AboutContentTests.test_noPaymentOrSponsorshipSurfaceInApp.
+    // Documentation and acknowledgements must remain free of funding copy.
+    // StoreKit support lives exclusively in TipJar types; external payment links
+    // remain forbidden after the 1.0(3) App Review rejection.
+    // Lock-in: AboutContentTests.test_noExternalPaymentLinksOrFundingCopyInAboutContent.
 
     static let acknowledgements: [Acknowledgement] = [
         Acknowledgement(

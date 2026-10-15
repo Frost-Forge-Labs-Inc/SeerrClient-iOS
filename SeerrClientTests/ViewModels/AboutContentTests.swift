@@ -71,13 +71,9 @@ final class AboutContentTests: XCTestCase {
         XCTAssertTrue(AboutFeature.allCases.contains(.multiServer))
     }
 
-    func test_noPaymentOrSponsorshipSurfaceInApp() {
-        // App Review rejected build 1.0(3) on 2026-08-28 under Guideline 3.1.1
-        // (In-App Purchase): the former "Support Development" section linked to the
-        // seerrclient.dev support page (BMaC / Ko-fi / GitHub Sponsors). Apple's
-        // stated remedy was IAP or removal; we removed it. The Apple binaries must
-        // expose NO tipping/sponsorship surface. Re-adding one requires a
-        // StoreKit 2 IAP implementation, not an external link.
+    func test_noExternalPaymentLinksOrFundingCopyInAboutContent() {
+        // StoreKit copy belongs in TipJar* types. Documentation and acknowledgements
+        // remain free of funding copy, and external payment links stay forbidden.
         var allURLs: [URL] = []
         if let url = AboutContent.sourceCodeURL { allURLs.append(url) }
         if let url = AboutContent.privacyPolicyURL { allURLs.append(url) }

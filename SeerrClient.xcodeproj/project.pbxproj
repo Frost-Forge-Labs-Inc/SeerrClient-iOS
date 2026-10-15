@@ -256,6 +256,23 @@
 		70520000000000000000B109 /* SeerrModelsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A65F11D0875344C5E92CB0 /* SeerrModelsTests.swift */; };
 		70520000000000000000B110 /* ServerDetectionResultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66E1E51275191AF431112E6C /* ServerDetectionResultTests.swift */; };
 		70520000000000000000B111 /* WatchlistViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487D98B554FDDAA3F90661D4 /* WatchlistViewModelTests.swift */; };
+		A21FFA64E7A8408DA2FCF83F /* SupportProduct.swift */ = {isa = PBXBuildFile; fileRef = 77F3A1ABB23F48FC9A8257B1 /* SupportProduct.swift */; };
+		B1274C2D9CFD4B07952FB11C /* SupportProduct.swift */ = {isa = PBXBuildFile; fileRef = 77F3A1ABB23F48FC9A8257B1 /* SupportProduct.swift */; };
+		6DFB04C95A8344DC9F9A3DD9 /* SupportProduct.swift */ = {isa = PBXBuildFile; fileRef = 77F3A1ABB23F48FC9A8257B1 /* SupportProduct.swift */; };
+		7D7C497FDC734ADAA3032C71 /* TipJarRepository.swift */ = {isa = PBXBuildFile; fileRef = 93ADD8CB4E13408EAC3816E4 /* TipJarRepository.swift */; };
+		024D6F752A034953B2B2C89C /* TipJarRepository.swift */ = {isa = PBXBuildFile; fileRef = 93ADD8CB4E13408EAC3816E4 /* TipJarRepository.swift */; };
+		A05077F302C541BC88B167B3 /* TipJarRepository.swift */ = {isa = PBXBuildFile; fileRef = 93ADD8CB4E13408EAC3816E4 /* TipJarRepository.swift */; };
+		BE58C6901A6A4317A82CA549 /* TipJarViewModel.swift */ = {isa = PBXBuildFile; fileRef = 12E9FAEEF92C43259A2B68F1 /* TipJarViewModel.swift */; };
+		A47F806D43A24FDE835952F2 /* TipJarViewModel.swift */ = {isa = PBXBuildFile; fileRef = 12E9FAEEF92C43259A2B68F1 /* TipJarViewModel.swift */; };
+		EF38485AA4BC42FBBF9389DC /* TipJarViewModel.swift */ = {isa = PBXBuildFile; fileRef = 12E9FAEEF92C43259A2B68F1 /* TipJarViewModel.swift */; };
+		F74D1E6E0325499FB12CF80C /* TipJarSheet.swift */ = {isa = PBXBuildFile; fileRef = CBC32BB890A7416DB89A44C3 /* TipJarSheet.swift */; };
+		30AB31CAEFFD4A159F8561AC /* TipJarSheet.swift */ = {isa = PBXBuildFile; fileRef = CBC32BB890A7416DB89A44C3 /* TipJarSheet.swift */; };
+		46866A8D8FAA40EE9CA7FFA2 /* TipJarSheet.swift */ = {isa = PBXBuildFile; fileRef = CBC32BB890A7416DB89A44C3 /* TipJarSheet.swift */; };
+		D9CE5AB3DE1A47A48E937791 /* TipJarSection.swift */ = {isa = PBXBuildFile; fileRef = 533F7609EAA24F2F890147C5 /* TipJarSection.swift */; };
+		F55DA8BDA011466799636005 /* TipJarSection.swift */ = {isa = PBXBuildFile; fileRef = 533F7609EAA24F2F890147C5 /* TipJarSection.swift */; };
+		BA210E171564445B95EB06F7 /* TipJarSection.swift */ = {isa = PBXBuildFile; fileRef = 533F7609EAA24F2F890147C5 /* TipJarSection.swift */; };
+		D805447BEE0A4E579DC908C4 /* TipJarTests.swift */ = {isa = PBXBuildFile; fileRef = DFE91C3B889944C98A059B3C /* TipJarTests.swift */; };
+		6EAFF52B7DEC4F57B5B5F5C4 /* OctopusExplorer.storekit */ = {isa = PBXBuildFile; fileRef = F357F5910CA141D89B26FBF4 /* OctopusExplorer.storekit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -436,6 +453,13 @@
 		70520000000000000000A021 /* SeerrClientMacTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SeerrClientMacTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		70520000000000000000A031 /* SeerrClientMacUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SeerrClientMacUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		70520000000000000000A038 /* MacSidebarSmokeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacSidebarSmokeUITests.swift; sourceTree = "<group>"; };
+		77F3A1ABB23F48FC9A8257B1 /* SupportProduct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SeerrClient/Features/Settings/Models/SupportProduct.swift"; sourceTree = SOURCE_ROOT; };
+		93ADD8CB4E13408EAC3816E4 /* TipJarRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SeerrClient/Features/Settings/Repositories/TipJarRepository.swift"; sourceTree = SOURCE_ROOT; };
+		12E9FAEEF92C43259A2B68F1 /* TipJarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SeerrClient/Features/Settings/ViewModels/TipJarViewModel.swift"; sourceTree = SOURCE_ROOT; };
+		CBC32BB890A7416DB89A44C3 /* TipJarSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SeerrClient/Features/Settings/Views/TipJarSheet.swift"; sourceTree = SOURCE_ROOT; };
+		533F7609EAA24F2F890147C5 /* TipJarSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SeerrClient/Features/Settings/Views/TipJarSection.swift"; sourceTree = SOURCE_ROOT; };
+		DFE91C3B889944C98A059B3C /* TipJarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SeerrClientTests/ViewModels/TipJarTests.swift"; sourceTree = SOURCE_ROOT; };
+		F357F5910CA141D89B26FBF4 /* OctopusExplorer.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = "SeerrClient/Resources/OctopusExplorer.storekit"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -631,6 +655,13 @@
 		545A2B2BE03B933E992730D3 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				F357F5910CA141D89B26FBF4 /* OctopusExplorer.storekit */,
+				DFE91C3B889944C98A059B3C /* TipJarTests.swift */,
+				533F7609EAA24F2F890147C5 /* TipJarSection.swift */,
+				CBC32BB890A7416DB89A44C3 /* TipJarSheet.swift */,
+				12E9FAEEF92C43259A2B68F1 /* TipJarViewModel.swift */,
+				93ADD8CB4E13408EAC3816E4 /* TipJarRepository.swift */,
+				77F3A1ABB23F48FC9A8257B1 /* SupportProduct.swift */,
 				43542A772485535FF551A593 /* Repositories */,
 				CDF889051AB6FF01D7869A51 /* ViewModels */,
 				BB21A7C79B2C15D2677E5988 /* Views */,
@@ -1112,6 +1143,7 @@
 			buildConfigurationList = EE52F2BE271CDAB0EA7F9298 /* Build configuration list for PBXNativeTarget "SeerrClientTests" */;
 			buildPhases = (
 				D941CB7D20CD0D9C054EA743 /* Sources */,
+				41085605348D4475909131E9 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -1353,6 +1385,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		41085605348D4475909131E9 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (
+				6EAFF52B7DEC4F57B5B5F5C4 /* OctopusExplorer.storekit */,); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -1360,6 +1394,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BA210E171564445B95EB06F7 /* TipJarSection.swift */,
+				46866A8D8FAA40EE9CA7FFA2 /* TipJarSheet.swift */,
+				EF38485AA4BC42FBBF9389DC /* TipJarViewModel.swift */,
+				A05077F302C541BC88B167B3 /* TipJarRepository.swift */,
+				6DFB04C95A8344DC9F9A3DD9 /* SupportProduct.swift */,
 				70520000000000000000A010 /* SeerrClientMacApp.swift in Sources */,
 				70520000000000000000B038 /* MacContentView.swift in Sources */,
 				70520000000000000000B040 /* PlatformColor.swift in Sources */,
@@ -1445,6 +1484,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F55DA8BDA011466799636005 /* TipJarSection.swift */,
+				30AB31CAEFFD4A159F8561AC /* TipJarSheet.swift */,
+				A47F806D43A24FDE835952F2 /* TipJarViewModel.swift */,
+				024D6F752A034953B2B2C89C /* TipJarRepository.swift */,
+				B1274C2D9CFD4B07952FB11C /* SupportProduct.swift */,
 				70510000000000000000A010 /* SeerrClientTVApp.swift in Sources */,
 				70510000000000000000A015 /* ContentView-tvOS.swift in Sources */,
 				70510000000000000000B001 /* SeerrModels.swift in Sources */,
@@ -1531,6 +1575,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D9CE5AB3DE1A47A48E937791 /* TipJarSection.swift */,
+				F74D1E6E0325499FB12CF80C /* TipJarSheet.swift */,
+				BE58C6901A6A4317A82CA549 /* TipJarViewModel.swift */,
+				7D7C497FDC734ADAA3032C71 /* TipJarRepository.swift */,
+				A21FFA64E7A8408DA2FCF83F /* SupportProduct.swift */,
 				F5E75B8DCEA4839422965BF1 /* APIEndpoints.swift in Sources */,
 				CA8605D14239CC1AEA63810E /* APIError.swift in Sources */,
 				3A1AD2811B79C6CE0AEEEB54 /* AboutSection.swift in Sources */,
@@ -1617,6 +1666,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D805447BEE0A4E579DC908C4 /* TipJarTests.swift */,
 				D2A000000000000000000001 /* AboutContentTests.swift in Sources */,
 				F4A000000000000000000001 /* AppStateNavigationTests.swift in Sources */,
 				C500000000000000000000003 /* TabSelectionPolicyTests.swift in Sources */,

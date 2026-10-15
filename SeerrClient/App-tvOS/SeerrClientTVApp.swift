@@ -17,6 +17,7 @@ struct SeerrClientTVApp: App {
     @State private var appState: AppState
 
     init() {
+        TipJarViewModel.start()
         let store = ServerStore()
         _serverStore = State(initialValue: store)
         let state = AppState(serverStore: store)
